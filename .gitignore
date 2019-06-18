@@ -5,4 +5,8 @@ src\main\java\jp\myouth\db\RDSVariables
 src\main\java\jp\myouth\storage\PepperVariables
 
 #Ignore SESVariables
+<<<<<<< HEAD
 src\main\java\jp\myouth\mail\SESVariables
+=======
+src\main\java\jp\myouth\mail\SESVariables
+>>>>>>> 983ea028f115017744f354030c91782f400bebcb
