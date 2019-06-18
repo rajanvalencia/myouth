@@ -1,0 +1,8 @@
+#Ignore RDSVariables
+\src\main\java\jp\myouth\db\RDSVariables
+
+#Ignore PepperVariables
+\src\main\java\jp\myouth\storage\PepperVariables
+
+#Ignore SESVariables
+\src\main\java\jp\myouth\mail\SESVariables
