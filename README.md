@@ -1,6 +1,8 @@
 Welcome to the myouth web application
 ==================================================
 
+![index_page](https://user-images.githubusercontent.com/47655366/55319211-5bf05d80-54af-11e9-9639-8f6d9853ac79.png)
+
 ![MYouth](https://user-images.githubusercontent.com/47655366/55858288-46afb900-5baa-11e9-80ad-03ba41d84cc8.png)
 
 その他myouthシステムの機能
