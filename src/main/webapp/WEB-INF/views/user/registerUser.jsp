@@ -14,26 +14,20 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="/resources/alpha/css/main.css" />
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+		<link rel="stylesheet" href="/resources/css/font-awesome-animation.css">
 	</head>
 	<body class="is-preload">
 		<div id="page-wrapper">
-
-			<!-- Header -->
-				<header id="header">
-					<h1><a href="#">myouth</a> by Valencia Rajan</h1>
-					<nav id="nav">
-						<ul>
-							<li><a href="/">Home</a></li>
-						</ul>
-					</nav>
-				</header>
-
 			<!-- Main -->
-				<section id="main" class="container medium">
+				<section id="main" class="container">
+				<section  class="back-button">
+					<a href="/"><span class="fas fa-arrow-left fa-3x faa-passing-reverse animated"></span></a>
+				</section>
 					<header>
 						<h2>新規登録</h2>
 					</header>
 					<div class="box">
+					<div class="row">
 						<form id="form" method="post" action="/insertUser">
 							<div class="row gtr-50 gtr-uniform">
 								<div class="col-12">
@@ -48,19 +42,19 @@
 									<label for="email">メールアドレス</label>
 									<input type="email" name="email" id="email" value="" placeholder="" required/>
 								</div>
-								<div class="col-4 col-12-mobilep">
+								<div class="col-4 col-4-mobilep">
 									<label for="years">生年月日  年</label>
 									<select name="birth-year" id="years" required>
 													<option label="" selected></option>
 									</select>
 								</div>
-								<div class="col-4 col-12-mobilep">
+								<div class="col-4 col-4-mobilep">
 									<label for="months">月</label>
 									<select name="birth-month" id="months" required>
 													<option label="" selected></option>
 									</select>
 								</div>
-								<div class="col-4 col-12-mobilep">
+								<div class="col-4 col-4-mobilep">
 									<label for="days">日</label>
 									<select name="birth-day" id="days" required>
 													<option value="" selected></option>
@@ -82,16 +76,18 @@
 									<span id='message'></span>
 								</div>
 								<div class="col-12">
-										<ul class="actions">
-											<li><button id="btn" class="button" disabled>
-												登録 <span class="special big icon solid fa-paper-plane"></span>
-											</button></li>
-										</ul>
-									</div>
+									<ul class="actions" id="swap">
+										<li><input id="btn" type="submit" value="登録 " disabled/></li>
+									</ul>
+								</div>
 							</div>
 						</form>
 					</div>
+				</div>
+				<section  class="back-button">
+					<a href="/"><span class="fas fa-arrow-left fa-3x faa-passing-reverse animated"></span></a>
 				</section>
+			</section>
 
 			<!-- Footer -->
 				<footer id="footer">
@@ -159,9 +155,8 @@
 		
 		
 		$('#form').on('submit', function (){
-			$('#btn')
-		    .html('処理中 <span class="special big icon solid fa fa-refresh fa-spin"></span>')
-		    .css('pointer-events', 'none');
+			$('#swap')
+		    .html('<li><i class="fa fa-refresh fa-2x faa-spin faa-fast animated"></i></li>')
 		});
 		
 		$('#password, #confirm_password').on('keyup', function () {

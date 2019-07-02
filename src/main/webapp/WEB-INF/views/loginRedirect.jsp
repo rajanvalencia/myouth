@@ -3,6 +3,25 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ page import="jp.myouth.security.Authorization"%>
 <%@ page import="jp.myouth.db.User"%>
+<%
+	String email = request.getParameter("email");
+	String password = request.getParameter("password");
+	Authorization auth = new Authorization();
+	Boolean res = auth.authenticate(email, password);
+	String sessionId = session.getId();
+	if (res) {
+		User db = new User();
+		db.open();
+		String userId = db.userId(email);
+		db.close();
+		session.setAttribute("userId", userId);
+		session.setAttribute("user", true);
+		response.sendRedirect("/home");
+	} else {
+		session.setAttribute("failure", true);
+		response.sendRedirect("/login");
+	}
+%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -14,26 +33,6 @@
 	content="width=device-width, initial-scale=1, viewport-fit=cover">
 </head>
 <body>
-	<%
-		String email = request.getParameter("email");
-		String password = request.getParameter("password");
-		Authorization authorization = new Authorization();
-		Boolean res = authorization.login(email, password);
-		String sessionId = session.getId();
-		if (res) {
-			User db = new User();
-			db.open();
-			String userId = db.userId(email);
-			db.close();
-			session.setAttribute("userId", userId);
-			session.setAttribute("user", true);
-			response.sendRedirect("/home");
-		} else {
-			session.setAttribute("failure", true);
-			response.sendRedirect("/login");
-		}
-	%>
-
 	<div class="loading">
 		<img src="https://a.top4top.net/p_1990j031.gif" alt="Loading">
 	</div>

@@ -1,153 +1,162 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
 	pageEncoding="utf-8"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ page import="java.util.ArrayList"%>
 <%@ page import="jp.myouth.db.Participants"%>
 <%@ page import="java.util.ArrayList"%>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html>
 <%
 	Boolean user = (Boolean) session.getAttribute("user");
 	if (!user)
 		response.sendRedirect("/login");
 	String userId = (String) session.getAttribute("userId");
+
+	Participants db = new Participants();
+	String event = (String) session.getAttribute("event");
+	db.open();
+	ArrayList<String> list = new ArrayList<String>();
+	int i = 0, j = 0;
+	list = db.participantsInfoLess(event);
+	db.close();
 %>
+<!DOCTYPE HTML>
+<!--
+	Alpha by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
 <head>
-<link rel="apple-touch-icon" sizes="180x180"
-	href="/resources/favicon/apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="32x32"
-	href="/resources/favicon/favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16"
-	href="/resources/favicon/favicon-16x16.png">
-<link rel="manifest" href="/resources/favicon/site.webmanifest">
-<link rel="mask-icon" href="/resources/favicon/safari-pinned-tab.svg"
-	color="#5bbad5">
-<meta name="msapplication-TileColor" content="#2d89ef">
-<meta name="theme-color" content="#ffffff">
-<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<meta name="description" content="" />
+<title>Home</title>
+<meta charset="utf-8" />
 <meta name="viewport"
-	content="width=device-width, initial-scale=1, viewport-fit=cover">
-
-<script
-	src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js"
-	type="text/javascript"></script>
+	content="width=device-width, initial-scale=1, user-scalable=no" />
+<link rel="stylesheet" href="/resources/alpha/css/main.css" />
+<link rel="stylesheet" href="/resources/css/font-awesome-animation.css">
 <link rel="stylesheet"
-	href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
-<link rel="stylesheet" href="/resources/css/table.css">
-
-<title>参加者一覧</title>
-
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
-<body>
+<body class="is-preload">
+	<div id="page-wrapper">
 
-	<div id="demo">
-		<!-- Responsive table starts here -->
-		<!-- For correct display on small screens you must add 'data-title' to each 'td' in your table -->
-		<div class="table-responsive-vertical shadow-z-1">
-			<!-- Table starts here -->
-			<table class="table table-bordered table-hover table-mc-deep-orange" id="table">
-				<tbody>
-				<thead>
-					<%
-						Participants db = new Participants();
-						String event = (String) session.getAttribute("event");
-						db.open();
-						ArrayList<ArrayList<String>> list = new ArrayList<ArrayList<String>>();
-						int i = 0, j = 0;
-						list = db.participantsInfo(event);
-						out.println("<tr>");
-						out.println("<th>氏名</th>");
-						out.println("<th>メールアドレス</th>");
-						out.println("<th>電話番号</th>");
-						out.println("<th>ルーツをもつ国</th>");
-						out.println("<th>学校名または会社名</th>");
-						out.println("</tr>");
-						out.println("</thead>");
-						i = 0;
-						for (ArrayList<String> row : list) {
-							out.println("<tr>");
-							for (String string : row) {
-								if (i % 5 == 0)
-									out.println("<td data-title=\"フリガナ\">" + string + "</td>");
-								else if (i % 5 == 1)
-									out.println("<td data-title=\"メールアドレス\"><a href=\"mailto:" + string + "?subject=myouth\">"
-											+ string + "</a></td>");
-								else if (i % 5 == 2) {
-									if (string == null || string.length() == 0){
-										string = "なし";
-										out.println("<td data-title=\"電話番号\">" + string + "</a></td>");
+		<!-- Main -->
+		<section id="main" class="container">
+			<section class="back-button">
+				<a href="/home"><span
+					class="fas fa-arrow-left fa-3x faa-passing-reverse animated"></span></a>
+			</section>
+			<header>
+				<h2>Participants</h2>
+			</header>
+			<div class="row">
+				<div class="col-12">
+
+					<!-- Image -->
+					<section class="box">
+						<div class="table-wrapper">
+							<table>
+								<tbody>
+								<thead>
+									<tr>
+										<th>タイムスタンプ</th>
+										<th>名前</th>
+									</tr>
+								</thead>
+								<%
+									i = 0;
+									for (String string : list) {
+										if (i % 4 == 0)
+											out.print("<tr><td>" + string);
+										else if (i % 4 == 1)
+											out.print(" " + string + "</td>");
+										else if(i % 4 == 2)
+											out.println("<td>" + string + "</td>");
+										else
+											out.println("<td><a href=\"/home/" + event + "/participant_id=" + string
+													+ "\"><i class=\"fa fa-user faa-pulse animated faa-hover\"></i></a></td></tr>");
+										i++;
 									}
-									else
-										out.println("<td data-title=\"電話番号\"><a href=\"tel:"+string+"\">" + string + "</a></td>");
-								} else if (i % 5 == 3)
-									out.println("<td data-title=\"ルーツをもつ国\">" + string + "</td>");
-								else if (i % 5 == 4) {
-									out.println("<td data-title=\"学校名または会社名\">" + string + "</td>");
-									out.println("</tr>");
-								}
-								i++;
-							}
-							break;
-						}
-						db.close();
-					%>
-				
-				</tbody>
-			</table>
-		</div>
+								%>
+								</tbody>
+							</table>
+						</div>
+					</section>
+				</div>
+			</div>
+			<section class="back-button">
+				<a href="/home"><span
+					class="fas fa-arrow-left fa-3x faa-passing-reverse animated"></span></a>
+			</section>
+		</section>
 
-		<!-- Table Constructor change table classes, you don't need it in your project 
-		<div style="width: 100%; display: inline-block; vertical-align: top">
-			<h2>Table Constructor</h2>
-			<p>
-				<label for="table-bordered">Style: bordered</label> <select
-					name="table-bordered" id="table-bordered">
-					<option value="" selected="">No</option>
-					<option value="table-bordered">Yes</option>
-				</select>
-			</p>
-			<p>
-				<label for="table-striped">Style: striped</label> <select
-					name="table-striped" id="table-striped">
-					<option value="" selected="">No</option>
-					<option value="table-striped">Yes</option>
-				</select>
-			</p>
-			<p>
-				<label for="table-hover">Style: hover</label> <select
-					name="table-hover" id="table-hover">
-					<option value="">No</option>
-					<option value="table-hover" selected="">Yes</option>
-				</select>
-			</p>
-			<p>
-				<label for="table-color">Style: color</label> <select
-					name="table-color" id="table-color">
-					<option value="">Default</option>
-					<option selected value="table-mc-red">Red</option>
-					<option value="table-mc-pink">Pink</option>
-					<option value="table-mc-purple">Purple</option>
-					<option value="table-mc-deep-purple">Deep Purple</option>
-					<option value="table-mc-indigo">Indigo</option>
-					<option value="table-mc-blue">Blue</option>
-					<option value="table-mc-light-blue">Light Blue</option>
-					<option value="table-mc-cyan">Cyan</option>
-					<option value="table-mc-teal">Teal</option>
-					<option value="table-mc-green">Green</option>
-					<option value="table-mc-light-green">Light Green</option>
-					<option value="table-mc-lime">Lime</option>
-					<option value="table-mc-yellow">Yellow</option>
-					<option value="table-mc-amber">Amber</option>
-					<option value="table-mc-orange">Orange</option>
-					<option value="table-mc-deep-orange">Deep Orange</option>
-				</select>
-			</p>
-		</div>
-	</div>-->
-		<script
-			src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+		<!-- Footer -->
+		<footer id="footer">
+			<!-- <ul class="icons">
+						<li><a href="#" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
+						<li><a href="#" class="icon brands fa-facebook-f"><span class="label">Facebook</span></a></li>
+						<li><a href="#" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
+						<li><a href="#" class="icon brands fa-github"><span class="label">Github</span></a></li>
+						<li><a href="#" class="icon brands fa-dribbble"><span class="label">Dribbble</span></a></li>
+						<li><a href="#" class="icon brands fa-google-plus"><span class="label">Google+</span></a></li>
+					</ul> -->
+			<ul class="copyright">
+				<li>myouth.jp</li>
+				<li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
+			</ul>
+		</footer>
 
-		<script src="/resources/js/table.js"></script>
+	</div>
+
+	<!-- Scripts -->
+	<script src="/resources/alpha/js/jquery.min.js"></script>
+	<script src="/resources/alpha/js/jquery.dropotron.min.js"></script>
+	<script src="/resources/alpha/js/jquery.scrollex.min.js"></script>
+	<script src="/resources/alpha/js/browser.min.js"></script>
+	<script src="/resources/alpha/js/breakpoints.min.js"></script>
+	<script src="/resources/alpha/js/util.js"></script>
+	<script src="/resources/alpha/js/main.js"></script>
+	<script>
+	$(window).on('load', function(){
+		
+		$('.img-responsive').each(function() {
+			var maxWindowWidth = $(window).width(); // New width
+			if(maxWindowWidth >= 1240){
+				var maxWidth = 350; // Max width for the image
+			    var maxHeight = 150; // Max height for the image
+			} else if(maxWindowWidth <= 736 && maxWindowWidth > 480){
+				var maxWidth = 200; // Max width for the image
+			    var maxHeight = 150; // Max height for the image
+			}
+			else {
+		    	var maxWidth = 100; // Max width for the image
+		    	var maxHeight = 150; // Max height for the image
+			}
+		    var ratio = 0;  // Used for aspect ratio
+		    var width = $(this).width();    // Current image width
+		    var height = $(this).height();  // Current image height
+
+		    // Check if the current width is larger than the max
+		    if(width > maxWidth){
+		        ratio = maxWidth / width;   // get ratio for scaling image
+		        $(this).css("width", maxWidth); // Set new width
+		        $(this).css("height", height * ratio);  // Scale height based on ratio
+		        height = height * ratio;    // Reset height to match scaled image
+		    }
+
+		    var width = $(this).width();    // Current image width
+		    var height = $(this).height();  // Current image height
+
+		    // Check if current height is larger than max
+		    if(height > maxHeight){
+		        ratio = maxHeight / height; // get ratio for scaling image
+		        $(this).css("height", maxHeight);   // Set new height
+		        $(this).css("width", width * ratio);    // Scale width based on ratio
+		        width = width * ratio;    // Reset width to match scaled image
+		    }
+			
+			});
+			
+		});
+	</script>
+
 </body>
-
 </html>

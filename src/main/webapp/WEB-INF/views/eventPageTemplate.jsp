@@ -1,12 +1,12 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
 	pageEncoding="utf-8"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
-<%@ page import="jp.myouth.db.MySQL"%>
+<%@ page import="jp.myouth.db.Events"%>
 <%@ page import="java.util.ArrayList"%>
 <%@ page session="true"%>
 <!DOCTYPE html>
 <%
-	MySQL db = new MySQL();
+	Events db = new Events();
 	db.open();
 	String event = (String) session.getAttribute("event");
 	String eventName = db.eventName(event);
@@ -15,6 +15,14 @@
 	String twitterUrl = db.twitterUrl(event);
 	String eventEmail = db.eventEmail(event);
 	String eventLocation = db.eventLocation(event);
+	String eventPlace = db.eventPlace(event);
+	ArrayList<String> eventDate = db.eventDate(event);
+	ArrayList<String> eventTime = db.eventTime(event);
+	ArrayList<String> recruitmentStartDate = db.recruitmentStartDate(event);
+	ArrayList<String> recruitmentEndDate = db.recruitmentEndDate(event);
+	Integer recruitNo = db.totalParticipants(event);
+	Integer recruitLimit = db.recruitmentLimit(event);
+	
 	ArrayList<ArrayList<String>> list = new ArrayList<ArrayList<String>>();
 	list = db.eventInfo(event);
 	int i, j;
@@ -45,7 +53,7 @@
 <meta name="theme-color" content="#ffffff">
 <meta name="viewport"
 	content="width=device-width, initial-scale=1, user-scalable=no" />
-<link rel="stylesheet" href="/resources/assets/css/main.css" />
+<link rel="stylesheet" href="/resources/prologue/css/main.css" />
 <link rel="stylesheet" href="/resources/css/starRatings.css" />
 <link rel="stylesheet"
 	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -142,41 +150,68 @@
 
 		<section id="" class="two">
 			<div class="container">
-
-				<%
-					i = 0;
-
-					for (ArrayList<String> row : list) {
-						for (String string : row) {
-							switch (i) {
-								case 1 :
-									out.print("<h2>開催場所</h2>");
-									break;
-								case 2 :
-									out.print("<h2>開催日</h2>");
-									break;
-								case 3 :
-									out.print("<h2>集合時間</h2>");
-									break;
-								case 4 :
-									out.print("<h2>募集人数</h2>");
-									break;
-								case 5 :
-									out.print("<h2>残り応募人数</h2>");
-									break;
-							}
-							if (i != 0) {
-								if (string == null)
-									out.print("<h2>-</h2><br>");
-								else
-									out.print("<h2>" + string + "</h2><br>");
-							}
-							i++;
-						}
+				<h2>開催場所</h2>
+				<h2><%out.print(eventPlace);%></h2>
+				<br />
+				
+				<h2>開催日</h2>
+				<h2><% 
+				i = 0;
+				for(String string : eventDate){
+					if(i == 2)
+						out.print(string);
+					else 
+						out.print(string+"-");
+					i++;
+				}
+				%></h2>
+				<br />
+				
+				<h2>開始時間</h2>
+				<h2><% 
+				i = 0;
+				for(String string : eventTime){
+					if(i == 1){
+						if(Integer.valueOf(string) < 10)
+							out.print("0"+string);
+						else
+							out.print(string);
 					}
-				%>
-
-				<h2></h2>
+					else 
+						out.print(string+":");
+					i++;
+				}
+				%></h2>
+				<br />
+				
+				<h2>残り募集人数</h2>
+				<h2><%out.print(recruitLimit-recruitNo);%></h2>
+				<br />
+				
+				<h2>募集開始</h2>
+				<h2><% 
+				i = 0;
+				for(String string : recruitmentStartDate){
+					if(i == 2)
+						out.print(string);
+					else 
+						out.print(string+"-");
+					i++;
+				}
+				%></h2>
+				<br />
+				
+				<h2>募集〆切</h2>
+				<h2><% 
+				i = 0;
+				for(String string : recruitmentEndDate){
+					if(i == 2)
+						out.print(string);
+					else 
+						out.print(string+"-");
+					i++;
+				}
+				%></h2>
 				<br>
 				<p>
 					<%
@@ -275,6 +310,7 @@
 				<div id="regions_div" class="chart"></div>
 				<div id="piechart_career" class="piechart"></div>
 				<div id="piechart_way" class="piechart"></div>
+				
 				<table>
 					<thead>
 						<tr>
@@ -349,7 +385,7 @@
 							out.print("<div class=\"middle\"><div class=\"bar-container\"><div class=\"bar-" + data.intValue()
 									+ "\"");
 						} else {
-							out.print("style=\"width:" + (data / total) * 100 + "%;\"></div></div></div>");
+							out.print(" style=\"width:" + (data / total) * 100 + "%;\"></div></div></div>");
 							out.println("<div class=\"side right\"><div>" + data.intValue() + "</div></div>");
 						}
 						i++;
@@ -357,7 +393,6 @@
 					out.println("</div>");
 				%>
 				<br /> <br />
-				<h3>感想</h3>
 				<%
 					list = null;
 					i = 0;
@@ -395,34 +430,6 @@
 						%>
 					</tbody>
 				</table>
-				<h3>改善案</h3>
-				<%
-					list = null;
-					i = 0;
-					list = db.improvementPlansTable(event);
-					if (list.get(0).size() == 0)
-						out.println("データはありません<br />");
-				%>
-				<table>
-					<tbody>
-						<%
-							for (ArrayList<String> row : list) {
-								for (String string : row) {
-									if (i % 2 == 0) {
-										out.println("<tr>");
-										out.println("<td>" + string + "</td>");
-										out.println("</tr>");
-									} else {
-										out.println("<tr>");
-										out.println("<td>" + string + "</td>");
-										out.println("</tr>");
-									}
-									i++;
-								}
-							}
-						%>
-					</tbody>
-				</table>
 			</div>
 		</section>
 
@@ -433,9 +440,8 @@
 
 		<!-- Copyright -->
 		<ul class="copyright">
-			<li>Design: <a href="http://html5up.net">HTML5 UP</a>.Photo by
-				NASA on <a href="https://unsplash.com">Unsplash</a>.
-			</li>
+			<li>Design: <a href="http://html5up.net">HTML5 UP</a>.</li>
+			<li>Image: <a href="https://unsplash.com">Unsplash</a>.</li>
 		</ul>
 
 	</div>
@@ -443,13 +449,13 @@
 	<!-- Scripts -->
 	<script
 		src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js'></script>
-	<script src="/resources/assets/js/jquery.min.js"></script>
-	<script src="/resources/assets/js/jquery.scrolly.min.js"></script>
-	<script src="/resources/assets/js/jquery.scrollex.min.js"></script>
-	<script src="/resources/assets/js/browser.min.js"></script>
-	<script src="/resources/assets/js/breakpoints.min.js"></script>
-	<script src="/resources/assets/js/util.js"></script>
-	<script src="/resources/assets/js/main.js"></script>
+	<script src="/resources/prologue/js/jquery.min.js"></script>
+	<script src="/resources/prologue/js/jquery.scrolly.min.js"></script>
+	<script src="/resources/prologue/js/jquery.scrollex.min.js"></script>
+	<script src="/resources/prologue/js/browser.min.js"></script>
+	<script src="/resources/prologue/js/breakpoints.min.js"></script>
+	<script src="/resources/prologue/js/util.js"></script>
+	<script src="/resources/prologue/js/main.js"></script>
 	<script type="text/javascript"
 		src="https://www.gstatic.com/charts/loader.js"></script>
 
@@ -483,7 +489,7 @@
 			var options = {
 				title : 'ルーツをもつ国別参加者'
 			};
-			options['backgroundColor'] = '#ecf1f1';
+			options['backgroundColor'] = '#97BAEC';
 			options['colors'] = [ '#98FB98', '#006400' ];
 			var chart = new google.visualization.GeoChart(document
 					.getElementById('regions_div'));
@@ -522,7 +528,7 @@
 			var options = {
 				title : '参加者職種別'
 			};
-			options['backgroundColor'] = '#ecf1f1';
+			options['backgroundColor'] = '#f5f5f5';
 			var chart = new google.visualization.PieChart(document
 					.getElementById('piechart_career'));
 
@@ -560,7 +566,7 @@
 			var options = {
 				title : '参加のきっかけ'
 			};
-			options['backgroundColor'] = '#ecf1f1';
+			options['backgroundColor'] = '#f5f5f5';
 			var chart = new google.visualization.PieChart(document
 					.getElementById('piechart_way'));
 

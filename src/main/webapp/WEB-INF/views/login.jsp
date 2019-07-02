@@ -24,12 +24,14 @@
 <meta charset="utf-8" />
 <meta name="viewport"
 	content="width=device-width, initial-scale=1, user-scalable=no" />
-<link rel="stylesheet" href="/resources/logInassets/css/main.css" />
+<link rel="stylesheet" href="/resources/eventually/css/main.css" />
+<link rel="stylesheet" href="/resources/css/font-awesome-animation.css">
 </head>
 <body class="is-preload">
-
+	
 	<!-- Header -->
 	<header id="header">
+		<a href="/" style="border-bottom-color: transparent;"><span class="icon fa fa-arrow-left fa-3x faa-passing-reverse animated"></span></a>
 		<h1>Login to myouth</h1>
 	</header>
 
@@ -46,11 +48,12 @@
 		<ul class="copyright">
 			<li>myouth.jp</li>
 			<li>Credits: <a href="http://html5up.net">HTML5 UP</a></li>
+			<li>Images: <a href="http://unsplash.com/">UNSPLASH</a></li>
 		</ul>
 	</footer>
 
 	<!-- Scripts -->
-	<script src="/resources/logInassets/js/main.js"></script>
+	<script src="/resources/eventually/js/main.js"></script>
 	<script>
 		// Signup Form.
 		(function() {

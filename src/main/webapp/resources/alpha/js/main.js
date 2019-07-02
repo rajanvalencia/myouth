@@ -35,8 +35,8 @@
 
 	// NavPanel.
 
-		// Button.
-			$(
+		// Button. 
+		/*	$(
 				'<div id="navButton">' +
 					'<a href="#navPanel" class="toggle"></a>' +
 				'</div>'
@@ -61,12 +61,12 @@
 					side: 'left',
 					target: $body,
 					visibleClass: 'navPanel-visible'
-				});
+				}); */
 
 	// Header.
-		if (!browser.mobile
+	if (!browser.mobile
 		&&	$header.hasClass('alt')
-		&&	$banner.length > 0) {*/
+		&&	$banner.length > 0) {
 
 			$window.on('load', function() {
 
@@ -79,6 +79,6 @@
 
 			});
 
-		}
+		} 
 
 })(jQuery);

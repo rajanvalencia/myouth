@@ -2,6 +2,7 @@ package jp.myouth.db;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.ResultSet;
@@ -42,8 +43,10 @@ public class User {
 	public String userId(String email) {
 		String data = new String();
 		try {
-			String query = "SELECT users.user_id FROM users WHERE email = \"" + email + "\"";
-			ResultSet rset = stmt.executeQuery(query);
+			String query = "SELECT users.user_id FROM users WHERE email = ?";
+			PreparedStatement stmt = conn.prepareStatement(query);
+			stmt.setString(1, email);
+			ResultSet rset = stmt.executeQuery();
 			if (rset.next())
 				data = rset.getString("user_id");
 			return data;
@@ -52,6 +55,7 @@ public class User {
 		}
 		return null;
 	}
+	
 
 	public String name(String userId) {
 		String data = new String();
@@ -66,12 +70,28 @@ public class User {
 		}
 		return null;
 	}
+	
+	public String fname(String userId) {
+		String data = new String();
+		try {
+			String query = "SELECT users.fname FROM users WHERE user_id = \"" + userId + "\"";
+			ResultSet rset = stmt.executeQuery(query);
+			if (rset.next())
+				data = rset.getString("fname");
+			return data;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 
 	public String word(String userId) {
 		String data = new String();
 		try {
-			String query = "SELECT users.word FROM users WHERE user_id = \"" + userId + "\"";
-			ResultSet rset = stmt.executeQuery(query);
+			String query = "SELECT users.word FROM users WHERE user_id = ?";
+			PreparedStatement stmt = conn.prepareStatement(query);
+			stmt.setString(1, userId);
+			ResultSet rset = stmt.executeQuery();
 			if (rset.next())
 				data = rset.getString("word");
 			return data;
@@ -83,9 +103,12 @@ public class User {
 
 	public Boolean introduction(String userId, String name, String word) {
 		try {
-			String update = "UPDATE users SET name = \"" + name + "\", word = \"" + word + "\" WHERE user_id = \""
-					+ userId + "\"";
-			stmt.executeUpdate(update);
+			String update = "UPDATE users SET name = ?, word = ? WHERE user_id ?";
+			PreparedStatement stmt = conn.prepareStatement(update);
+			stmt.setString(1, userId);
+			stmt.setString(2, name);
+			stmt.setString(3, word);
+			stmt.executeUpdate();
 			return true;
 		} catch (Exception e) {
 			return false;
@@ -94,9 +117,14 @@ public class User {
 
 	public Boolean register(String userId, String name, String fname, String email, String birthdate) {
 		try {
-			String update = "INSERT INTO users (user_id, name, fname, email, birthdate) VALUES(\""
-					+userId+"\", \""+name+"\", \""+fname+"\", \""+email+"\", \""+birthdate+"\")";
-			stmt.executeUpdate(update);
+			String update = "INSERT INTO users (user_id, name, fname, email, birthdate) VALUES(?,?,?,?,?)";
+			PreparedStatement stmt = conn.prepareStatement(update);
+			stmt.setString(1, userId);
+			stmt.setString(2, name);
+			stmt.setString(3, fname);
+			stmt.setString(4, email);
+			stmt.setString(5, birthdate);
+			stmt.executeUpdate();
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -108,11 +136,19 @@ public class User {
 	public Boolean verifyEmail(String userId, Boolean verification) {
 		try {
 			if(!verification) {
-				String update = "INSERT INTO verify_email (user_id, verification) VALUES(\""+userId+"\", "+verification+")";
-				stmt.executeUpdate(update);
+				String insert = "INSERT INTO verify_email (user_id, verification) VALUES(?, ?)";
+				PreparedStatement stmt = conn.prepareStatement(insert);
+				stmt.setString(1, userId);
+				stmt.setBoolean(2, verification);
+				stmt.executeUpdate();
 			}
-			String update = "UPDATE verify_email SET verification = "+verification+" WHERE user_id = \""+userId+"\"";
-			stmt.executeUpdate(update);
+			else {
+				String update = "UPDATE verify_email SET verification = ? WHERE user_id = ?";
+				PreparedStatement stmt = conn.prepareStatement(update);
+				stmt.setBoolean(1, verification);
+				stmt.setString(2, userId);
+				stmt.executeUpdate();
+			}
 			return true;
 		}catch(Exception e) {
 			e.printStackTrace();
@@ -142,6 +178,25 @@ public class User {
 			
 			if(rset.next())
 				data = rset.getInt("totalUsers");
+			
+			return data;
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	
+	public String userEmailAddress(String userId) {
+		String data = new String();
+		try {
+			String query = "SELECT email FROM users WHERE user_id = ?";
+			PreparedStatement stmt = conn.prepareStatement(query);
+			stmt.setString(1, userId);
+			ResultSet rset = stmt.executeQuery();
+			
+			if(rset.next())
+				data = rset.getString("email");
 			
 			return data;
 		}catch(Exception e) {

@@ -48,13 +48,13 @@ db1.close();
 		<div id="page-wrapper">
 
 			<!-- Header -->
-				<header id="header" class="alt">
-				 <h1><a href="index.html">myouth</a> by Valencia Rajan</h1>
-					 <!-- <nav id="nav">
+			 <header id="header" class="alt reveal">
+				 <h1>An <a href="">Event Management System</a> by Valencia Rajan</h1>
+					  <!-- <nav id="nav">
 						<ul>
-							<li><a href="/">Home</a></li>
-							  <li>
-								<!--<a href="#" class="icon solid fa-angle-down">Layouts</a>
+							<li><a href="index.html">Home</a></li>
+							<li>
+								<a href="#" class="icon solid fa-angle-down">Layouts</a>
 								<ul>
 									<li><a href="generic.html">Generic</a></li>
 									<li><a href="contact.html">Contact</a></li>
@@ -70,9 +70,12 @@ db1.close();
 									</li>
 								</ul>
 							</li>
-						</ul> 
+							<li><a href="#" class="button">Sign Up</a></li>
+						</ul>
 					</nav> -->
-				</header>
+				</header> 
+
+
 
 			<!-- Banner -->
 				<section id="banner">
@@ -111,7 +114,7 @@ db1.close();
 							<section>
 								<span class="icon solid major fa-envelope faa-passing animated accent3"></span>
 								<h3>コンタクト</h3>
-								<p>一人一人の参加者に対してのメールや一斉送信などの連絡ができます。</p>
+								<p>一人一人の参加者に対してのメールやイベントごとの参加者への一斉送信などの連絡ができます。</p>
 							</section>
 						</div>
 						<div class="features-row">
@@ -144,8 +147,8 @@ db1.close();
 						</div>
 						<div class="col-6 col-12-narrower">
 							<section class="box special">
-								<span class="image featured"><img src="https://s3-ap-northeast-1.amazonaws.com/jp.myouth.images/users/tD21O5Wrp5H/profile_pic.jpg" alt="" /></span>
-								<h3>myouth 製作者</h3>
+								<span class="image featured"><img src="https://s3-ap-northeast-1.amazonaws.com/jp.myouth.images/rajanValencia/creator.jpg" alt="" /></span>
+								<h3>Developer</h3>
 								<p>日本に来て<span id="stay"></span>年、フィリピンとインドのミックスで多文化ユースの実行委員の一人でもあります。第一回のイベントで参加者名簿の担当でしたが、その大変さを知ってしまい、自らイベント管理システムを製作しました。
 								資格や成果物などを閲覧したい場合は詳細をクリックしてください。</p>
 								<ul class="actions special">
@@ -181,7 +184,9 @@ db1.close();
 			<!-- Footer -->
 				<footer id="footer">
 					<ul class="copyright">
-						<li>myouth.jp</li><li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
+						<li>myouth.jp</li>
+						<li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
+						<li>Images: <a href="http://unsplash.com/">UNSPLASH</a></li>
 					</ul>
 				</footer>
 
@@ -194,7 +199,7 @@ db1.close();
 			<script src="/resources/alpha/js/browser.min.js"></script>
 			<script src="/resources/alpha/js/breakpoints.min.js"></script>
 			<script src="/resources/alpha/js/util.js"></script>
-			<!-- <script src="/resources/alpha/js/main.js"></script> -->
+			<script src="/resources/alpha/js/main.js"></script>
 	</body>
 	
 	<script>

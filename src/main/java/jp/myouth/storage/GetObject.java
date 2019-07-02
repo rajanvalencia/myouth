@@ -26,14 +26,14 @@ public class GetObject {
 		S3Object fullObject = null, objectPortion = null, headerOverrideObject = null;
 		try {
 
-			AmazonS3 s3Client = AmazonS3ClientBuilder.standard()
+			/*AmazonS3 s3Client = AmazonS3ClientBuilder.standard()
 					.withCredentials(DefaultAWSCredentialsProviderChain.getInstance())
-					.build();
-			
-			/*AmazonS3 s3Client = AmazonS3ClientBuilder.standard().withRegion(clientRegion)
-					.withCredentials(new ProfileCredentialsProvider())
 					.build();*/
-
+			
+			AmazonS3 s3Client = AmazonS3ClientBuilder.standard().withRegion(clientRegion)
+					.withCredentials(new ProfileCredentialsProvider())
+					.build();
+					
 			// Get an object and print its contents.
 			// System.out.println("Downloading an object");
 			fullObject = s3Client.getObject(new GetObjectRequest(bucketName, key));

@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
 	pageEncoding="utf-8"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
-<%@ page import="jp.myouth.db.*"%>
+<%@ page import="jp.myouth.db.Events"%>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -33,7 +33,7 @@
 	Boolean survey = (Boolean) session.getAttribute("survey");
 	if (event == null)
 		response.sendRedirect("/events");
-	MySQL db = new MySQL();
+	Events db = new Events();
 	db.open();
 	String eventName = db.eventName(event);
 	db.close();

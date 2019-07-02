@@ -3,11 +3,12 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ page import="jp.myouth.db.Events"%>
 <%@ page import="java.util.ArrayList"%>
-<% 
-Events db = new Events();
-db.open();
-ArrayList<String> data = db.allEvents();
-db.close();
+<%
+	Boolean user = (Boolean) session.getAttribute("user");
+	if (!user)
+		response.sendRedirect("/login");
+	String userId = (String) session.getAttribute("userId");
+	String event = (String) session.getAttribute("event");
 %>
 <!DOCTYPE HTML>
 <!--
@@ -17,7 +18,7 @@ db.close();
 -->
 <html>
 <head>
-<title>myouth Events</title>
+<title>設定</title>
 <meta charset="utf-8" />
 <meta name="viewport"
 	content="width=device-width, initial-scale=1, user-scalable=no" />
@@ -31,33 +32,29 @@ db.close();
 		<!-- Main -->
 		<section id="main" class="container">
 		<section  class="back-button">
-		<a href="/"><span class="fas fa-arrow-left fa-3x faa-passing-reverse animated"></span></a>
+		<a href="/home"><span class="fas fa-arrow-left fa-3x faa-passing-reverse animated"></span></a>
 		</section>
 		<header>
-		<h2>Events</h2>
+		<h2>Settings</h2>
 		</header>
 			<div class="row">
 				<div class="col-12">
 
 					<!-- Image -->
 					<section class="box">
-					<div class="col-3 col-6-narrower col-12-mobilep">
-					<ul class="actions">
-					<%
-					int i = 0;
-					for(String string : data){
-						if(i % 2 == 0)
-							out.print("<li><a href=\"/events/"+string+"\" class=\"button special fit\">");
-						else
-							out.println(string+"</a></li>");
-						i++;
-					}
-					%>
-					</ul>
-					</div>
+						<div class="col-3 col-6-narrower col-12-mobilep">
+							<ul class="actions">
+								<li><a href="/home/<%out.print(event);%>/settings/details" class="button special fit">詳細設定</a></li>
+								<li><a href="/home/<%out.print(event);%>/settings/form" class="button special fit">参加申し込み設定</a></li>
+								<li><a href="/home/<%out.print(event);%>/settings/survey" class="button special fit">アンケート設定</a></li>
+							</ul>
+						</div>
 					</section>
 				</div>
 			</div>
+		<section  class="back-button">
+			<a href="/home"><span class="fas fa-arrow-left fa-3x faa-passing-reverse animated"></span></a>
+		</section>
 		</section>
 
 

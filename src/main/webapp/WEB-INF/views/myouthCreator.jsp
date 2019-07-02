@@ -20,24 +20,15 @@
 </head>
 <body class="is-preload">
 	<div id="page-wrapper">
-
-		<!-- Header -->
-		<header id="header">
-			<h1>
-				<a href="#">myouth</a> by Valencia Rajan
-			</h1>
-			<nav id="nav">
-				<ul>
-					<li><a href="/">Home</a></li>
-				</ul>
-			</nav>
-		</header>
+	
 		<!-- Main -->
 		<section id="main" class="container">
+		<section  class="back-button">
+		<a href="/"><span class="fas fa-arrow-left fa-3x faa-passing-reverse animated"></span></a>
+		</section>
 		<header>
 		<h2>Valencia Rajan Zamora</h2>
-		<h2><span><a href="https://github.com/rajanvalencia"><span class="fa fa-github faa-pulse animated"></span></a></span>
-		    <span><a href="mailto:rajan.valencia@au.com"><span class="fa fa-envelope  faa-pulse animated"></span></a></span></h2>
+		<span><a href="https://github.com/rajanvalencia" class="icon"><span class="fa fa-github fa-3x faa-pulse animated"></span></a></span>
 		</header>
 			<div class="row">
 				<div class="col-12">
@@ -95,9 +86,9 @@
 						<div class="col-6 col-12-mobilep">
 						<h4>Google App Script   <span class="fa fa-google faa-wrench animated"></span></h4>
 						<ul>
-						<li>SpreadSheet</li>
 						<li>Gmail</li>
 						<li>Google Docs</li>
+						<li>SpreadSheet</li>
 						</ul>
 						
 						<h4>学歴   <span class="fa fa-graduation-cap faa-float animated"></span></h4>
@@ -118,7 +109,7 @@
 						</div>
 					</section>
 					<section class="box">
-					<h3>TCCの可視化   <a href="https://github.com/rajanvalencia/TCC"><span class="fa fa-github faa-pulse animated"></span></a></h3>
+					<h3>TCCの可視化   <a href="https://github.com/rajanvalencia/TCC" class="icon"><span class="fa fa-github faa-pulse animated"></span></a></h3>
 					<div class="row">
 					<div class="col-6 col-12-mobilep">
 					<h4>言語   <span class="fa fa-language faa-tada animated"></span></h4>
@@ -142,7 +133,7 @@
 					</section>
 					
 					<section class="box">
-					<h3><a href="/">myouth</a> Web Application   <a href="https://github.com/rajanvalencia/mysite"><span class="fa fa-github faa-pulse animated"></span></a></h3>
+					<h3><a href="/">myouth</a> Web Application   <a href="https://github.com/rajanvalencia/myouth" class="icon"><span class="fa fa-github faa-pulse animated"></span></a></h3>
 					<div class="row">
 					<div class="col-6 col-12-mobilep">
 					<h4>言語   <span class="fa fa-language faa-tada animated"></span></h4>
@@ -169,9 +160,10 @@
 					</section>
 				</div>
 			</div>
+			<section  class="back-button">
+				<a href="/"><span class="fas fa-arrow-left fa-3x faa-passing-reverse animated"></span></a>
+			</section>
 		</section>
-
-
 
 		<!-- Footer -->
 		<footer id="footer">

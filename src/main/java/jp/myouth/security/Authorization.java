@@ -1,6 +1,6 @@
 package jp.myouth.security;
 
-import jp.myouth.mail.EmailVerification;
+import jp.myouth.mail.Templates;
 import jp.myouth.db.Credentials;
 import jp.myouth.db.User;
 import jp.myouth.storage.GetObject;
@@ -85,7 +85,7 @@ public class Authorization {
 		return messageDigest.digest();
 	}
 
-	public Boolean login(String email, String password) throws IOException {
+	public Boolean authenticate(String email, String password) throws IOException {
 		GetObject get = new GetObject();
 		String pepper = get.pepper();
 		
@@ -130,8 +130,8 @@ public class Authorization {
 		Boolean res2 = db1.verifyEmail(userId, false);
 		db1.close();
 
-		EmailVerification emailVer = new EmailVerification();
-		Boolean res3 = emailVer.Send(name, email, userId);
+		Templates send = new Templates();
+		Boolean res3 = send.accountVerificationMail(name, email, userId);
 
 		if (res && res1 && res2 && res3)
 			return true;
