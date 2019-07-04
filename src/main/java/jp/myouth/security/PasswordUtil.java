@@ -1,6 +1,6 @@
 package jp.myouth.security;
 
-import jp.myouth.storage.GetObject;
+import jp.myouth.storage.S3;
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -11,7 +11,13 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
  
 public class PasswordUtil {
- 
+	
+private static final String CLIENT_REGION  = "ap-northeast-1";
+	
+	private static final String BUCKETNAME = "jp.myouth.security";
+	
+	private static final String KEY = "pepper/pepper1.txt";
+	
     /**
      *  パスワードを安全にするためのアルゴリズム 
     */
@@ -86,8 +92,8 @@ public class PasswordUtil {
     
     public static void main(String[] args) throws IOException { 
         GenerateSecureString gen = new GenerateSecureString(); 
-        GetObject get = new GetObject();
-        String pepper = get.pepper();
+        S3 s3 = new S3();
+        String pepper = s3.download(CLIENT_REGION, BUCKETNAME, KEY);
         String hashedPasswordWithSalt = PasswordUtil.getSafetyPassword("1234", gen.string(500)); 
         String hashedPasswordWithSaltAndPepper = PasswordUtil.getSafetyPassword(hashedPasswordWithSalt, pepper);
         System.out.println("key: "+hashedPasswordWithSaltAndPepper); 

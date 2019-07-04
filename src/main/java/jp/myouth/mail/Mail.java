@@ -1,31 +1,30 @@
 package jp.myouth.mail;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Properties;
 
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
 import com.amazonaws.regions.Regions;
-import com.amazonaws.services.s3.model.Region;
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
-import com.amazonaws.services.simpleemail.AmazonSimpleEmailServiceClient;
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailServiceClientBuilder;
 import com.amazonaws.services.simpleemail.model.Body;
 import com.amazonaws.services.simpleemail.model.Content;
 import com.amazonaws.services.simpleemail.model.Destination;
 import com.amazonaws.services.simpleemail.model.Message;
-import com.amazonaws.services.simpleemail.model.SendEmailRequest; 
+import com.amazonaws.services.simpleemail.model.SendEmailRequest;
 
 public class Mail {
-
+	
   static final String CONFIGSET = "ConfigSet";
 
   public Boolean send(String FROM, ArrayList<String> TO, String FROMNAME, String SUBJECT, String TEXTBODY, String HTMLBODY) throws IOException {
-	  SESVariables get = new SESVariables();
     try {
-    	AWSCredentials credentials = new BasicAWSCredentials(get.accessKey(), get.SecretAccessKey());
+    	AWSCredentials credentials = credentials();
+    	
     	AmazonSimpleEmailService client =
     			AmazonSimpleEmailServiceClientBuilder.standard()
                 .withRegion(Regions.US_EAST_1)
@@ -57,5 +56,27 @@ public class Mail {
           + e.getMessage());
     }
     return false;
+  }
+  
+  public static  BasicAWSCredentials credentials() {
+
+      try (InputStream input = Mail.class.getClassLoader().getResourceAsStream("application.properties")) {
+
+          Properties prop = new Properties();
+
+          if (input == null) {
+              System.out.println("Sorry, unable to find application.properties");
+              return null;
+          }
+
+          //load a properties file from class path, inside static method
+          prop.load(input);
+
+          return new BasicAWSCredentials(prop.getProperty("AccessKey"), prop.getProperty("SecretAccessKey"));
+
+      } catch (IOException ex) {
+          ex.printStackTrace();
+      }
+      return null;
   }
 }

@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.sql.ResultSet;
 
 public class User {
@@ -205,4 +206,63 @@ public class User {
 		return null;
 	}
 
+	public ArrayList<String> managingEvents(String userId) {
+		ArrayList<String> data = new ArrayList<String>();
+		try {
+			String query = "SELECT event.e_name, event.english_e_name FROM event, user_event WHERE user_event.user_id = ? AND event.event_id = user_event.event_id";
+			PreparedStatement stmt = conn.prepareStatement(query);
+			stmt.setString(1, userId);
+			ResultSet rset = stmt.executeQuery();
+			while (rset.next()) {
+				data.add(rset.getString("e_name"));
+				data.add(rset.getString("english_e_name"));
+			}
+			return data;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public ArrayList<String> eventMember(String event){
+		ArrayList<String> data = new ArrayList<String>();
+		try {
+			String query = "SELECT users.name, users.user_id FROM users, user_event, event WHERE users.user_id = user_event.user_id AND event.event_id = user_event.event_id AND event.english_e_name = ?";
+			PreparedStatement stmt = conn.prepareStatement(query);
+			stmt.setString(1, event);
+			ResultSet rset = stmt.executeQuery();
+
+			while(rset.next()) {
+				data.add(rset.getString("name"));
+				data.add(rset.getString("user_id"));
+			}
+			
+			return data;
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	
+	public ArrayList<String> memberSearch(String search){
+		ArrayList<String> data = new ArrayList<String>();
+		try {
+			String query = "SELECT name, fname FROM users WHERE name LIKE ? OR fname LIKE ?";
+			PreparedStatement stmt = conn.prepareStatement(query);
+			stmt.setString(1, search+"%");
+			stmt.setString(2, search+"%");
+			ResultSet rset = stmt.executeQuery();
+
+			while(rset.next()) {
+				data.add(rset.getString("name"));
+				data.add(rset.getString("fname"));
+			}
+			
+			return data;
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 }

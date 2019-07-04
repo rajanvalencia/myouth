@@ -126,7 +126,7 @@ db1.close();
 							<section>
 								<span class="icon solid major fa-lock faa-tada animated accent5"></span>
 								<h3>セキュリティー</h3>
-								<p>パスワードをデータベスに保存しないアルゴリズムによって厳重なセキュリティーを確立しています。</p>
+								<p>パスワードをデータベスに保存しないアルゴリズムとによって厳重なセキュリティーを確立しています。その他のセキュリティ対策もしています。</p>
 							</section>
 						</div>
 					</section>

@@ -289,6 +289,28 @@ public class HelloWorldController {
 		return mv;
 	}
 	
+	@RequestMapping("home/{event}/settings/member")
+	public ModelAndView member(HttpServletRequest request, @PathVariable("event") String event) {
+		HttpSession session = request.getSession();
+		Boolean user = (Boolean)session.getAttribute("user");
+		if(user == null)
+			session.setAttribute("user", false);
+		session.setAttribute("event", event);
+		ModelAndView mv = new ModelAndView("user/settings/member");
+		return mv;
+	}
+	
+	@RequestMapping("home/{event}/settings/member/search")
+	public ModelAndView memberSearch(HttpServletRequest request, @PathVariable("event") String event) {
+		HttpSession session = request.getSession();
+		Boolean user = (Boolean)session.getAttribute("user");
+		if(user == null)
+			session.setAttribute("user", false);
+		session.setAttribute("event", event);
+		ModelAndView mv = new ModelAndView("user/settings/memberSearch");
+		return mv;
+	}
+	
 	@RequestMapping("events/{eventname}/form")
 	public String form(HttpServletRequest request, @PathVariable("eventname") String eventname) {
 		HttpSession session = request.getSession(true);

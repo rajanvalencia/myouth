@@ -1,7 +1,5 @@
 package jp.myouth.db;
 
-import javax.mail.internet.InternetAddress;
-
 import java.sql.Date;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -51,8 +49,11 @@ public class Events {
 		ArrayList<ArrayList<String>> list = new ArrayList<ArrayList<String>>();
 		ArrayList<String> info = new ArrayList<String>();
 		try {
-			String query = "SELECT * FROM event where english_e_name = \"" + event + "\"";
-			ResultSet rset = stmt.executeQuery(query);
+			String query = "SELECT * FROM event where english_e_name = ?";
+			PreparedStatement stmt = conn.prepareStatement(query);
+			stmt.setString(1, event);
+			ResultSet rset = stmt.executeQuery();
+			
 			while (rset.next()) {
 				info.add(rset.getString("e_name"));
 				info.add(rset.getString("place"));
@@ -61,10 +62,12 @@ public class Events {
 				info.add(rset.getString("recruitno"));
 			}
 			rset.close();
-			String query1 = "SELECT recruitno-COUNT(*) AS participants_per_event FROM event_participants, event WHERE english_e_name = \""
-					+ event
-					+ "\" AND event.event_id = event_participants.event_id AND join_date > recruitment_start AND join_date < recruitment_end";
-			ResultSet rset1 = stmt.executeQuery(query1);
+			
+			String query1 = "SELECT recruitno-COUNT(*) AS participants_per_event FROM event_participants, event WHERE english_e_name = ? AND event.event_id = event_participants.event_id AND join_date > recruitment_start AND join_date < recruitment_end";
+			PreparedStatement stmt1 = conn.prepareStatement(query1);
+			stmt1.setString(1, event);
+			ResultSet rset1 = stmt1.executeQuery();
+			
 			while (rset1.next()) {
 				info.add(rset1.getString("participants_per_event"));
 			}
@@ -84,9 +87,10 @@ public class Events {
 	public String instagramUrl(String event) {
 		String data = new String();
 		try {
-			String query = "SELECT instagram_url FROM event_url, event WHERE event.event_id = event_url.event_id AND english_e_name = \""
-					+ event + "\"";
-			ResultSet rset = stmt.executeQuery(query);
+			String query = "SELECT instagram_url FROM event_url, event WHERE event.event_id = event_url.event_id AND english_e_name = ?";
+			PreparedStatement stmt = conn.prepareStatement(query);
+			stmt.setString(1, event);
+			ResultSet rset = stmt.executeQuery();
 			while (rset.next())
 				data = rset.getString("instagram_url");
 			return data;
@@ -102,9 +106,10 @@ public class Events {
 	public String facebookUrl(String event) {
 		String data = new String();
 		try {
-			String query = "SELECT facebook_url FROM event_url, event WHERE event.event_id = event_url.event_id AND english_e_name = \""
-					+ event + "\"";
-			ResultSet rset = stmt.executeQuery(query);
+			String query = "SELECT facebook_url FROM event_url, event WHERE event.event_id = event_url.event_id AND english_e_name = ?";
+			PreparedStatement stmt = conn.prepareStatement(query);
+			stmt.setString(1, event);
+			ResultSet rset = stmt.executeQuery();
 			while (rset.next())
 				data = rset.getString("facebook_url");
 			return data;
@@ -120,9 +125,10 @@ public class Events {
 	public String twitterUrl(String event) {
 		String data = new String();
 		try {
-			String query = "SELECT twitter_url FROM event_url, event WHERE event.event_id = event_url.event_id AND english_e_name = \""
-					+ event + "\"";
-			ResultSet rset = stmt.executeQuery(query);
+			String query = "SELECT twitter_url FROM event_url, event WHERE event.event_id = event_url.event_id AND english_e_name = ?";
+			PreparedStatement stmt = conn.prepareStatement(query);
+			stmt.setString(1, event);
+			ResultSet rset = stmt.executeQuery();
 			while (rset.next())
 				data = rset.getString("twitter_url");
 			return data;
@@ -138,8 +144,10 @@ public class Events {
 	public String eventLocation(String event) {
 		String data = new String();
 		try {
-			String query = "SELECT place FROM event WHERE english_e_name = \"" + event + "\"";
-			ResultSet rset = stmt.executeQuery(query);
+			String query = "SELECT place FROM event WHERE english_e_name = ?";
+			PreparedStatement stmt = conn.prepareStatement(query);
+			stmt.setString(1, event);
+			ResultSet rset = stmt.executeQuery();
 			while (rset.next())
 				data = rset.getString("place");
 			return data;
@@ -155,9 +163,10 @@ public class Events {
 	public String eventEmail(String event) {
 		String data = new String();
 		try {
-			String query = "SELECT email FROM event, event_admin_email WHERE event.event_id = event_admin_email.event_id AND english_e_name = \""
-					+ event + "\"";
-			ResultSet rset = stmt.executeQuery(query);
+			String query = "SELECT email FROM event, event_admin_email WHERE event.event_id = event_admin_email.event_id AND english_e_name = ?";
+			PreparedStatement stmt = conn.prepareStatement(query);
+			stmt.setString(1, event);
+			ResultSet rset = stmt.executeQuery();
 			while (rset.next())
 				data = rset.getString("email");
 			return data;
@@ -173,9 +182,10 @@ public class Events {
 	public String eventDescription(String event) {
 		String data = new String();
 		try {
-			String query = "SELECT description FROM event, event_description WHERE event.event_id = event_description.event_id AND english_e_name = \""
-					+ event + "\"";
-			ResultSet rset = stmt.executeQuery(query);
+			String query = "SELECT description FROM event, event_description WHERE event.event_id = event_description.event_id AND english_e_name = ?";
+			PreparedStatement stmt = conn.prepareStatement(query);
+			stmt.setString(1, event);
+			ResultSet rset = stmt.executeQuery();
 			while (rset.next())
 				data = rset.getString("description");
 			return data;
@@ -191,28 +201,12 @@ public class Events {
 	public String eventLogo(String event) {
 		String data = new String();
 		try {
-			String query = "SELECT logo_url FROM event, event_logo WHERE event.event_id = event_logo.event_id AND english_e_name = \""
-					+ event + "\"";
-			ResultSet rset = stmt.executeQuery(query);
+			String query = "SELECT logo_url FROM event, event_logo WHERE event.event_id = event_logo.event_id AND english_e_name = ?";
+			PreparedStatement stmt = conn.prepareStatement(query);
+			stmt.setString(1, event);
+			ResultSet rset = stmt.executeQuery();
 			while (rset.next())
 				data = rset.getString("logo_url");
-			return data;
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-
-	public ArrayList<String> managingEvents(String userId) {
-		ArrayList<String> data = new ArrayList<String>();
-		try {
-			String query = "SELECT event.e_name, event.english_e_name FROM event, user_event WHERE user_event.user_id = \""
-					+ userId + "\" AND event.event_id = user_event.event_id";
-			ResultSet rset = stmt.executeQuery(query);
-			while (rset.next()) {
-				data.add(rset.getString("e_name"));
-				data.add(rset.getString("english_e_name"));
-			}
 			return data;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -224,10 +218,13 @@ public class Events {
 	 * イベントの名前を取得
 	 */
 	public String eventName(String event) {
+		String data = new String();
 		try {
-			String data = new String();
-			String query = "SELECT e_name FROM event WHERE english_e_name=\"" + event + "\"";
-			ResultSet rset = stmt.executeQuery(query);
+			String query = "SELECT e_name FROM event WHERE english_e_name= ?";
+			PreparedStatement stmt = conn.prepareStatement(query);
+			stmt.setString(1, event);
+			ResultSet rset = stmt.executeQuery();
+			
 			while (rset.next())
 				data = rset.getString("e_name");
 			rset.close();
@@ -241,8 +238,10 @@ public class Events {
 	public String eventPlace(String event) {
 		try {
 			String data = new String();
-			String query = "SELECT place FROM event WHERE english_e_name=\"" + event + "\"";
-			ResultSet rset = stmt.executeQuery(query);
+			String query = "SELECT place FROM event WHERE english_e_name= ?";
+			PreparedStatement stmt = conn.prepareStatement(query);
+			stmt.setString(1, event);
+			ResultSet rset = stmt.executeQuery();
 			while (rset.next())
 				data = rset.getString("place");
 			rset.close();
@@ -256,9 +255,10 @@ public class Events {
 	public ArrayList<String> eventTime(String event) {
 		try {
 			ArrayList<String> data = new ArrayList<String>();
-			String query = "SELECT EXTRACT(HOUR FROM time) AS hour, EXTRACT(MINUTE FROM time) as minute FROM event WHERE english_e_name=\""
-					+ event + "\"";
-			ResultSet rset = stmt.executeQuery(query);
+			String query = "SELECT EXTRACT(HOUR FROM time) AS hour, EXTRACT(MINUTE FROM time) as minute FROM event WHERE english_e_name= ?";
+			PreparedStatement stmt = conn.prepareStatement(query);
+			stmt.setString(1, event);
+			ResultSet rset = stmt.executeQuery();
 			while (rset.next()) {
 				data.add(rset.getString("hour"));
 				data.add(rset.getString("minute"));
@@ -274,9 +274,10 @@ public class Events {
 	public ArrayList<String> eventDate(String event) {
 		ArrayList<String> data = new ArrayList<String>();
 		try {
-			String query = "SELECT EXTRACT(YEAR FROM date) AS year, EXTRACT(MONTH FROM date) AS month, EXTRACT(DAY FROM date) AS day FROM event WHERE english_e_name=\""
-					+ event + "\"";
-			ResultSet rset = stmt.executeQuery(query);
+			String query = "SELECT EXTRACT(YEAR FROM date) AS year, EXTRACT(MONTH FROM date) AS month, EXTRACT(DAY FROM date) AS day FROM event WHERE english_e_name= ?";
+			PreparedStatement stmt = conn.prepareStatement(query);
+			stmt.setString(1, event);
+			ResultSet rset = stmt.executeQuery();
 			if (rset.next()) {
 				data.add(rset.getString("year"));
 				data.add(rset.getString("month"));
@@ -297,9 +298,10 @@ public class Events {
 	public ArrayList<String> recruitmentStartDate(String event) {
 		ArrayList<String> data = new ArrayList<String>();
 		try {
-			String query = "SELECT EXTRACT(YEAR FROM recruitment_start) AS year, EXTRACT(MONTH FROM recruitment_start) AS month, EXTRACT(DAY FROM recruitment_start) AS day FROM event WHERE english_e_name = \""
-					+ event + "\"";
-			ResultSet rset = stmt.executeQuery(query);
+			String query = "SELECT EXTRACT(YEAR FROM recruitment_start) AS year, EXTRACT(MONTH FROM recruitment_start) AS month, EXTRACT(DAY FROM recruitment_start) AS day FROM event WHERE english_e_name = ?";
+			PreparedStatement stmt = conn.prepareStatement(query);
+			stmt.setString(1, event);
+			ResultSet rset = stmt.executeQuery();
 
 			while (rset.next()) {
 				data.add(rset.getString("year"));
@@ -321,9 +323,10 @@ public class Events {
 	public ArrayList<String> recruitmentEndDate(String event) {
 		ArrayList<String> data = new ArrayList<String>();
 		try {
-			String query = "SELECT EXTRACT(YEAR FROM recruitment_end) AS year, EXTRACT(MONTH FROM recruitment_end) AS month, EXTRACT(DAY FROM recruitment_end) AS day FROM event WHERE english_e_name = \""
-					+ event + "\"";
-			ResultSet rset = stmt.executeQuery(query);
+			String query = "SELECT EXTRACT(YEAR FROM recruitment_end) AS year, EXTRACT(MONTH FROM recruitment_end) AS month, EXTRACT(DAY FROM recruitment_end) AS day FROM event WHERE english_e_name = ?";
+			PreparedStatement stmt = conn.prepareStatement(query);
+			stmt.setString(1, event);
+			ResultSet rset = stmt.executeQuery();
 
 			while (rset.next()) {
 				data.add(rset.getString("year"));
@@ -344,8 +347,10 @@ public class Events {
 	public int recruitmentLimit(String event) {
 		int data = 0;
 		try {
-			String query = "SELECT recruitno FROM event WHERE english_e_name = \"" + event + "\"";
-			ResultSet rset = stmt.executeQuery(query);
+			String query = "SELECT recruitno FROM event WHERE english_e_name = ?";
+			PreparedStatement stmt = conn.prepareStatement(query);
+			stmt.setString(1, event);
+			ResultSet rset = stmt.executeQuery();
 
 			if (rset.next())
 				data = rset.getInt("recruitno");
@@ -362,7 +367,8 @@ public class Events {
 		Integer data = 0;
 		try {
 			String query = "SELECT COUNT(*) AS totalEvents FROM event";
-			ResultSet rset = stmt.executeQuery(query);
+			PreparedStatement stmt = conn.prepareStatement(query);
+			ResultSet rset = stmt.executeQuery();
 
 			if (rset.next())
 				data = rset.getInt("totalEvents");
@@ -401,14 +407,12 @@ public class Events {
 		ArrayList<ArrayList<String>> list = new ArrayList<ArrayList<String>>();
 		ArrayList<String> data = new ArrayList<String>();
 		try {
-			String query = "SELECT countries.country AS country, COUNT(*) AS total_participants_per_country FROM(SELECT country FROM participants, event_participants, event WHERE country IS NOT NULL AND participants.participant_id =  event_participants.participant_id AND english_e_name = \""
-					+ event
-					+ "\" AND event.event_id = event_participants.event_id AND join_date >= recruitment_start AND join_date <= recruitment_end UNION ALL SELECT country2 FROM participants, event_participants, event WHERE country2 IS NOT NULL AND participants.participant_id =  event_participants.participant_id AND english_e_name = \""
-					+ event
-					+ "\" AND event.event_id = event_participants.event_id AND join_date >= recruitment_start AND join_date <= recruitment_end UNION ALL SELECT country3 FROM participants, event_participants, event WHERE country3 IS NOT NULL AND participants.participant_id =  event_participants.participant_id AND english_e_name = \""
-					+ event
-					+ "\" AND event.event_id = event_participants.event_id AND join_date >= recruitment_start AND join_date <= recruitment_end)  AS countries GROUP BY country";
-			ResultSet rset = stmt.executeQuery(query);
+			String query = "SELECT countries.country AS country, COUNT(*) AS total_participants_per_country FROM(SELECT country FROM participants, event_participants, event WHERE country IS NOT NULL AND participants.participant_id =  event_participants.participant_id AND english_e_name = ? AND event.event_id = event_participants.event_id AND join_date >= recruitment_start AND join_date <= recruitment_end UNION ALL SELECT country2 FROM participants, event_participants, event WHERE country2 IS NOT NULL AND participants.participant_id =  event_participants.participant_id AND english_e_name = ? AND event.event_id = event_participants.event_id AND join_date >= recruitment_start AND join_date <= recruitment_end UNION ALL SELECT country3 FROM participants, event_participants, event WHERE country3 IS NOT NULL AND participants.participant_id =  event_participants.participant_id AND english_e_name = ? AND event.event_id = event_participants.event_id AND join_date >= recruitment_start AND join_date <= recruitment_end)  AS countries GROUP BY country";
+			PreparedStatement stmt = conn.prepareStatement(query);
+			stmt.setString(1, event);
+			stmt.setString(2, event);
+			stmt.setString(3, event);
+			ResultSet rset = stmt.executeQuery();
 
 			while (rset.next()) {
 				data.add(rset.getString("country"));
@@ -476,17 +480,19 @@ public class Events {
 	/**
 	 * パイチャート用の職種または学年ごとの情報を取得
 	 */
-	public ArrayList<ArrayList<String>> careerPieChart(String eventname) {
+	public ArrayList<ArrayList<String>> careerPieChart(String event) {
 		ArrayList<ArrayList<String>> list = new ArrayList<ArrayList<String>>();
 		ArrayList<String> data = new ArrayList<String>();
 		try {
-			String total = "SET @total = (SELECT COUNT(*) FROM event, event_participants, participants WHERE event.event_id = event_participants.event_id AND participants.participant_id = event_participants.participant_id AND english_e_name = \""
-					+ eventname + "\" AND join_date < recruitment_end AND join_date > recruitment_start)";
-			stmt.execute(total);
-			String query = "SELECT career, ((COUNT(*)/@total)*100) AS percentage_per_career FROM participants, event_participants, event WHERE  english_e_name = \""
-					+ eventname
-					+ "\" AND participants.participant_id = event_participants.participant_id AND event.event_id = event_participants.event_id AND join_date > recruitment_start AND join_date < recruitment_end GROUP BY career";
-			ResultSet rset = stmt.executeQuery(query);
+			String total = "SET @total = (SELECT COUNT(*) FROM event, event_participants, participants WHERE event.event_id = event_participants.event_id AND participants.participant_id = event_participants.participant_id AND english_e_name = ? AND join_date <= recruitment_end AND join_date >= recruitment_start)";
+			PreparedStatement stmt = conn.prepareStatement(total);
+			stmt.setString(1, event);
+			stmt.executeUpdate();
+			
+			String query = "SELECT career, ((COUNT(*)/@total)*100) AS percentage_per_career FROM participants, event_participants, event WHERE  english_e_name = ? AND participants.participant_id = event_participants.participant_id AND event.event_id = event_participants.event_id AND join_date >= recruitment_start AND join_date <= recruitment_end GROUP BY career";
+			PreparedStatement stmt1 = conn.prepareStatement(query);
+			stmt1.setString(1, event);
+			ResultSet rset = stmt1.executeQuery();
 
 			while (rset.next()) {
 				data.add(rset.getString("career"));
@@ -505,17 +511,19 @@ public class Events {
 	/**
 	 * パイチャート用の参加のきっかけの情報を取得
 	 */
-	public ArrayList<ArrayList<String>> wayPieChart(String eventname) {
+	public ArrayList<ArrayList<String>> wayPieChart(String event) {
 		ArrayList<ArrayList<String>> list = new ArrayList<ArrayList<String>>();
 		ArrayList<String> data = new ArrayList<String>();
 		try {
-			String total = "SET @total = (SELECT COUNT(*) FROM event, event_participants, participants WHERE event.event_id = event_participants.event_id AND participants.participant_id = event_participants.participant_id AND english_e_name = \""
-					+ eventname + "\" AND join_date < recruitment_end AND join_date > recruitment_start)";
-			stmt.execute(total);
-			String query = "SELECT way, ((COUNT(*)/@total)*100) AS percentage_per_way FROM participants, event_participants, event WHERE  english_e_name = \""
-					+ eventname
-					+ "\" AND participants.participant_id = event_participants.participant_id AND event.event_id = event_participants.event_id AND join_date > recruitment_start AND join_date < recruitment_end GROUP BY way";
-			ResultSet rset = stmt.executeQuery(query);
+			String total = "SET @total = (SELECT COUNT(*) FROM event, event_participants, participants WHERE event.event_id = event_participants.event_id AND participants.participant_id = event_participants.participant_id AND english_e_name = ? AND join_date <= recruitment_end AND join_date >= recruitment_start)";
+			PreparedStatement stmt = conn.prepareStatement(total);
+			stmt.setString(1, event);
+			stmt.executeUpdate();
+			
+			String query = "SELECT way, ((COUNT(*)/@total)*100) AS percentage_per_way FROM participants, event_participants, event WHERE  english_e_name = ? AND participants.participant_id = event_participants.participant_id AND event.event_id = event_participants.event_id AND join_date >= recruitment_start AND join_date <= recruitment_end GROUP BY way";
+			PreparedStatement stmt1 = conn.prepareStatement(query);
+			stmt1.setString(1, event);
+			ResultSet rset = stmt1.executeQuery();
 
 			while (rset.next()) {
 				data.add(rset.getString("way"));
@@ -534,14 +542,15 @@ public class Events {
 	/**
 	 * 会社ごとの参加人数
 	 */
-	public ArrayList<ArrayList<String>> companyTable(String eventname) {
+	public ArrayList<ArrayList<String>> companyTable(String event) {
 		ArrayList<ArrayList<String>> list = new ArrayList<ArrayList<String>>();
 		ArrayList<String> data = new ArrayList<String>();
 		try {
-			String query = "SELECT company, COUNT(*) AS participant_per_company FROM participants, event_participants, event WHERE english_e_name = \""
-					+ eventname
-					+ "\" AND event.event_id = event_participants.event_id AND participants.participant_id = event_participants.participant_id AND recruitment_start < join_date AND join_date < recruitment_end GROUP BY company";
-			ResultSet rset = stmt.executeQuery(query);
+			String query = "SELECT company, COUNT(*) AS participant_per_company FROM participants, event_participants, event WHERE english_e_name = ? AND event.event_id = event_participants.event_id AND participants.participant_id = event_participants.participant_id AND recruitment_start <= join_date AND join_date <= recruitment_end GROUP BY company";
+			PreparedStatement stmt = conn.prepareStatement(query);
+			stmt.setString(1, event);
+			ResultSet rset = stmt.executeQuery();
+			
 			while (rset.next()) {
 				data.add(rset.getString("company"));
 				data.add(rset.getString("participant_per_company"));
@@ -557,14 +566,15 @@ public class Events {
 	/**
 	 * 各イベントのコメントを取得
 	 */
-	public ArrayList<ArrayList<String>> commentsTable(String eventname) {
+	public ArrayList<ArrayList<String>> commentsTable(String event) {
 		ArrayList<ArrayList<String>> list = new ArrayList<ArrayList<String>>();
 		ArrayList<String> data = new ArrayList<String>();
 		try {
-			String query = "SELECT event_survey.satisfaction, event_survey.date, event_survey.time, event_survey.comments FROM event_survey, event WHERE english_e_name = \""
-					+ eventname
-					+ "\" AND event.event_id = event_survey.event_id ORDER BY survey_id DESC";
-			ResultSet rset = stmt.executeQuery(query);
+			String query = "SELECT event_survey.satisfaction, event_survey.date, event_survey.time, event_survey.comments FROM event_survey, event WHERE english_e_name = ? AND event.event_id = event_survey.event_id ORDER BY survey_id DESC";
+			PreparedStatement stmt = conn.prepareStatement(query);
+			stmt.setString(1, event);
+			ResultSet rset = stmt.executeQuery();
+			
 			while (rset.next()) {
 				data.add(rset.getString("satisfaction"));
 				data.add(rset.getString("date") + " " + rset.getString("time"));
@@ -581,14 +591,15 @@ public class Events {
 	/**
 	 * 各イベントの改善案を取得
 	 */
-	public ArrayList<ArrayList<String>> improvementPlansTable(String eventname) {
+	public ArrayList<ArrayList<String>> improvementPlansTable(String event) {
 		ArrayList<ArrayList<String>> list = new ArrayList<ArrayList<String>>();
 		ArrayList<String> data = new ArrayList<String>();
 		try {
-			String query = "SELECT event_survey.date, event_survey.time, event_survey.improvements FROM event_survey, event WHERE english_e_name = \""
-					+ eventname
-					+ "\" AND event.event_id = event_survey.event_id AND event_survey.date <= event.recruitment_end ORDER BY survey_id DESC";
-			ResultSet rset = stmt.executeQuery(query);
+			String query = "SELECT event_survey.date, event_survey.time, event_survey.improvements FROM event_survey, event WHERE english_e_name = ? AND event.event_id = event_survey.event_id AND event_survey.date <= event.recruitment_end ORDER BY survey_id DESC";
+			PreparedStatement stmt = conn.prepareStatement(query);
+			stmt.setString(1, event);
+			ResultSet rset = stmt.executeQuery();
+			
 			while (rset.next()) {
 				if (rset.getString("improvements").length() > 0) {
 					data.add(rset.getString("date") + " " + rset.getString("time"));
@@ -606,13 +617,15 @@ public class Events {
 	/**
 	 * 画像のurlを取得
 	 */
-	public ArrayList<ArrayList<String>> getImage(String eventname) {
+	public ArrayList<ArrayList<String>> getImage(String event) {
 		ArrayList<ArrayList<String>> list = new ArrayList<ArrayList<String>>();
 		ArrayList<String> data = new ArrayList<String>();
 		try {
-			String query = "SELECT url, description FROM event, event_images WHERE event.event_id = event_images.event_id AND english_e_name = \""
-					+ eventname + "\"";
-			ResultSet rset = stmt.executeQuery(query);
+			String query = "SELECT url, description FROM event, event_images WHERE event.event_id = event_images.event_id AND english_e_name = ?";
+			PreparedStatement stmt = conn.prepareStatement(query);
+			stmt.setString(1, event);
+			ResultSet rset = stmt.executeQuery();
+
 			while (rset.next()) {
 				data.add(rset.getString("url"));
 				data.add(rset.getString("description"));
@@ -631,9 +644,10 @@ public class Events {
 	public ArrayList<Boolean> formQuestion(String event) {
 		ArrayList<Boolean> data = new ArrayList<Boolean>();
 		try {
-			String query = "SELECT name, fname, gender, email, phone, birthdate, career, company, country, country2, country3, address, allergy, way, parent_confirmation, confirmation FROM event, form_questions WHERE event.event_id = form_questions.event_id AND english_e_name = \""
-					+ event + "\"";
-			ResultSet rset = stmt.executeQuery(query);
+			String query = "SELECT name, fname, gender, email, phone, birthdate, career, company, country, country2, country3, address, allergy, way, parent_confirmation, confirmation FROM event, form_questions WHERE event.event_id = form_questions.event_id AND english_e_name = ?";
+			PreparedStatement stmt = conn.prepareStatement(query);
+			stmt.setString(1, event);
+			ResultSet rset = stmt.executeQuery();
 			while (rset.next()) {
 				data.add(rset.getBoolean("name"));
 				data.add(rset.getBoolean("fname"));
@@ -666,9 +680,12 @@ public class Events {
 	public ArrayList<Boolean> surveyQuestion(String event) {
 		ArrayList<Boolean> data = new ArrayList<Boolean>();
 		try {
-			String query = "SELECT survey_questions.name, survey_questions.fname, survey_questions.satisfaction, survey_questions.comments, survey_questions.transportation, survey_questions.improvements, survey_questions.repetition FROM survey_questions, event WHERE event.event_id = survey_questions.event_id AND english_e_name = \""
-					+ event + "\"";
-			ResultSet rset = stmt.executeQuery(query);
+			String query = "SELECT survey_questions.name, survey_questions.fname, survey_questions.satisfaction, survey_questions.comments, survey_questions.transportation, survey_questions.improvements, survey_questions.repetition FROM survey_questions, event WHERE event.event_id = survey_questions.event_id AND english_e_name = ?";
+			
+			PreparedStatement stmt = conn.prepareStatement(query);
+			stmt.setString(1, event);
+			ResultSet rset = stmt.executeQuery();
+			
 			while (rset.next()) {
 				data.add(rset.getBoolean("name"));
 				data.add(rset.getBoolean("fname"));
@@ -728,12 +745,14 @@ public class Events {
 		return false;
 	}
 
-	public ArrayList<Double> ratingData(String eventname) {
+	public ArrayList<Double> ratingData(String event) {
 		ArrayList<Double> list = new ArrayList<Double>();
 		try {
-			String query = "SELECT COUNT(*) AS totalRatings, ROUND(SUM(satisfaction)/COUNT(*), 1) AS averageRatings FROM event_survey, event WHERE english_e_name = \""
-					+ eventname + "\" AND event.event_id = event_survey.event_id";
-			ResultSet rset = stmt.executeQuery(query);
+			String query = "SELECT COUNT(*) AS totalRatings, ROUND(SUM(satisfaction)/COUNT(*), 1) AS averageRatings FROM event_survey, event WHERE english_e_name = ? AND event.event_id = event_survey.event_id";
+			PreparedStatement stmt = conn.prepareStatement(query);
+			stmt.setString(1, event);
+			ResultSet rset = stmt.executeQuery();
+			
 			while (rset.next()) {
 				list.add(rset.getDouble("totalRatings"));
 				list.add(rset.getDouble("averageRatings"));
@@ -746,14 +765,15 @@ public class Events {
 		return null;
 	}
 
-	public ArrayList<Double> totalPerSatisfaction(String eventname) {
+	public ArrayList<Double> totalPerSatisfaction(String event) {
 		ArrayList<Double> list = new ArrayList<Double>();
 		try {
 
-			String query = "SELECT satisfaction, COUNT(*) AS total FROM event_survey, event WHERE english_e_name = \""
-					+ eventname
-					+ "\" AND event.event_id = event_survey.event_id GROUP BY satisfaction ORDER BY satisfaction DESC";
-			ResultSet rset = stmt.executeQuery(query);
+			String query = "SELECT satisfaction, COUNT(*) AS total FROM event_survey, event WHERE english_e_name = ? AND event.event_id = event_survey.event_id GROUP BY satisfaction ORDER BY satisfaction DESC";
+			PreparedStatement stmt = conn.prepareStatement(query);
+			stmt.setString(1, event);
+			ResultSet rset = stmt.executeQuery();
+			
 			while (rset.next()) {
 				list.add(rset.getDouble("satisfaction"));
 				list.add(rset.getDouble("total"));
@@ -764,12 +784,6 @@ public class Events {
 		}
 		return null;
 	}
-
-	/*
-	 * イベントの合計参加者をメールアドレスが二重にならない設定で取得する
-	 */
-
-	
 	
 	/*
 	 * イベントの合計参加者を取得する
@@ -778,9 +792,11 @@ public class Events {
 	public int totalParticipants(String event) {
 		try {
 			Integer total = 0;
-			String query = "SELECT COUNT(*) FROM participants, event_participants, event WHERE participants.participant_id = event_participants.participant_id AND event.event_id = event_participants.event_id AND english_e_name=\""
-					+ event + "\" AND join_date >= recruitment_start AND join_date <= recruitment_end";
-			ResultSet rset = stmt.executeQuery(query);
+			String query = "SELECT COUNT(*) FROM participants, event_participants, event WHERE participants.participant_id = event_participants.participant_id AND event.event_id = event_participants.event_id AND english_e_name= ? AND join_date >= recruitment_start AND join_date <= recruitment_end";
+			PreparedStatement stmt = conn.prepareStatement(query);
+			stmt.setString(1, event);
+			ResultSet rset = stmt.executeQuery();
+			
 			if (rset.next())
 				total = rset.getInt("COUNT(*)");
 			rset.close();

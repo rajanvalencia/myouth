@@ -1,21 +1,23 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
 	pageEncoding="utf-8"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
-<%@ page import="java.util.ArrayList" %>
 <%@ page import="jp.myouth.db.User"%>
+<%@ page import="java.util.ArrayList"%>
 <%
 	Boolean user = (Boolean) session.getAttribute("user");
 	if (!user)
 		response.sendRedirect("/login");
 	String userId = (String) session.getAttribute("userId");
 	String event = (String) session.getAttribute("event");
+	
+	ArrayList<String> searchResults = (ArrayList<String>) session.getAttribute("searchResults");
+	
 	User db = new User();
 	db.open();
-	String name = db.name(userId);
-	String fname = db.fname(userId);
-	String word = db.word(userId);
-	ArrayList<String> list = db.managingEvents(userId);
+	ArrayList<String> data = db.eventMember(event);
 	db.close();
+	
+	int i = 0;
 %>
 <!DOCTYPE HTML>
 <!--
@@ -25,7 +27,7 @@
 -->
 <html>
 <head>
-<title>Home</title>
+<title>メンバー</title>
 <meta charset="utf-8" />
 <meta name="viewport"
 	content="width=device-width, initial-scale=1, user-scalable=no" />
@@ -36,61 +38,84 @@
 </head>
 <body class="is-preload">
 	<div id="page-wrapper">
-	
 		<!-- Main -->
 		<section id="main" class="container">
 		<section  class="back-button">
-		<a href="/logoutRedirect"><span class="fas fa-door-open fa-3x"></span><span class="fas fa-arrow-left fa-3x faa-passing-reverse animated"></span></a>
+		<a href="/home/<%out.print(event);%>/settings"><span class="fas fa-arrow-left fa-3x faa-passing-reverse animated"></span></a>
 		</section>
+		<header>
+		<h2>Member</h2>
+		</header>
 			<div class="row">
 				<div class="col-12">
 
 					<!-- Image -->
 					<section class="box">
-					<span class="image left"><img class="img-responsive" src="https://s3-ap-northeast-1.amazonaws.com/jp.myouth.images/users/default/profile_pic.PNG" alt="" /></span>
-					<span class="image right"><a href="/home/profile" style="border-bottom-color: transparent;"><i class="fa fa-pencil fa-2x faa-wrench animated"></i></a></span>
-					<h2><%out.print(name);%></h2>
-					<h4><%out.print(fname);%></h4>
-					<p><%out.print(word);%></p>
+						<div class="col-12 col-12-mobilep">
+							<section class="box">
+								<form method="post" action="/home/<%out.print(event);%>/settings/member/search">
+									<div class="row gtr-uniform gtr-50">
+										<div class="col-9 col-12-mobilep">
+											<input type="text" name="search" id="search" value=""
+												placeholder="新たなメンバーを追加" />
+										</div>
+										<div class="col-3 col-12-mobilep">
+											<input type="submit" value="検索" class="fit" />
+										</div>
+									</div>
+								</form>
+								<table>
+								<tbody>
+										<%
+											if (searchResults != null) {
+												i = 0;
+												for (String string : searchResults) {
+													if (i % 2 == 0)
+														out.print(
+																"<tr><td><img class=\"img-responsive\" src=\"https://s3-ap-northeast-1.amazonaws.com/jp.myouth.images/users/default/profile_pic.PNG\" alt=\"\" /></td><td>"
+																		+ string + "</td>");
+													else
+														out.println("<td><a href=\"/home/" + event + "/settings/member/view/user_id=" + string
+																+ "\"><i class=\"fa fa-user-plus faa-pulse animated faa-hover\"></i></a></td></tr>");
+													i++;
+												}
+											}
+										%>
+									</tbody>
+								</table>
+								<div class="table-wrapper">
+							<table>
+								<tbody>
+								<%
+									if (searchResults == null) {
+										i = 0;
+										for (String string : data) {
+											if (i % 2 == 0)
+												out.print(
+														"<tr><td><img class=\"img-responsive\" src=\"https://s3-ap-northeast-1.amazonaws.com/jp.myouth.images/users/default/profile_pic.PNG\" alt=\"\" /></td><td>"
+																+ string + "</td>");
+											else
+												out.println("<td><a href=\"/home/" + event + "/settings/member/view/user_id=" + string
+														+ "\"><i class=\"fa fa-user faa-pulse animated faa-hover\"></i></a></td></tr>");
+											i++;
+										}
+									}
+								session.setAttribute("searchResults", null);
+								%>
+								</tbody>
+							</table>
+						</div>
 					</section>
-					
-					<section class="box">
-					<div class="row">
-					<div class="col-6 col-12-mobilep">
-					<h3>Events</h3>
-					</div>
-					<div class="col-6 col-12-mobilep">
-					<ul class="actions">
-						<li><a href="#" class="button special"><i class="fa fa-plus faa-pulse animated"></i>    イベント作成</a></li>
-					</ul>
-					</div>
-					</div>
-					<div class="table-wrapper">
-					<table>
-					<tbody>
-					<%
-					int i = 0;
-					for(String string : list){
-						if(i % 2 == 0)
-							out.println("<tr><td>"+string+"</td>");
-						else {
-							out.println("<td><a href=\"/events/"+string+"\"><i class=\"fa fa-home faa-tada animated-hover\"></i></a></td>");
-							out.println("<td><a href=\"/home/"+string+"/settings\"><i class=\"fa fa-cog faa-spin animated-hover\"></i></a></td>");
-							out.println("<td><a href=\"/home/"+string+"/participants\"><i class=\"fa fa-users faa-tada animated-hover\"></i></a></td>");
-							out.println("<td><a href=\"/home/"+string+"/download\"><i class=\"fa fa-download faa-tada animated-hover\"></i></a></td>");
-							out.println("<td><a href=\"/home/"+string+"/mail\"><i class=\"fa fa-envelope faa-tada animated-hover\"></i></a></td>");
-							out.println("<td><a href=\"/home/"+string+"/delete\"><i class=\"fa fa-trash faa-tada animated-hover\" style=\"color: #ff7496\"></i></a></td></tr>");
-						}
-						i++;
-					}
-					%>
-					</tbody>
-					</table>
-					</div>
+						</div>
 					</section>
 				</div>
 			</div>
+		<section  class="back-button">
+			<a href="/home/<%out.print(event);%>/settings"><span class="fas fa-arrow-left fa-3x faa-passing-reverse animated"></span></a>
 		</section>
+		</section>
+
+
 
 		<!-- Footer -->
 		<footer id="footer">
@@ -124,15 +149,15 @@
 		$('.img-responsive').each(function() {
 			var maxWindowWidth = $(window).width(); // New width
 			if(maxWindowWidth >= 1240){
-				var maxWidth = 350; // Max width for the image
-			    var maxHeight = 150; // Max height for the image
+				var maxWidth = 70; // Max width for the image
+			    var maxHeight = 70; // Max height for the image
 			} else if(maxWindowWidth <= 736 && maxWindowWidth > 480){
-				var maxWidth = 200; // Max width for the image
-			    var maxHeight = 150; // Max height for the image
+				var maxWidth = 50; // Max width for the image
+			    var maxHeight = 50; // Max height for the image
 			}
 			else {
-		    	var maxWidth = 100; // Max width for the image
-		    	var maxHeight = 150; // Max height for the image
+		    	var maxWidth = 50; // Max width for the image
+		    	var maxHeight = 50; // Max height for the image
 			}
 		    var ratio = 0;  // Used for aspect ratio
 		    var width = $(this).width();    // Current image width
@@ -161,6 +186,6 @@
 			
 		});
 	</script>
-
+	
 </body>
 </html>

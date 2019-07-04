@@ -1,4 +1,4 @@
-Welcome to the myouth web application
+﻿Welcome to the myouth web application
 ==================================================
 
 ![MYouth](https://user-images.githubusercontent.com/47655366/55858288-46afb900-5baa-11e9-80ad-03ba41d84cc8.png)

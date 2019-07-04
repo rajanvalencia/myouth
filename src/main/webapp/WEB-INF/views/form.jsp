@@ -1062,17 +1062,17 @@
 
 								if (confirmation) {
 									out.println("<div class=\"col-6 col-12-narrower\">");
-									out.println("<label for=\"confirmation\"><br />確認</label>");
+									out.println("<label for=\"confirmation\"><br />上記記入したことは間違いないですか？</label>");
 									out.println("<input type=\"checkbox\" name=\"confirmation\" id=\"confirmation\">");
-									out.println("<label for=\"confirmation\">上記記入したことは間違いないですか？</label>");
+									out.println("<label for=\"confirmation\">はい</label>");
 									out.println("</div>");
 								}
 
 								if (parent_permission) {
 									out.println("<div class=\"col-6 col-12-narrower\">");
-									out.println("<label for=\"parent-permission\"><br />許可</label>");
+									out.println("<label for=\"parent-permission\"><br />ご両親の同意はもらってますか？</label>");
 									out.println("<input type=\"checkbox\" name=\"parent-permission\" id=\"parent-permission\">");
-									out.println("<label for=\"parent-permission\">ご両親の同意はもらってますか？</label>");
+									out.println("<label for=\"parent-permission\">はい</label>");
 									out.println("</div>");
 								}
 							%>

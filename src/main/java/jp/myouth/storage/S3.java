@@ -1,39 +1,36 @@
 package jp.myouth.storage;
 
 import java.io.BufferedReader;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Properties;
 
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.SdkClientException;
-import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
-import com.amazonaws.auth.profile.ProfileCredentialsProvider;
+import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
+import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.ResponseHeaderOverrides;
 import com.amazonaws.services.s3.model.S3Object;
 
-public class GetObject {
-	public String pepper() throws IOException {
-		PepperVariables var = new PepperVariables();
+public class S3 {
+	
+	public String download(String clientRegion, String bucketName, String key) throws IOException {
 		
-		String clientRegion = var.clientRegion();
-		String bucketName = var.bucketName();
-		String key = var.key();
-
 		S3Object fullObject = null, objectPortion = null, headerOverrideObject = null;
 		try {
-
-			/*AmazonS3 s3Client = AmazonS3ClientBuilder.standard()
-					.withCredentials(DefaultAWSCredentialsProviderChain.getInstance())
-					.build();*/
+			AWSCredentials credentials = credentials();
 			
-			AmazonS3 s3Client = AmazonS3ClientBuilder.standard().withRegion(clientRegion)
-					.withCredentials(new ProfileCredentialsProvider())
+			AmazonS3 s3Client = AmazonS3ClientBuilder.standard()
+					.withRegion(clientRegion)
+					.withCredentials(new AWSStaticCredentialsProvider(credentials))
 					.build();
-					
+			
 			// Get an object and print its contents.
 			// System.out.println("Downloading an object");
 			fullObject = s3Client.getObject(new GetObjectRequest(bucketName, key));
@@ -94,4 +91,26 @@ public class GetObject {
 		}
 		System.out.println();
 	}
+	
+	public static  BasicAWSCredentials credentials() {
+
+        try (InputStream input = S3.class.getClassLoader().getResourceAsStream("application.properties")) {
+
+            Properties prop = new Properties();
+
+            if (input == null) {
+                System.out.println("Sorry, unable to find application.properties");
+                return null;
+            }
+
+            //load a properties file from class path, inside static method
+            prop.load(input);
+
+            return new BasicAWSCredentials(prop.getProperty("AccessKey"), prop.getProperty("SecretAccessKey"));
+
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
 }

@@ -49,8 +49,6 @@
 			</header>
 			<div class="row">
 				<div class="col-12">
-
-					<!-- Image -->
 					<section class="box">
 						<div class="table-wrapper">
 							<table>

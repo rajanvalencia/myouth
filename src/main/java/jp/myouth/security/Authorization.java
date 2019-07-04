@@ -1,9 +1,10 @@
 package jp.myouth.security;
 
 import jp.myouth.mail.Templates;
+
 import jp.myouth.db.Credentials;
 import jp.myouth.db.User;
-import jp.myouth.storage.GetObject;
+import jp.myouth.storage.S3;
 
 import java.io.IOException;
 import java.security.MessageDigest;
@@ -15,6 +16,12 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 
 public class Authorization {
+	
+	private static final String CLIENT_REGION  = "ap-northeast-1";
+	
+	private static final String BUCKETNAME = "jp.myouth.security";
+	
+	private static final String KEY = "pepper/pepper1.txt";
 
 	/**
 	 * パスワードを安全にするためのアルゴリズム
@@ -86,8 +93,8 @@ public class Authorization {
 	}
 
 	public Boolean authenticate(String email, String password) throws IOException {
-		GetObject get = new GetObject();
-		String pepper = get.pepper();
+		S3 s3 = new S3();
+		String pepper = s3.download(CLIENT_REGION, BUCKETNAME, KEY);
 		
 		Credentials db = new Credentials();
 		db.open();
@@ -114,8 +121,8 @@ public class Authorization {
 		String userId = gen.string(11);
 		String salt = gen.string(50);
 
-		GetObject get = new GetObject();
-		String pepper = get.pepper();
+		S3 s3 = new S3();
+		String pepper = s3.download(CLIENT_REGION, BUCKETNAME, KEY);
 		String hashedPasswordWithSalt = Authorization.getSafetyPassword(password, salt);
 		String hashedPasswordWithSaltAndPepper = Authorization.getSafetyPassword(hashedPasswordWithSalt, pepper);
 
@@ -137,5 +144,12 @@ public class Authorization {
 			return true;
 		else
 			return false;
+	}
+	
+	
+	public static void main(String... args) throws IOException{
+		S3 s3 = new S3();
+		String pepper = s3.download(CLIENT_REGION, BUCKETNAME, KEY);
+		System.out.println(pepper);
 	}
 }

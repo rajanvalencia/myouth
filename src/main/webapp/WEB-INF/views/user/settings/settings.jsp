@@ -47,6 +47,7 @@
 								<li><a href="/home/<%out.print(event);%>/settings/details" class="button special fit">詳細設定</a></li>
 								<li><a href="/home/<%out.print(event);%>/settings/form" class="button special fit">参加申し込み設定</a></li>
 								<li><a href="/home/<%out.print(event);%>/settings/survey" class="button special fit">アンケート設定</a></li>
+								<li><a href="/home/<%out.print(event);%>/settings/member" class="button special fit">メンバー設定</a></li>
 							</ul>
 						</div>
 					</section>

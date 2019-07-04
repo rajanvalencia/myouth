@@ -1,30 +1,51 @@
 package jp.myouth.db;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
+
 public class RDSVariables {
-	
-	/*
-	 * mysql -h myouthdb.c2hims90pztt.ap-northeast-1.rds.amazonaws.com -P 3306 -u
-	 * rajanvalencia -p myouthdb --ssl-ca=\mysql-certs\rds-combined-ca-bundle.pem
-	 * --ssl-verify-server-cert
-	 */
-	
+
 	protected String hostname() {
-		return "myouthdb.c2hims90pztt.ap-northeast-1.rds.amazonaws.com";
+		return dbVariables("HOSTNAME");
 	}
-	
+
 	protected String dbname() {
-		return "myouthdb";
+		return dbVariables("DATABASE.NAME");
 	}
-	
+
 	protected String username() {
-		return "rajanvalencia";
+		return dbVariables("USERNAME");
 	}
-	
+
 	protected String password() {
-		return "nLObZqgi";
+		return dbVariables("PASSWORD");
 	}
-	
+
 	protected String port() {
-		return "3306";
+		return dbVariables("PORT");
 	}
-}
+
+	public String dbVariables(String varName) {
+		try (InputStream input = RDSVariables.class.getClassLoader().getResourceAsStream("database.properties")) {
+
+			Properties prop = new Properties();
+
+			if (input == null) {
+				System.out.println("Sorry, unable to find database.properties");
+				return null;
+			}
+
+			// load a properties file from class path, inside static method
+			prop.load(input);
+
+			String data = prop.getProperty(varName);
+
+			return data;
+
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		}
+		return null;
+	}
+}	
