@@ -15,11 +15,11 @@ public class Events {
 
 	RDSVariables var = new RDSVariables();
 
-	private final String hostname = var.hostname();
-	private final String dbname = var.dbname();
-	private final String username = var.username();
-	private final String password = var.password();
-	private final String port = var.port();
+	private final String hostname = var.dbVariables("HOSTNAME");
+	private final String dbname = var.dbVariables("DATABASE.NAME");
+	private final String username = var.dbVariables("USERNAME");
+	private final String password = var.dbVariables("PASSWORD");
+	private final String port = var.dbVariables("PORT");
 
 	public void open() {
 		try {
@@ -53,7 +53,7 @@ public class Events {
 			PreparedStatement stmt = conn.prepareStatement(query);
 			stmt.setString(1, event);
 			ResultSet rset = stmt.executeQuery();
-			
+
 			while (rset.next()) {
 				info.add(rset.getString("e_name"));
 				info.add(rset.getString("place"));
@@ -62,12 +62,12 @@ public class Events {
 				info.add(rset.getString("recruitno"));
 			}
 			rset.close();
-			
+
 			String query1 = "SELECT recruitno-COUNT(*) AS participants_per_event FROM event_participants, event WHERE english_e_name = ? AND event.event_id = event_participants.event_id AND join_date > recruitment_start AND join_date < recruitment_end";
 			PreparedStatement stmt1 = conn.prepareStatement(query1);
 			stmt1.setString(1, event);
 			ResultSet rset1 = stmt1.executeQuery();
-			
+
 			while (rset1.next()) {
 				info.add(rset1.getString("participants_per_event"));
 			}
@@ -224,7 +224,7 @@ public class Events {
 			PreparedStatement stmt = conn.prepareStatement(query);
 			stmt.setString(1, event);
 			ResultSet rset = stmt.executeQuery();
-			
+
 			while (rset.next())
 				data = rset.getString("e_name");
 			rset.close();
@@ -285,6 +285,36 @@ public class Events {
 			}
 			rset.close();
 			return data;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public String eventDayName(String event) {
+		ArrayList<String> week = new ArrayList<String>();
+		int data = 0;
+		
+		week.add("日");
+		week.add("月");
+		week.add("火");
+		week.add("水");
+		week.add("木");
+		week.add("金");
+		week.add("土");
+		
+		try {
+			String query = "SELECT DAYOFWEEK(date) FROM event WHERE english_e_name = ?";
+			PreparedStatement stmt = conn.prepareStatement(query);
+			stmt.setString(1, event);
+			ResultSet rset = stmt.executeQuery();
+			if (rset.next()) 
+				data = rset.getInt("DAYOFWEEK(date)");
+			
+			rset.close();
+			
+			return week.get(data-1);
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -407,7 +437,7 @@ public class Events {
 		ArrayList<ArrayList<String>> list = new ArrayList<ArrayList<String>>();
 		ArrayList<String> data = new ArrayList<String>();
 		try {
-			String query = "SELECT countries.country AS country, COUNT(*) AS total_participants_per_country FROM(SELECT country FROM participants, event_participants, event WHERE country IS NOT NULL AND participants.participant_id =  event_participants.participant_id AND english_e_name = ? AND event.event_id = event_participants.event_id AND join_date >= recruitment_start AND join_date <= recruitment_end UNION ALL SELECT country2 FROM participants, event_participants, event WHERE country2 IS NOT NULL AND participants.participant_id =  event_participants.participant_id AND english_e_name = ? AND event.event_id = event_participants.event_id AND join_date >= recruitment_start AND join_date <= recruitment_end UNION ALL SELECT country3 FROM participants, event_participants, event WHERE country3 IS NOT NULL AND participants.participant_id =  event_participants.participant_id AND english_e_name = ? AND event.event_id = event_participants.event_id AND join_date >= recruitment_start AND join_date <= recruitment_end)  AS countries GROUP BY country";
+			String query = "SELECT countries.country AS country, COUNT(*) AS total_participants_per_country FROM(SELECT country FROM participants, event_participants, event WHERE country IS NOT NULL AND participants.participant_id =  event_participants.participant_id AND english_e_name = ? AND event.event_id = event_participants.event_id UNION ALL SELECT country2 FROM participants, event_participants, event WHERE country2 IS NOT NULL AND participants.participant_id =  event_participants.participant_id AND english_e_name = ? AND event.event_id = event_participants.event_id UNION ALL SELECT country3 FROM participants, event_participants, event WHERE country3 IS NOT NULL AND participants.participant_id =  event_participants.participant_id AND english_e_name = ? AND event.event_id = event_participants.event_id)  AS countries GROUP BY country";
 			PreparedStatement stmt = conn.prepareStatement(query);
 			stmt.setString(1, event);
 			stmt.setString(2, event);
@@ -458,7 +488,10 @@ public class Events {
 			stmt1.setString(10, career);
 			stmt1.setString(11, company);
 			stmt1.setString(12, zip);
-			stmt1.setString(13, pref + address);
+			if (pref == null || address == null)
+				stmt1.setString(13, null);
+			else
+				stmt1.setString(13, pref + address);
 			stmt1.setString(14, allergy);
 			stmt1.executeUpdate();
 			stmt1.close();
@@ -484,12 +517,12 @@ public class Events {
 		ArrayList<ArrayList<String>> list = new ArrayList<ArrayList<String>>();
 		ArrayList<String> data = new ArrayList<String>();
 		try {
-			String total = "SET @total = (SELECT COUNT(*) FROM event, event_participants, participants WHERE event.event_id = event_participants.event_id AND participants.participant_id = event_participants.participant_id AND english_e_name = ? AND join_date <= recruitment_end AND join_date >= recruitment_start)";
+			String total = "SET @total = (SELECT COUNT(*) FROM event, event_participants, participants WHERE event.event_id = event_participants.event_id AND participants.participant_id = event_participants.participant_id AND english_e_name = ?)";
 			PreparedStatement stmt = conn.prepareStatement(total);
 			stmt.setString(1, event);
 			stmt.executeUpdate();
-			
-			String query = "SELECT career, ((COUNT(*)/@total)*100) AS percentage_per_career FROM participants, event_participants, event WHERE  english_e_name = ? AND participants.participant_id = event_participants.participant_id AND event.event_id = event_participants.event_id AND join_date >= recruitment_start AND join_date <= recruitment_end GROUP BY career";
+
+			String query = "SELECT career, ((COUNT(*)/@total)*100) AS percentage_per_career FROM participants, event_participants, event WHERE  english_e_name = ? AND participants.participant_id = event_participants.participant_id AND event.event_id = event_participants.event_id GROUP BY career";
 			PreparedStatement stmt1 = conn.prepareStatement(query);
 			stmt1.setString(1, event);
 			ResultSet rset = stmt1.executeQuery();
@@ -515,12 +548,12 @@ public class Events {
 		ArrayList<ArrayList<String>> list = new ArrayList<ArrayList<String>>();
 		ArrayList<String> data = new ArrayList<String>();
 		try {
-			String total = "SET @total = (SELECT COUNT(*) FROM event, event_participants, participants WHERE event.event_id = event_participants.event_id AND participants.participant_id = event_participants.participant_id AND english_e_name = ? AND join_date <= recruitment_end AND join_date >= recruitment_start)";
+			String total = "SET @total = (SELECT COUNT(*) FROM event, event_participants, participants WHERE event.event_id = event_participants.event_id AND participants.participant_id = event_participants.participant_id AND english_e_name = ?)";
 			PreparedStatement stmt = conn.prepareStatement(total);
 			stmt.setString(1, event);
 			stmt.executeUpdate();
-			
-			String query = "SELECT way, ((COUNT(*)/@total)*100) AS percentage_per_way FROM participants, event_participants, event WHERE  english_e_name = ? AND participants.participant_id = event_participants.participant_id AND event.event_id = event_participants.event_id AND join_date >= recruitment_start AND join_date <= recruitment_end GROUP BY way";
+
+			String query = "SELECT way, ((COUNT(*)/@total)*100) AS percentage_per_way FROM participants, event_participants, event WHERE  english_e_name = ? AND participants.participant_id = event_participants.participant_id AND event.event_id = event_participants.event_id GROUP BY way";
 			PreparedStatement stmt1 = conn.prepareStatement(query);
 			stmt1.setString(1, event);
 			ResultSet rset = stmt1.executeQuery();
@@ -546,11 +579,11 @@ public class Events {
 		ArrayList<ArrayList<String>> list = new ArrayList<ArrayList<String>>();
 		ArrayList<String> data = new ArrayList<String>();
 		try {
-			String query = "SELECT company, COUNT(*) AS participant_per_company FROM participants, event_participants, event WHERE english_e_name = ? AND event.event_id = event_participants.event_id AND participants.participant_id = event_participants.participant_id AND recruitment_start <= join_date AND join_date <= recruitment_end GROUP BY company";
+			String query = "SELECT company, COUNT(*) AS participant_per_company FROM participants, event_participants, event WHERE english_e_name = ? AND event.event_id = event_participants.event_id AND participants.participant_id = event_participants.participant_id GROUP BY company";
 			PreparedStatement stmt = conn.prepareStatement(query);
 			stmt.setString(1, event);
 			ResultSet rset = stmt.executeQuery();
-			
+
 			while (rset.next()) {
 				data.add(rset.getString("company"));
 				data.add(rset.getString("participant_per_company"));
@@ -574,7 +607,7 @@ public class Events {
 			PreparedStatement stmt = conn.prepareStatement(query);
 			stmt.setString(1, event);
 			ResultSet rset = stmt.executeQuery();
-			
+
 			while (rset.next()) {
 				data.add(rset.getString("satisfaction"));
 				data.add(rset.getString("date") + " " + rset.getString("time"));
@@ -599,7 +632,7 @@ public class Events {
 			PreparedStatement stmt = conn.prepareStatement(query);
 			stmt.setString(1, event);
 			ResultSet rset = stmt.executeQuery();
-			
+
 			while (rset.next()) {
 				if (rset.getString("improvements").length() > 0) {
 					data.add(rset.getString("date") + " " + rset.getString("time"));
@@ -681,11 +714,11 @@ public class Events {
 		ArrayList<Boolean> data = new ArrayList<Boolean>();
 		try {
 			String query = "SELECT survey_questions.name, survey_questions.fname, survey_questions.satisfaction, survey_questions.comments, survey_questions.transportation, survey_questions.improvements, survey_questions.repetition FROM survey_questions, event WHERE event.event_id = survey_questions.event_id AND english_e_name = ?";
-			
+
 			PreparedStatement stmt = conn.prepareStatement(query);
 			stmt.setString(1, event);
 			ResultSet rset = stmt.executeQuery();
-			
+
 			while (rset.next()) {
 				data.add(rset.getBoolean("name"));
 				data.add(rset.getBoolean("fname"));
@@ -737,7 +770,7 @@ public class Events {
 			stmt1.setBoolean(5, transportation.get(4));
 			stmt1.executeUpdate();
 			stmt1.close();
-			
+
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -752,7 +785,7 @@ public class Events {
 			PreparedStatement stmt = conn.prepareStatement(query);
 			stmt.setString(1, event);
 			ResultSet rset = stmt.executeQuery();
-			
+
 			while (rset.next()) {
 				list.add(rset.getDouble("totalRatings"));
 				list.add(rset.getDouble("averageRatings"));
@@ -773,7 +806,7 @@ public class Events {
 			PreparedStatement stmt = conn.prepareStatement(query);
 			stmt.setString(1, event);
 			ResultSet rset = stmt.executeQuery();
-			
+
 			while (rset.next()) {
 				list.add(rset.getDouble("satisfaction"));
 				list.add(rset.getDouble("total"));
@@ -784,11 +817,11 @@ public class Events {
 		}
 		return null;
 	}
-	
+
 	/*
 	 * イベントの合計参加者を取得する
 	 */
-	
+
 	public int totalParticipants(String event) {
 		try {
 			Integer total = 0;
@@ -796,7 +829,7 @@ public class Events {
 			PreparedStatement stmt = conn.prepareStatement(query);
 			stmt.setString(1, event);
 			ResultSet rset = stmt.executeQuery();
-			
+
 			if (rset.next())
 				total = rset.getInt("COUNT(*)");
 			rset.close();
@@ -853,7 +886,7 @@ public class Events {
 				event_id = rset.getString("event_id");
 			rset.close();
 
-			String update = "UPDATE form_questions SET name = ?, fname = ?, gender = ?, email = ?, phone = ?, birthdate = ?, company = ?, career = ?, country = ?, country2 = ?, country3 = ?, address = ?, allergy = ?, way = ?, confirmation = ?, parent_confirmation = ? WHERE event_id = ?";
+			String update = "UPDATE form_questions SET name = ?, fname = ?, gender = ?, email = ?, phone = ?, birthdate = ?, company = ?, career = ?, country = ?, country2 = ?, country3 = ?, zip = ?, address = ?, allergy = ?, way = ?, confirmation = ?, parent_confirmation = ? WHERE event_id = ?";
 			PreparedStatement stmt = conn.prepareStatement(update);
 			stmt.setBoolean(1, name);
 			stmt.setBoolean(2, fname);
@@ -867,11 +900,12 @@ public class Events {
 			stmt.setBoolean(10, country2);
 			stmt.setBoolean(11, country3);
 			stmt.setBoolean(12, address);
-			stmt.setBoolean(13, allergy);
-			stmt.setBoolean(14, way);
-			stmt.setBoolean(15, confirmation);
-			stmt.setBoolean(16, parent_confirmation);
-			stmt.setString(17, event_id);
+			stmt.setBoolean(13, address);
+			stmt.setBoolean(14, allergy);
+			stmt.setBoolean(15, way);
+			stmt.setBoolean(16, confirmation);
+			stmt.setBoolean(17, parent_confirmation);
+			stmt.setString(18, event_id);
 			int res = stmt.executeUpdate();
 			if (res > 0)
 				return true;
@@ -917,4 +951,157 @@ public class Events {
 		}
 		return false;
 	}
+	
+	public ArrayList<String> formQuestionsColumn(String event){
+		ArrayList<String> data = new ArrayList<String>();
+		String eventId = new String();
+		try {
+			String query = "SELECT event_id FROM event WHERE english_e_name = ?";
+			PreparedStatement stmt = conn.prepareStatement(query);
+			stmt.setString(1, event);
+			ResultSet rset = stmt.executeQuery();
+			
+			while(rset.next())
+				eventId = rset.getString("event_id");
+			
+			String query1 = "SELECT col FROM ( SELECT col, CASE s.col WHEN 'name' THEN name WHEN 'fname' THEN fname WHEN 'gender' THEN gender WHEN 'email' THEN email WHEN 'phone' THEN phone WHEN 'birthdate' THEN birthdate WHEN 'country' THEN country WHEN 'country2' THEN country2 WHEN 'country3' THEN country3 WHEN 'career' THEN career WHEN 'company' THEN company WHEN 'zip' THEN zip WHEN 'address' THEN address WHEN 'allergy' THEN allergy WHEN 'way' THEN way END AS val FROM form_questions CROSS JOIN ( SELECT 'name' AS col UNION ALL SELECT 'fname' UNION ALL SELECT 'gender' UNION ALL  SELECT 'email' UNION ALL SELECT 'phone' UNION ALL SELECT 'birthdate' UNION ALL SELECT 'country' UNION ALL SELECT 'country2' UNION ALL SELECT 'country3' UNION ALL SELECT 'career' UNION ALL SELECT 'company' UNION ALL SELECT 'zip' UNION ALL SELECT 'address' UNION ALL SELECT 'allergy' UNION ALL SELECT 'way') s  WHERE event_id = ? ) s WHERE val = true";
+			PreparedStatement stmt1 = conn.prepareStatement(query1);
+			stmt1.setString(1, eventId);
+			ResultSet rset1 = stmt1.executeQuery();
+			
+			while(rset1.next())
+				data.add(rset1.getString("col"));
+			
+			System.out.println(data);
+			
+			rset.close();
+			rset1.close();
+			stmt1.close();
+			stmt.close();
+			
+			return data;
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public ArrayList<String> surveyQuestionsColumn(String event){
+		ArrayList<String> data = new ArrayList<String>();
+		String eventId = new String();
+		try {
+			String query = "SELECT event_id FROM event WHERE english_e_name = ?";
+			PreparedStatement stmt = conn.prepareStatement(query);
+			stmt.setString(1, event);
+			ResultSet rset = stmt.executeQuery();
+			
+			while(rset.next())
+				eventId = rset.getString("event_id");
+			
+			String query1 = "SELECT col FROM ( SELECT col, CASE s.col WHEN 'name' THEN name WHEN 'fname' THEN fname WHEN 'satisfaction' THEN satisfaction WHEN 'comments' THEN comments  WHEN 'improvements' THEN improvements END AS val FROM survey_questions CROSS JOIN ( SELECT 'name' AS col UNION ALL SELECT 'fname' UNION ALL SELECT 'satisfaction' UNION ALL  SELECT 'comments' UNION ALL SELECT 'improvements') s  WHERE event_id = ? ) s WHERE val = true";
+			PreparedStatement stmt1 = conn.prepareStatement(query1);
+			stmt1.setString(1, eventId);
+			ResultSet rset1 = stmt1.executeQuery();
+			
+			while(rset1.next())
+				data.add(rset1.getString("col"));
+			
+			System.out.println(data);
+			
+			rset.close();
+			rset1.close();
+			stmt1.close();
+			stmt.close();
+			
+			return data;
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public ArrayList<String> formQuestionColumnName(ArrayList<String> columnList){
+		ArrayList<String> data = new ArrayList<String>();
+		
+		data.add("申込日");
+		
+		for(String string : columnList) {
+			switch(string) {
+			case "name":
+				data.add("名前");
+				break;
+			case "fname":
+				data.add("フリガナ");
+				break;
+			case "gender":
+				data.add("性別");
+				break;
+			case "email":
+				data.add("メールアドレス");
+				break;
+			case "phone":
+				data.add("電話番号");
+				break;
+			case "birthdate":
+				data.add("生年月日");
+				break;
+			case "country":
+				data.add("ルーツをもつ国");
+				break;
+			case "country2":
+				data.add("ルーツをもつ国");
+				break;
+			case "country3":
+				data.add("ルーツをもつ国");
+				break;
+			case "career":
+				data.add("学年または職業");
+				break;
+			case "company":
+				data.add("学校名または会社名");
+				break;
+			case "allergy":
+				data.add("アレルギー");
+				break;
+			case "zip":
+				data.add("郵便番号");
+				break;
+			case "address":
+				data.add("住所");
+				break;
+			case "way":
+				data.add("参加のきっかけ");
+				break;
+			}
+		}
+		return data;
+	}
+
+	public ArrayList<String> surveyQuestionColumnName(ArrayList<String> columnList) {
+		ArrayList<String> data = new ArrayList<String>();
+
+		data.add("申込日");
+
+		for (String string : columnList) {
+			switch (string) {
+			case "name":
+				data.add("名前");
+				break;
+			case "fname":
+				data.add("フリガナ");
+				break;
+			case "satisfaction":
+				data.add("満足度");
+				break;
+			case "comments":
+				data.add("コメント");
+				break;
+			case "improvements":
+				data.add("改善策");
+				break;
+			}
+		}
+		return data;
+	}
+		
 }

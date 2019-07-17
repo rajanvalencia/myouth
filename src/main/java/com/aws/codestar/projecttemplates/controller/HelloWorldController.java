@@ -99,15 +99,15 @@ public class HelloWorldController {
 		return mv;
 	}
 	
-	@RequestMapping("registerUser2")
-	public ModelAndView registerUser2() {
-		ModelAndView mv = new ModelAndView("user/registerUser2");
+	@RequestMapping("sendReissuePermission")
+	public ModelAndView sendReissuePermission() {
+		ModelAndView mv = new ModelAndView("user/sendReissuePermission");
 		return mv;
 	}
 	
-	@RequestMapping("insertUser")
-	public ModelAndView insertUser() {
-		ModelAndView mv = new ModelAndView("user/insertUser");
+	@RequestMapping("reissuePermission")
+	public ModelAndView reissuePermission() {
+		ModelAndView mv = new ModelAndView("user/reissuePermission");
 		return mv;
 	}
 	
@@ -151,7 +151,7 @@ public class HelloWorldController {
 		Boolean user = (Boolean)session.getAttribute("user");
 		if(user == null)
 			session.setAttribute("user", false);
-		ModelAndView mv = new ModelAndView("user/changeProfile");
+		ModelAndView mv = new ModelAndView("user/profile/changeProfile");
 		return mv;
 	}
 	
@@ -166,6 +166,17 @@ public class HelloWorldController {
 		ModelAndView mv = new ModelAndView("user/participants");
 		return mv;
 	}
+	
+	@RequestMapping("home/{event}/downloadSettings")
+	public ModelAndView downloadSettings(HttpServletRequest request, @PathVariable("event") String event) {
+		HttpSession session = request.getSession();
+		Boolean user = (Boolean)session.getAttribute("user");
+		if(user == null)
+			session.setAttribute("user", false);
+		session.setAttribute("event", event);
+		ModelAndView mv = new ModelAndView("user/downloadSettings");
+		return mv;
+    }
 	
 	@RequestMapping("home/{event}/download")
 	public ModelAndView download(HttpServletRequest request, @PathVariable("event") String event) {
@@ -308,6 +319,30 @@ public class HelloWorldController {
 			session.setAttribute("user", false);
 		session.setAttribute("event", event);
 		ModelAndView mv = new ModelAndView("user/settings/memberSearch");
+		return mv;
+	}
+	
+	@RequestMapping("home/{event}/settings/member/add/{userId}")
+	public ModelAndView memberAdd(HttpServletRequest request, @PathVariable("event") String event, @PathVariable("userId") String userId) {
+		HttpSession session = request.getSession();
+		Boolean user = (Boolean)session.getAttribute("user");
+		if(user == null)
+			session.setAttribute("user", false);
+		session.setAttribute("event", event);
+		session.setAttribute("addUser", userId);
+		ModelAndView mv = new ModelAndView("user/settings/memberAdd");
+		return mv;
+	}
+	
+	@RequestMapping("home/{event}/settings/member/remove/{userId}")
+	public ModelAndView memberRemove(HttpServletRequest request, @PathVariable("event") String event, @PathVariable("userId") String userId) {
+		HttpSession session = request.getSession();
+		Boolean user = (Boolean)session.getAttribute("user");
+		if(user == null)
+			session.setAttribute("user", false);
+		session.setAttribute("event", event);
+		session.setAttribute("removeUser", userId);
+		ModelAndView mv = new ModelAndView("user/settings/memberRemove");
 		return mv;
 	}
 	

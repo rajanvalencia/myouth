@@ -2,6 +2,7 @@ package jp.myouth.db;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -13,11 +14,11 @@ public class Credentials {
 	
 	RDSVariables var = new RDSVariables();
 	
-	private final String hostname = var.hostname();
-	private final String dbname = var.dbname();
-	private final String username = var.username();
-	private final String password = var.password();
-	private final String port = var.port();
+	private final String hostname = var.dbVariables("HOSTNAME");
+	private final String dbname = var.dbVariables("DATABASE.NAME");
+	private final String username = var.dbVariables("USERNAME");
+	private final String password = var.dbVariables("PASSWORD");
+	private final String port = var.dbVariables("PORT");
 
 	public void open() {
 		try {
@@ -93,6 +94,23 @@ public class Credentials {
 			stmt.executeUpdate(update);
 			return true;
 		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
+	public Boolean checkEmailAndBirthdate(String email, String birthdate) {
+		try {
+			String query = "SELECT email, birthdate FROM users WHERE email = ? AND birthdate = ?";
+			PreparedStatement stmt = conn.prepareStatement(query); 
+			stmt.setString(1, email);
+			stmt.setString(2, birthdate);
+			ResultSet rset = stmt.executeQuery();
+			if(rset.next())
+				return true;
+			else
+				return false;
+		}catch(Exception e) {
 			e.printStackTrace();
 		}
 		return false;

@@ -3,15 +3,22 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ page import="jp.myouth.db.Events" %>
 <%@ page import="jp.myouth.db.User" %>
+<%@ page import="jp.myouth.db.Participants" %>
 <% 
 Events db = new Events();
 db.open();
 Integer totalEvents = db.totalEvents();
 db.close();
+
 User db1 = new User();
 db1.open();
 Integer totalUsers = db1.totalUsers();
 db1.close();
+
+Participants db2 = new Participants();
+db2.open();
+Integer totalParticipants = db2.allEventsTotalParticipants();
+db2.close();
 %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!--
@@ -36,20 +43,30 @@ db1.close();
 <meta name="author" content="バレンシア　ラジャン　ザモラ">
 
 <meta name="description"
-	content="外国のイベントを運営または管理するサイトです。イベント登録システム構築中です。">
+	content="誰でも無料にイベント管理が出来るWeb上にあるシステムです。参加申し込み、アンケートデータの分析までの自動処理を行います。一般公開されるまで数か月お待ちください">
 	
-		<title>myouth</title>
+		<title>myouth イベント管理システム</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="/resources/alpha/css/main.css" />
 		<link rel="stylesheet" href="/resources/css/font-awesome-animation.css">
+		
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-143752853-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-143752853-1');
+</script>
 	</head>
 	<body class="landing is-preload">
 		<div id="page-wrapper">
 
 			<!-- Header -->
 			 <header id="header" class="alt reveal">
-				 <h1>An <a href="">Event Management System</a> by Valencia Rajan</h1>
+				 <h1 class="hidden">誰でも無料にイベント管理が出来るWeb上にあるシステムです。参加申し込み、アンケートデータの分析までの自動処理を行います。一般公開されるまで数か月お待ちください</h1>
 					  <!-- <nav id="nav">
 						<ul>
 							<li><a href="index.html">Home</a></li>
@@ -80,6 +97,7 @@ db1.close();
 			<!-- Banner -->
 				<section id="banner">
 					<h2>myouth</h2>
+					<h4>イベント管理システム</h4>
 					<ul class="actions special">
 						<li><a href="registerUser" class="button primary">無料登録</a></li>
 						<li><a href="login" class="button primary">ログイン</a></li>
@@ -89,6 +107,7 @@ db1.close();
 					</ul>
 					<h4>現在のイベント数は <% out.print(totalEvents);%></h4>
 					<h4>利用者(管理者)数は <% out.print(totalUsers);%> 人</h4>
+					<h4>全イベントの参加者数は <% out.print(totalParticipants);%> 人</h4>
 				</section>
 			<!-- Main -->
 				<section id="main" class="container">
@@ -107,12 +126,12 @@ db1.close();
 					<section class="box special features">
 						<div class="features-row">
 							<section>
-								<span class="icon solid major fa fa-cog fa-spin accent2"></span>
+								<span class="icon solid major fa fa-cog faa-pulse animated accent2"></span>
 								<h3>管理</h3>
 								<p>参加申し込み、アンケート、データのグラフ化、ダウンロードするcsvファイルまでリアルタイムで更新され、イベントの運営効率を上げられます。</p>
 							</section>
 							<section>
-								<span class="icon solid major fa-envelope faa-passing animated accent3"></span>
+								<span class="icon solid major fa-envelope faa-pulse animated accent3"></span>
 								<h3>コンタクト</h3>
 								<p>一人一人の参加者に対してのメールやイベントごとの参加者への一斉送信などの連絡ができます。</p>
 							</section>
@@ -124,9 +143,9 @@ db1.close();
 								<p>利用者（管理者）のアカウント一つでいくつものイベントを運用することができます。その上、各イベントに管理者を登録可能です。</p>
 							</section>
 							<section>
-								<span class="icon solid major fa-lock faa-tada animated accent5"></span>
+								<span class="icon solid major fa-lock faa-pulse animated accent5"></span>
 								<h3>セキュリティー</h3>
-								<p>パスワードをデータベスに保存しないアルゴリズムとによって厳重なセキュリティーを確立しています。その他のセキュリティ対策もしています。</p>
+								<p>パスワードをデータベースに保存しないアルゴリズムとによって厳重なセキュリティーを確立しています。その他のセキュリティ対策もしています。</p>
 							</section>
 						</div>
 					</section>

@@ -35,6 +35,17 @@
 <link rel="stylesheet" href="/resources/css/font-awesome-animation.css">
 <link rel="stylesheet"
 	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-143752853-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-143752853-1');
+</script>
+
 </head>
 <body class="is-preload">
 	<div id="page-wrapper">
@@ -60,7 +71,7 @@
 												placeholder="新たなメンバーを追加" />
 										</div>
 										<div class="col-3 col-12-mobilep">
-											<input type="submit" value="検索" class="fit" />
+												<input type="submit" value="検索" class="fit" />
 										</div>
 									</div>
 								</form>
@@ -75,7 +86,7 @@
 																"<tr><td><img class=\"img-responsive\" src=\"https://s3-ap-northeast-1.amazonaws.com/jp.myouth.images/users/default/profile_pic.PNG\" alt=\"\" /></td><td>"
 																		+ string + "</td>");
 													else
-														out.println("<td><a href=\"/home/" + event + "/settings/member/view/user_id=" + string
+														out.println("<td><a href=\"/home/" + event + "/settings/member/add/"+ string
 																+ "\"><i class=\"fa fa-user-plus faa-pulse animated faa-hover\"></i></a></td></tr>");
 													i++;
 												}
@@ -95,8 +106,8 @@
 														"<tr><td><img class=\"img-responsive\" src=\"https://s3-ap-northeast-1.amazonaws.com/jp.myouth.images/users/default/profile_pic.PNG\" alt=\"\" /></td><td>"
 																+ string + "</td>");
 											else
-												out.println("<td><a href=\"/home/" + event + "/settings/member/view/user_id=" + string
-														+ "\"><i class=\"fa fa-user faa-pulse animated faa-hover\"></i></a></td></tr>");
+												out.println("<td><a href=\"/home/" + event + "/settings/member/remove/"+ string
+														+ "\"><i class=\"fa fa-remove faa-pulse animated faa-hover\"></i></a></td></tr>");
 											i++;
 										}
 									}

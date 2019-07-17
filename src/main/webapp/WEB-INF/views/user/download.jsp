@@ -2,55 +2,64 @@
 	pageEncoding="utf-8"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ page trimDirectiveWhitespaces="true"%>
-<%@ page import="java.io.OutputStream"%>
 <%@ page import="java.util.ArrayList"%>
 <%@ page import="jp.myouth.db.Participants"%>
+<%@ page import="jp.myouth.db.Events"%>
+<%@ page import="jp.myouth.downloads.*"%>
 <%
 	Boolean user = (Boolean) session.getAttribute("user");
 	if (!user)
 		response.sendRedirect("/login");
 	
 	String userId = (String) session.getAttribute("userId");
-
 	String event = (String) session.getAttribute("event");
+	String startPeriod;
+	String endPeriod;
+	
+	request.setCharacterEncoding("UTF-8");
+	String dataType = request.getParameter("dataType");
+	String periodType = request.getParameter("periodType");
+	String fileType = request.getParameter("fileType");
+	String fontSize = request.getParameter("fontSize");
 
-	Participants db = new Participants();
-	db.open();
-	ArrayList<String> data = db.participants(event);
-	int total = db.totalParticipants(event);
-	db.close();
-
-	response.setContentType("text/csv");
-	response.setHeader("Content-Disposition", "attachment; filename=\"" + event + ".csv\"");
-	OutputStream outputStream = response.getOutputStream();
-	//BOMを付与
-	outputStream.write(0xef);
-	outputStream.write(0xbb);
-	outputStream.write(0xbf);
-
-	String outputResult;
-	outputResult = "参加申込日,名前,フリガナ,性別,メールアドレス,電話番号,生年月日,ルーツをもつ国,ルーツをもつ国(2),ルーツをもつ国(3),学校名または会社名,学年または職業,アレルギー,郵便番号,住所,参加のきかっけ\n";
-	outputStream.write(outputResult.getBytes("UTF-8"));
-	int i = 1;
-	int len = data.size() / total;
-	for (String string : data) {
-		if (i == len) {
-			if (string == null)
-				outputResult = "\n";
-			else
-				outputResult = string + "\n";
-			i = 0;
-		} else {
-			if (string == null)
-				outputResult = ",";
-			else
-				outputResult = string + ",";
-		}
-		outputStream.write(outputResult.getBytes("UTF-8"));
-		i++;
+	
+	if(periodType.equals("freePeriod")){
+		startPeriod = request.getParameter("startYear")+"-"+request.getParameter("startMonth")+"-"+request.getParameter("startDay");
+		endPeriod = request.getParameter("endYear")+"-"+request.getParameter("endMonth")+"-"+request.getParameter("endDay");	
+	} else if (periodType.equals("recruitmentPeriod")) {
+		Events db = new Events();
+		db.open();
+		startPeriod = db.recruitmentStartDate(event).get(0) + "-" + db.recruitmentStartDate(event).get(1) + "-"
+				+ db.recruitmentStartDate(event).get(2);
+		endPeriod = db.recruitmentEndDate(event).get(0) + "-" + db.recruitmentEndDate(event).get(1) + "-"
+				+ db.recruitmentEndDate(event).get(2);
+		db.close();
+	} else /*else if(periodType.equals("allPeriod"))*/ {
+		startPeriod = null;
+		endPeriod = null;
 	}
-	outputStream.flush();
-	outputStream.close();
+
+	ArrayList<String> data = new ArrayList<String>();
+	int total;
+
+	Participants db1 = new Participants();
+	db1.open();
+	if (dataType.equals("applicationFormData")) {
+		data = db1.participants(event, periodType, startPeriod, endPeriod);
+		total = db1.totalParticipants(event, periodType, startPeriod, endPeriod);
+	} else /*else if(dataType.equals("surveyData"))*/ {
+		data = db1.survey(event, periodType, startPeriod, endPeriod);
+		total = db1.totalSurveyAnswers(event, periodType, startPeriod, endPeriod);
+	}
+	db1.close();
+
+	if (fileType.equals("csv")) {
+		CSV csv = new CSV();
+		csv.createCSVFile(response, event, data, total);
+	} else /*else  if(fileType.equals("pdf"))*/ {
+		PDF pdf = new PDF();
+		pdf.createPDFFile(response, event, data, total, fontSize);
+	}
 %>
 
 <!DOCTYPE html>

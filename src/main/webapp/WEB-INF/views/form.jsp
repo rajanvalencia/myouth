@@ -9,6 +9,12 @@
 	Events db = new Events();
 	db.open();
 	String eventName = db.eventName(event);
+	String eventPlace = db.eventPlace(event);
+	ArrayList<String> eventDate = db.eventDate(event);
+	String year = eventDate.get(0);
+	String month = eventDate.get(1);
+	String day = eventDate.get(2);
+	String dayName = db.eventDayName(event);
 	ArrayList<Boolean> formQuestion = db.formQuestion(event);
 	db.close();
 	Boolean name = formQuestion.get(0);
@@ -42,7 +48,21 @@
 		<link rel="stylesheet" href="/resources/alpha/css/main.css" />
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 		<link rel="stylesheet" href="/resources/css/font-awesome-animation.css">
-	</head>
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async
+	src="https://www.googletagmanager.com/gtag/js?id=UA-143752853-1"></script>
+<script>
+	window.dataLayer = window.dataLayer || [];
+	function gtag() {
+		dataLayer.push(arguments);
+	}
+	gtag('js', new Date());
+
+	gtag('config', 'UA-143752853-1');
+</script>
+
+</head>
 	<body class="is-preload">
 		<div id="page-wrapper">
 			<!-- Main -->
@@ -64,9 +84,9 @@
 						<form id="form" method="post" action="/events/<%out.print(event);%>/form/insertForm">
 						<div class="row gtr-50 gtr-uniform">
 							<div class="col-6 col-12-mobilep">
-								<label for="eventName">イベント名</label> <input type="text"
-									value="<%out.print(eventName);%>" name="eventName"
-									id="eventName" disabled />
+								<h3><%out.print(eventName);%>参加申し込み</h3>
+								<h5>開催場所： <%out.print(eventPlace);%></h5>
+								<h5>開催日： <%out.print(year+"年 "+month+"月 "+day+"日 ("+dayName+")");%></h5>
 							</div>
 							<div class="col-6">
 							</div>
@@ -144,16 +164,9 @@
 									out.println("<label for=\"career-field\">学年または職種</label>");
 									out.println("<select name=\"career-field\" onchange=\"changeSubject(event)\" required>");
 									out.println("<option label=\" \" selected></option>");
-									out.println("<option value=\"中学１年生\">中学１年生</option>");
-									out.println("<option value=\"中学２年生\">中学２年生</option>");
-									out.println("<option value=\"中学３年生\">中学３年生</option>");
-									out.println("<option value=\"高校１年生\">高校１年生</option>");
-									out.println("<option value=\"高校２年生\">高校２年生</option>");
-									out.println("<option value=\"高校３年生\">高校３年生</option>");
-									out.println("<option value=\"大学１年生\">大学１年生</option>");
-									out.println("<option value=\"大学２年生\">大学２年生</option>");
-									out.println("<option value=\"大学３年生\">大学３年生</option>");
-									out.println("<option value=\"大学４年生\">大学４年生</option>");
+									out.println("<option value=\"中学生\">中学生</option>");
+									out.println("<option value=\"高校生\">高校生</option>");
+									out.println("<option value=\"大学生\">大学生</option>");
 									out.println("<option value=\"大学院生\">大学院生</option>");
 									out.println("<option value=\"短大学生\">短大学生</option>");
 									out.println("<option value=\"専門学生\">専門学生</option>");

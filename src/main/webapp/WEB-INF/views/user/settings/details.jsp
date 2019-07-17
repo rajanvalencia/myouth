@@ -52,6 +52,17 @@
 <link rel="stylesheet" href="/resources/css/font-awesome-animation.css">
 <link rel="stylesheet"
 	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-143752853-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-143752853-1');
+</script>
+
 </head>
 <body class="is-preload">
 	<div id="page-wrapper">
@@ -73,7 +84,7 @@
 					<section class="box">
 						<h3><%out.print(eventName);%>詳細設定</h3>
 						<form id="form" method="post"
-							action="/home/multiculturalyouth/settings/details/change">
+							action="/home/<%out.print(event);%>/settings/details/change">
 							<div class="row gtr-uniform gtr-50">
 								<div class="col-12">
 								<label for="eventName">イベント名</label>

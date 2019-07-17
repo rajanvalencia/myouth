@@ -15,7 +15,7 @@ import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 
-public class Authorization {
+public class Authentication {
 	
 	private static final String CLIENT_REGION  = "ap-northeast-1";
 	
@@ -100,8 +100,8 @@ public class Authorization {
 		db.open();
 		String userId = db.userId(email);
 		String salt = db.salt(userId);
-		String hashedPasswordWithSalt = Authorization.getSafetyPassword(password, salt);
-		String hashedPasswordWithSaltAndPepper = Authorization.getSafetyPassword(hashedPasswordWithSalt, pepper);
+		String hashedPasswordWithSalt = Authentication.getSafetyPassword(password, salt);
+		String hashedPasswordWithSaltAndPepper = Authentication.getSafetyPassword(hashedPasswordWithSalt, pepper);
 		Boolean res = db.password(userId, hashedPasswordWithSaltAndPepper);
 		db.close();
 		
@@ -123,8 +123,8 @@ public class Authorization {
 
 		S3 s3 = new S3();
 		String pepper = s3.download(CLIENT_REGION, BUCKETNAME, KEY);
-		String hashedPasswordWithSalt = Authorization.getSafetyPassword(password, salt);
-		String hashedPasswordWithSaltAndPepper = Authorization.getSafetyPassword(hashedPasswordWithSalt, pepper);
+		String hashedPasswordWithSalt = Authentication.getSafetyPassword(password, salt);
+		String hashedPasswordWithSaltAndPepper = Authentication.getSafetyPassword(hashedPasswordWithSalt, pepper);
 
 		Credentials db = new Credentials();
 		db.open();
@@ -146,6 +146,16 @@ public class Authorization {
 			return false;
 	}
 	
+	public Boolean identify(String email, String birthdate) {
+		Credentials db = new Credentials();
+		db.open();
+		Boolean res = db.checkEmailAndBirthdate(email, birthdate);
+		db.close();
+		if(res)
+			return true;
+		else
+			return false;
+	}
 	
 	public static void main(String... args) throws IOException{
 		S3 s3 = new S3();

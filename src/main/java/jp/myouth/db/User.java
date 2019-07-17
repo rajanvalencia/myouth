@@ -14,11 +14,11 @@ public class User {
 
 	RDSVariables var = new RDSVariables();
 	
-	private final String hostname = var.hostname();
-	private final String dbname = var.dbname();
-	private final String username = var.username();
-	private final String password = var.password();
-	private final String port = var.port();
+	private final String hostname = var.dbVariables("HOSTNAME");
+	private final String dbname = var.dbVariables("DATABASE.NAME");
+	private final String username = var.dbVariables("USERNAME");
+	private final String password = var.dbVariables("PASSWORD");
+	private final String port = var.dbVariables("PORT");
 
 	public void open() {
 		try {
@@ -61,8 +61,10 @@ public class User {
 	public String name(String userId) {
 		String data = new String();
 		try {
-			String query = "SELECT users.name FROM users WHERE user_id = \"" + userId + "\"";
-			ResultSet rset = stmt.executeQuery(query);
+			String query = "SELECT users.name FROM users WHERE user_id = ?";
+			PreparedStatement stmt = conn.prepareStatement(query);
+			stmt.setString(1, userId);
+			ResultSet rset = stmt.executeQuery();
 			if (rset.next())
 				data = rset.getString("name");
 			return data;
@@ -75,8 +77,11 @@ public class User {
 	public String fname(String userId) {
 		String data = new String();
 		try {
-			String query = "SELECT users.fname FROM users WHERE user_id = \"" + userId + "\"";
-			ResultSet rset = stmt.executeQuery(query);
+			String query = "SELECT users.fname FROM users WHERE user_id = ?";
+			
+			PreparedStatement stmt = conn.prepareStatement(query);
+			stmt.setString(1, userId);
+			ResultSet rset = stmt.executeQuery();
 			if (rset.next())
 				data = rset.getString("fname");
 			return data;
@@ -102,18 +107,23 @@ public class User {
 		return null;
 	}
 
-	public Boolean introduction(String userId, String name, String word) {
+	public Boolean introduction(String userId, String name, String word) throws Exception{
 		try {
-			String update = "UPDATE users SET name = ?, word = ? WHERE user_id ?";
+			String update = "UPDATE users SET name = ?, word = ? WHERE user_id = ?";
 			PreparedStatement stmt = conn.prepareStatement(update);
-			stmt.setString(1, userId);
-			stmt.setString(2, name);
-			stmt.setString(3, word);
-			stmt.executeUpdate();
-			return true;
+			stmt.setString(1, name);
+			stmt.setString(2, word);
+			stmt.setString(3, userId);
+			int res = stmt.executeUpdate();
+			
+			if(res > 0)
+				return true;
+			else
+				return false;
 		} catch (Exception e) {
-			return false;
+			e.printStackTrace();
 		}
+		return false;
 	}
 
 	public Boolean register(String userId, String name, String fname, String email, String birthdate) {
@@ -125,8 +135,12 @@ public class User {
 			stmt.setString(3, fname);
 			stmt.setString(4, email);
 			stmt.setString(5, birthdate);
-			stmt.executeUpdate();
-			return true;
+			int res = stmt.executeUpdate();
+			
+			if(res > 0)
+				return true;
+			else 
+				return false;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -160,8 +174,11 @@ public class User {
 	public Boolean checkVerification(String userId) {
 		Boolean data = false;
 		try {
-			String query = "SELECT verification FROM verify_email WHERE user_id = \""+userId+"\"";
-			ResultSet rset = stmt.executeQuery(query);
+			String query = "SELECT verification FROM verify_email WHERE user_id = ?";
+			
+			PreparedStatement stmt = conn.prepareStatement(query);
+			stmt.setString(1, userId);
+			ResultSet rset = stmt.executeQuery();
 			if(rset.next())
 				data = rset.getBoolean("verification");
 			return data;
@@ -248,15 +265,15 @@ public class User {
 	public ArrayList<String> memberSearch(String search){
 		ArrayList<String> data = new ArrayList<String>();
 		try {
-			String query = "SELECT name, fname FROM users WHERE name LIKE ? OR fname LIKE ?";
+			String query = "SELECT name, user_id FROM users WHERE name LIKE ? OR fname LIKE ?";
 			PreparedStatement stmt = conn.prepareStatement(query);
-			stmt.setString(1, search+"%");
-			stmt.setString(2, search+"%");
+			stmt.setString(1, "%"+search+"%");
+			stmt.setString(2, "%"+search+"%");
 			ResultSet rset = stmt.executeQuery();
 
 			while(rset.next()) {
 				data.add(rset.getString("name"));
-				data.add(rset.getString("fname"));
+				data.add(rset.getString("user_id"));
 			}
 			
 			return data;
@@ -264,5 +281,61 @@ public class User {
 			e.printStackTrace();
 		}
 		return null;
+	}
+	
+	public Boolean memberAdd(String event, String userId) {
+		String event_id = new String();
+		try {
+			String query = "SELECT event_id FROM event WHERE english_e_name = ?";
+			PreparedStatement stmt = conn.prepareStatement(query);
+			stmt.setString(1, event);
+			ResultSet rset = stmt.executeQuery();
+			while(rset.next())
+				event_id = rset.getString("event_id");
+			rset.close();
+			
+			String update = "INSERT INTO user_event (user_id, event_id) VALUES(?, ?)";
+			PreparedStatement stmt1 = conn.prepareStatement(update);
+			stmt1.setString(1, userId);
+			stmt1.setString(2, event_id);
+			int res = stmt1.executeUpdate();
+			
+			if(res > 0)
+				return true;
+			else
+				return false;
+			
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
+	public Boolean memberRemove(String event, String userId) {
+		String event_id = new String();
+		try {
+			String query = "SELECT event_id FROM event WHERE english_e_name = ?";
+			PreparedStatement stmt = conn.prepareStatement(query);
+			stmt.setString(1, event);
+			ResultSet rset = stmt.executeQuery();
+			while(rset.next())
+				event_id = rset.getString("event_id");
+			rset.close();
+			
+			String update = "DELETE FROM user_event WHERE user_id = ? AND event_id = ?";
+			PreparedStatement stmt1 = conn.prepareStatement(update);
+			stmt1.setString(1, userId);
+			stmt1.setString(2, event_id);
+			int res = stmt1.executeUpdate();
+			
+			if(res > 0)
+				return true;
+			else
+				return false;
+			
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 }

@@ -26,6 +26,17 @@
 	content="width=device-width, initial-scale=1, user-scalable=no" />
 <link rel="stylesheet" href="/resources/eventually/css/main.css" />
 <link rel="stylesheet" href="/resources/css/font-awesome-animation.css">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-143752853-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-143752853-1');
+</script>
+
 </head>
 <body class="is-preload">
 	
@@ -34,15 +45,20 @@
 		<a href="/" style="border-bottom-color: transparent;"><span class="icon fa fa-arrow-left fa-3x faa-passing-reverse animated"></span></a>
 		<h1>Login to myouth</h1>
 	</header>
-
+	
+	<form id="signup-form">
+	<input type="button" value="新規登録" style="background-color: #FF7700;" onclick="window.location.href='/registerUser';"/>
+	<input type="button" value="パスワードお忘れですか？" style="background-color: #368ce7;" onclick="window.location.href='/reissuePermission';"/>
+	</form>
+	
 	<!-- Signup Form -->
 	<form id="signup-form" method="post" action="/loginRedirect">
+	<span class="message" id="hello"></span>
 		<input type="email" name="email" id="email" placeholder="メールアドレス"
 			required /> <input type="password" name="password" id="パスワード"
 			placeholder="パスワード" required /> <input type="submit" value="ログイン" />
-			<input type="button" value="新規登録" style="background-color: #FF7700;" onclick="window.location.href='/registerUser';"/>
 	</form>
-	
+
 	<!-- Footer -->
 	<footer id="footer">
 		<ul class="copyright">
@@ -55,6 +71,7 @@
 	<!-- Scripts -->
 	<script src="/resources/eventually/js/main.js"></script>
 	<script>
+		
 		// Signup Form.
 		(function() {
 
@@ -85,6 +102,7 @@
 
 			$message._hide = function() {
 				$message.classList.remove('visible');
+
 			};
 	<%Boolean failure = (Boolean) session.getAttribute("failure");
 			if (failure)

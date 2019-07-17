@@ -17,6 +17,17 @@
 <link rel="stylesheet" href="/resources/css/font-awesome-animation.css">
 <link rel="stylesheet"
 	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-143752853-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-143752853-1');
+</script>
+
 </head>
 <body class="is-preload">
 	<div id="page-wrapper">
@@ -153,12 +164,23 @@
 						<p>
 							TCCとは何か、と知りたい方はこちらの<a
 								href="https://content.sciendo.com/view/journals/amcs/25/4/article-p723.xml">論文</a>をお読みください。
-							ある事情によりプライベートにしています。
+							ある事情により非公開にしています。
 						</p>
-						<span class="image fit"><img
-							src="https://s3-ap-northeast-1.amazonaws.com/jp.myouth.images/rajanValencia/TCC1.png"></span>
-						<span class="image fit"><img
-							src="https://s3-ap-northeast-1.amazonaws.com/jp.myouth.images/rajanValencia/TCC2.png"></span>
+							<div style="text-align: center">2次元(n=2)でアリティは5(k=5)のTCCの可視化</div >
+						<video class="image fit" controls loop autoplay><source
+							src="https://s3-ap-northeast-1.amazonaws.com/jp.myouth.images/rajanValencia/2DTCC.mp4" type="video/mp4"></source></video>
+							<div  style="text-align: center">3次元(n=2)でアリティは5(k=5)のTCCの可視化(ノード番号付き)</div >
+						<video class="image fit" controls loop autoplay><source
+							src="https://s3-ap-northeast-1.amazonaws.com/jp.myouth.images/rajanValencia/2DTCC_1.mp4" type="video/mp4"></source></video>
+							<div  style="text-align: center">3次元(n=3)でアリティは2(k=2)のTCCの可視化</div >
+						<video class="image fit" controls loop autoplay><source
+							src="https://s3-ap-northeast-1.amazonaws.com/jp.myouth.images/rajanValencia/3DTCC_1+.mp4" type="video/mp4"></source></video>
+							<div  style="text-align: center">3次元(n=3)でアリティは5(k=5)のTCCの可視化</div >
+						<video class="image fit" controls loop autoplay><source
+							src="https://s3-ap-northeast-1.amazonaws.com/jp.myouth.images/rajanValencia/3DTCC.mp4" type="video/mp4"></source></video>
+							<div  style="text-align: center">3次元(n=3)でアリティは3(k=3)のTCCの可視化(ノード番号付き)</div >
+						<video class="image fit" controls loop autoplay><source
+							src="https://s3-ap-northeast-1.amazonaws.com/jp.myouth.images/rajanValencia/3DTCC_2.mp4" type="video/mp4"></source></video>
 					</section>
 
 					<section class="box">

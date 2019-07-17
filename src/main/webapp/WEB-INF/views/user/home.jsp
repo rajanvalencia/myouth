@@ -33,6 +33,17 @@
 <link rel="stylesheet" href="/resources/css/font-awesome-animation.css">
 <link rel="stylesheet"
 	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-143752853-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-143752853-1');
+</script>
+
 </head>
 <body class="is-preload">
 	<div id="page-wrapper">
@@ -77,9 +88,8 @@
 							out.println("<td><a href=\"/events/"+string+"\"><i class=\"fa fa-home faa-tada animated-hover\"></i></a></td>");
 							out.println("<td><a href=\"/home/"+string+"/settings\"><i class=\"fa fa-cog faa-spin animated-hover\"></i></a></td>");
 							out.println("<td><a href=\"/home/"+string+"/participants\"><i class=\"fa fa-users faa-tada animated-hover\"></i></a></td>");
-							out.println("<td><a href=\"/home/"+string+"/download\"><i class=\"fa fa-download faa-tada animated-hover\"></i></a></td>");
+							out.println("<td><a href=\"/home/"+string+"/downloadSettings\"><i class=\"fa fa-download faa-tada animated-hover\"></i></a></td>");
 							out.println("<td><a href=\"/home/"+string+"/mail\"><i class=\"fa fa-envelope faa-tada animated-hover\"></i></a></td>");
-							out.println("<td><a href=\"/home/"+string+"/delete\"><i class=\"fa fa-trash faa-tada animated-hover\" style=\"color: #ff7496\"></i></a></td></tr>");
 						}
 						i++;
 					}

@@ -42,6 +42,17 @@
 <noscript>
 	<link rel="stylesheet" href="/resources/user/css/noscript.css" />
 </noscript>
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-143752853-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-143752853-1');
+</script>
+
 </head>
 <body class="is-preload">
 
@@ -53,7 +64,7 @@
 			
 						<hr />
 						<h2>自己紹介</h2>
-						<form method="post" action="/home/insertProfileInfo">
+						<form method="post" action="/home/changeProfile">
 							<div class="fields">
 								<div class="field">
 								<label for="name">名前</label>

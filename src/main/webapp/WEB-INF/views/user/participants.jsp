@@ -3,20 +3,42 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ page import="java.util.ArrayList"%>
 <%@ page import="jp.myouth.db.Participants"%>
+<%@ page import="jp.myouth.db.Events"%>
 <%@ page import="java.util.ArrayList"%>
 <%
 	Boolean user = (Boolean) session.getAttribute("user");
 	if (!user)
 		response.sendRedirect("/login");
 	String userId = (String) session.getAttribute("userId");
-
-	Participants db = new Participants();
 	String event = (String) session.getAttribute("event");
-	db.open();
+	
+	String periodType = null;
+	String startPeriod = null;
+	String endPeriod = null;
+	
+	request.setCharacterEncoding("UTF-8");
+	periodType = request.getParameter("periodType");
+	
+	if(periodType == null)
+		periodType = "allPeriod";
+	else if(periodType.equals("recruitmentPeriod")){
+		Events db = new Events();
+		db.open();
+		startPeriod = db.recruitmentStartDate(event).get(0)+"-"+db.recruitmentStartDate(event).get(1)+"-"+db.recruitmentStartDate(event).get(2);
+		endPeriod = db.recruitmentEndDate(event).get(0)+"-"+db.recruitmentEndDate(event).get(1)+"-"+db.recruitmentEndDate(event).get(2);
+		db.close();
+	} 
+	else if(periodType.equals("freePeriod")) {
+		startPeriod = request.getParameter("startYear")+"-"+request.getParameter("startMonth")+"-"+request.getParameter("startDay");
+		endPeriod = request.getParameter("endYear")+"-"+request.getParameter("endMonth")+"-"+request.getParameter("endDay");
+	}
+	
+	Participants db1 = new Participants();
+	db1.open();
 	ArrayList<String> list = new ArrayList<String>();
 	int i = 0, j = 0;
-	list = db.participantsInfoLess(event);
-	db.close();
+	list = db1.participantsInfoLess(event, periodType, startPeriod, endPeriod);
+	db1.close();
 %>
 <!DOCTYPE HTML>
 <!--
@@ -34,6 +56,17 @@
 <link rel="stylesheet" href="/resources/css/font-awesome-animation.css">
 <link rel="stylesheet"
 	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-143752853-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-143752853-1');
+</script>
+
 </head>
 <body class="is-preload">
 	<div id="page-wrapper">
@@ -50,6 +83,62 @@
 			<div class="row">
 				<div class="col-12">
 					<section class="box">
+					<form id="form" method="post"
+							action="/home/<%out.print(event);%>/participants">
+							<div class="row gtr-uniform gtr-50">
+							<div class="col-12">
+									<label for="">参加者の申し込み期間を選択</label>
+								</div>
+								<div class="col-4 col-12-narrower">
+									<input type="radio" id="allPeriod" name="periodType"
+										value="allPeriod" <%if(periodType.equals("allPeriod")) out.print("checked");%>> <label for="allPeriod">全期間</label>
+								</div>
+								<div class="col-4 col-12-narrower">
+									<input type="radio" id="recruitmentPeriod" name="periodType"
+										value="recruitmentPeriod" <%if(periodType.equals("recruitmentPeriod")) out.print("checked");%>> <label
+										for="recruitmentPeriod">募集期間内</label>
+								</div>
+								<div class="col-4 col-12-narrower">
+									<input type="radio" id="freePeriod" name="periodType"
+										value="freePeriod" <%if(periodType.equals("freePeriod")) out.print("checked");%>> <label for="freePeriod">期間指定</label>
+								</div>
+									<div class="col-4 col-4-mobilep <%if(!periodType.equals("freePeriod")) out.print("hidden");%>" id="startYearRadio">
+										<label for="startYear">開始期間</label> <select name="startYear" id="startYear">
+											<option value="" selected></option>
+										</select>
+									</div>
+									<div class="col-4 col-4-mobilep <%if(!periodType.equals("freePeriod")) out.print("hidden");%>" id="startMonthRadio">
+										<label for="startMonth">月</label> <select name="startMonth" id="startMonth">
+											<option value="" selected></option>
+										</select>
+									</div>
+									<div class="col-4 col-4-mobilep <%if(!periodType.equals("freePeriod")) out.print("hidden");%>"  id="startDayRadio">
+										<label for="startDay">日</label> <select name="startDay" id="startDay">
+											<option value="" selected></option>
+										</select>
+									</div>
+									<div class="col-4 col-4-mobilep <%if(!periodType.equals("freePeriod")) out.print("hidden");%>" id="endYearRadio">
+										<label for="endYear">終了期間</label> <select name="endYear" id="endYear">
+											<option value="" selected></option>
+										</select>
+									</div>
+									<div class="col-4 col-4-mobilep <%if(!periodType.equals("freePeriod")) out.print("hidden");%>" id="endMonthRadio">
+										<label for="endMonth">月</label> <select name="endMonth" id="endMonth">
+											<option value="" selected></option>
+										</select>
+									</div>
+									<div class="col-4 col-4-mobilep <%if(!periodType.equals("freePeriod")) out.print("hidden");%>" id="endDayRadio">
+										<label for="endDay">日</label> <select name="endDay" id="endDay">
+											<option value="" selected></option>
+										</select>
+									</div>
+								<div id="submit-btn" class="col-12 <%if(!periodType.equals("freePeriod")) out.print("hidden");%>">
+									<ul class="actions">
+										<li><input type="submit" value="変更"/></li>
+									</ul>
+								</div>
+							</div>
+						</form>
 						<div class="table-wrapper">
 							<table>
 								<tbody>
@@ -154,6 +243,113 @@
 			});
 			
 		});
+	
+	$("input[name='periodType']").change(function(){
+		if($("input[name='periodType']:checked").val() == "freePeriod") {
+			$("#submit-btn, #startYearRadio, #startMonthRadio, #startDayRadio, #endYearRadio, #endMonthRadio, #endDayRadio")
+			.removeClass("hidden");
+			$("#startYear, #startMonth, #startDay, #endYear, #endMonth, #endDay")
+			.prop("required", true);
+		}
+		else {
+			$("#submit-btn, #startYearRadio, #startMonthRadio, #startDayRadio, #endYearRadio, #endMonthRadio, #endDayRadio")
+			.addClass("hidden");
+			
+			$("#startYear, #startMonth, #startDay, #endYear, #endMonth, #endDay")
+			.removeAttr("required");
+			
+			$("#form").submit();
+		}
+	});
+	</script>
+	
+	<script type="text/javascript">
+		$(function() {
+
+			//populate our years select box
+			for (i = 2019; i <= new Date().getFullYear() + 1; i++) {
+				$('#startYear').append($('<option />').val(i).html(i));
+			}
+			//populate our months select box
+			for (i = 1; i <= 12; i++) {
+				$('#startMonth').append($('<option />').val(i).html(i));
+			}
+			
+			
+			
+			//populate our Days select box
+			updateNumberOfRecruitmentStartDays();
+
+			//"listen" for change events
+			$('#startYear, #startMonth').change(function() {
+				$('#startDay').html('');
+				updateNumberOfRecruitmentStartDays();
+			});
+			
+
+		});
+
+		//function to update the days based on the current values of month and year
+		function updateNumberOfRecruitmentStartDays() {
+			month = $('#startMonth').val();
+			year = $('#startYear').val();
+			days = daysInMonth(month, year);
+
+			for (i = 1; i <= days; i++) 
+				$('#startDay').append($('<option />').val(i).html(i));
+		}
+		
+
+		//helper function
+		function daysInMonth(month, year) {
+			return new Date(year, month, 0).getDate();
+		}
+
+	</script>
+
+	<script type="text/javascript">
+		$(function() {
+
+			//populate our years select box
+			for (i = new Date().getFullYear(); i <= new Date().getFullYear() + 1; i++) {
+				$('#endYear').append($('<option />').val(i).html(i));
+			}
+			//populate our months select box
+			for (i = 1; i <= 12; i++) {
+				$('#endMonth').append($('<option />').val(i).html(i));
+			}
+			
+			
+			
+			//populate our Days select box
+			updateNumberOfRecruitmentEndDays();
+
+			//"listen" for change events
+			$('#endYear, #endMonth').change(function() {
+				$('#endDay').html('');
+				updateNumberOfRecruitmentEndDays();
+			});
+			
+
+		});
+
+		//function to update the days based on the current values of month and year
+		function updateNumberOfRecruitmentEndDays() {
+			month = $('#endMonth').val();
+			year = $('#endYear').val();
+			days = daysInMonth(month, year);
+
+			for (i = 1; i <= days; i++)
+				$('#endDay').append($('<option />').val(i).html(i));
+			
+		}
+		
+
+		//helper function
+		function daysInMonth(month, year) {
+			return new Date(year, month, 0).getDate();
+		}
+
 	</script>
 
 </body>

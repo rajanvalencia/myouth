@@ -6,26 +6,6 @@ import java.util.Properties;
 
 public class RDSVariables {
 
-	protected String hostname() {
-		return dbVariables("HOSTNAME");
-	}
-
-	protected String dbname() {
-		return dbVariables("DATABASE.NAME");
-	}
-
-	protected String username() {
-		return dbVariables("USERNAME");
-	}
-
-	protected String password() {
-		return dbVariables("PASSWORD");
-	}
-
-	protected String port() {
-		return dbVariables("PORT");
-	}
-
 	public String dbVariables(String varName) {
 		try (InputStream input = RDSVariables.class.getClassLoader().getResourceAsStream("database.properties")) {
 

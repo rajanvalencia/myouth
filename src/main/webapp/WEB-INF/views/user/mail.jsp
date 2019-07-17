@@ -35,6 +35,17 @@
 <link rel="stylesheet" href="/resources/css/font-awesome-animation.css">
 <link rel="stylesheet"
 	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-143752853-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-143752853-1');
+</script>
+
 </head>
 <body class="is-preload">
 	<div id="page-wrapper">
@@ -57,21 +68,70 @@
 						<br />受信者数: <%out.print(totalParticipants);%></p>
 					</section>
 					<section class="box">
-						<h3><%out.print(eventName);%>一斉送信</h3>
-						<p>送信者にもメールが送信されますのでご了承ください
-						<br />送信者のお名前は自動的に記入されますので記入する必要ありません</p>
+						<h3>
+							<%
+								out.print(eventName);
+							%>一斉送信
+						</h3>
 						<form id="form" method="post"
 							action="/home/<%out.print(event);%>/mail/send">
 							<div class="row gtr-uniform gtr-50">
+							<div class="col-12">
+									<label for="">参加者の申し込み期間を選択</label>
+								</div>
+								<div class="col-4 col-12-narrower">
+									<input type="radio" id="allPeriod" name="periodType"
+										value="allPeriod" checked> <label for="allPeriod">全期間</label>
+								</div>
+								<div class="col-4 col-12-narrower">
+									<input type="radio" id="recruitmentPeriod" name="periodType"
+										value="recruitmentPeriod"> <label
+										for="recruitmentPeriod">募集期間内</label>
+								</div>
+								<div class="col-4 col-12-narrower">
+									<input type="radio" id="freePeriod" name="periodType"
+										value="freePeriod"> <label for="freePeriod">期間指定</label>
+								</div>
+									<div class="col-4 col-4-mobilep hidden" id="startYearRadio">
+										<label for="startYear">開始期間</label> <select name="startYear" id="startYear">
+											<option value="" selected></option>
+										</select>
+									</div>
+									<div class="col-4 col-4-mobilep hidden" id="startMonthRadio">
+										<label for="startMonth">月</label> <select name="startMonth" id="startMonth">
+											<option value="" selected></option>
+										</select>
+									</div>
+									<div class="col-4 col-4-mobilep hidden"  id="startDayRadio">
+										<label for="startDay">日</label> <select name="startDay" id="startDay">
+											<option value="" selected></option>
+										</select>
+									</div>
+									<div class="col-4 col-4-mobilep hidden" id="endYearRadio">
+										<label for="endYear">終了期間</label> <select name="endYear" id="endYear">
+											<option value="" selected></option>
+										</select>
+									</div>
+									<div class="col-4 col-4-mobilep hidden" id="endMonthRadio">
+										<label for="endMonth">月</label> <select name="endMonth" id="endMonth">
+											<option value="" selected></option>
+										</select>
+									</div>
+									<div class="col-4 col-4-mobilep hidden" id="endDayRadio">
+										<label for="endDay">日</label> <select name="endDay" id="endDay">
+											<option value="" selected></option>
+										</select>
+									</div>
 								<div class="col-12">
 									<input type="text" name="subject" id="subject" placeholder="件名" />
 								</div>
 								<div class="col-12">
-									<textarea name="message" id="message" placeholder="メッセージ" rows="6"></textarea>
+									<textarea name="message" id="message" placeholder="メッセージ"
+										rows="6"></textarea>
 								</div>
 								<div class="col-12">
 									<ul class="actions" id="swap">
-										<li><input id="btn" type="submit" value="送信" disabled/></li>
+										<li><input id="btn" type="submit" value="送信" disabled /></li>
 									</ul>
 								</div>
 							</div>
@@ -132,6 +192,111 @@
 		$('#btn')
 		.removeAttr('disabled');
 		});
+	
+	$("input[name='periodType']").change(function(){
+		if($("input[name='periodType']:checked").val() == "freePeriod") {
+			$("#startYearRadio, #startMonthRadio, #startDayRadio, #endYearRadio, #endMonthRadio, #endDayRadio")
+			.removeClass("hidden");
+			
+			$("#startYear, #startMonth, #startDay, #endYear, #endMonth, #endDay")
+			.prop("required", true);
+		}
+		else {
+			$("#startYearRadio, #startMonthRadio, #startDayRadio, #endYearRadio, #endMonthRadio, #endDayRadio")
+			.addClass("hidden");
+			$("#startYear, #startMonth, #startDay, #endYear, #endMonth, #endDay")
+			.removeAttr("required");
+		}
+	});
+	</script>
+	
+	<script type="text/javascript">
+		$(function() {
+
+			//populate our years select box
+			for (i = 2019; i <= new Date().getFullYear() + 1; i++) {
+				$('#startYear').append($('<option />').val(i).html(i));
+			}
+			//populate our months select box
+			for (i = 1; i <= 12; i++) {
+				$('#startMonth').append($('<option />').val(i).html(i));
+			}
+			
+			
+			
+			//populate our Days select box
+			updateNumberOfRecruitmentStartDays();
+
+			//"listen" for change events
+			$('#startYear, #startMonth').change(function() {
+				$('#startDay').html('');
+				updateNumberOfRecruitmentStartDays();
+			});
+			
+
+		});
+
+		//function to update the days based on the current values of month and year
+		function updateNumberOfRecruitmentStartDays() {
+			month = $('#startMonth').val();
+			year = $('#startYear').val();
+			days = daysInMonth(month, year);
+
+			for (i = 1; i <= days; i++) 
+				$('#startDay').append($('<option />').val(i).html(i));
+		}
+		
+
+		//helper function
+		function daysInMonth(month, year) {
+			return new Date(year, month, 0).getDate();
+		}
+
+	</script>
+
+	<script type="text/javascript">
+		$(function() {
+
+			//populate our years select box
+			for (i = new Date().getFullYear(); i <= new Date().getFullYear() + 1; i++) {
+				$('#endYear').append($('<option />').val(i).html(i));
+			}
+			//populate our months select box
+			for (i = 1; i <= 12; i++) {
+				$('#endMonth').append($('<option />').val(i).html(i));
+			}
+			
+			
+			
+			//populate our Days select box
+			updateNumberOfRecruitmentEndDays();
+
+			//"listen" for change events
+			$('#endYear, #endMonth').change(function() {
+				$('#endDay').html('');
+				updateNumberOfRecruitmentEndDays();
+			});
+			
+
+		});
+
+		//function to update the days based on the current values of month and year
+		function updateNumberOfRecruitmentEndDays() {
+			month = $('#endMonth').val();
+			year = $('#endYear').val();
+			days = daysInMonth(month, year);
+
+			for (i = 1; i <= days; i++)
+				$('#endDay').append($('<option />').val(i).html(i));
+			
+		}
+		
+
+		//helper function
+		function daysInMonth(month, year) {
+			return new Date(year, month, 0).getDate();
+		}
+
 	</script>
 </body>
 </html>

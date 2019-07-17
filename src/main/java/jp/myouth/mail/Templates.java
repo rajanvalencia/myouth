@@ -1,18 +1,27 @@
 package jp.myouth.mail;
 
+
+
 import java.util.ArrayList;
+
+
 
 import org.apache.commons.text.StringEscapeUtils;
 
+
+
 import jp.myouth.db.Events;
+
+
 
 public class Templates {
 
 	public Boolean accountVerificationMail(String name, String email, String userId) {
 		try {
-
 			String FROM = "admin@myouth.jp";
+
 			String FROMNAME = "myouth";
+
 			String SUBJECT = "アカウント承認";
 
 			String HTMLBODY = String.join(System.getProperty("line.separator"),
@@ -37,12 +46,12 @@ public class Templates {
 					+"返信しないでください\n"
 					+"サイトのシステムに関しての相談\n"
 					+"rajan.valencia@au.com";
-			
+
 			ArrayList<String> TO = new ArrayList<String>();
 			TO.add(email);
-
 			Mail mail = new Mail();
 			mail.send(FROM, TO, FROMNAME, SUBJECT, TEXTBODY, HTMLBODY);
+
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -52,9 +61,9 @@ public class Templates {
 
 	public Boolean joinConfirmedMail(String event, String name, String email) {
 		try {
-
 			Events db = new Events();
 			db.open();
+
 			String eventName = db.eventName(event);
 			String place = db.eventLocation(event);
 			ArrayList<String> date = db.eventDate(event);
@@ -64,14 +73,17 @@ public class Templates {
 			ArrayList<String> time = db.eventTime(event);
 			String hour = time.get(0);
 			String minute = time.get(1);
+
 			if(Integer.valueOf(minute) < 10)
 				minute = "0"+minute;
 			db.close();
 
 			String FROM = event + "@myouth.jp";
+		
 			String FROMNAME = eventName;
+			
 			String SUBJECT = "お申込み完了のお知らせ";
-
+			
 			String HTMLBODY = String.join(System.getProperty("line.separator"),
 					"<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\">", "<tr>",
 					"<td style=\"text-align: center;\">",
@@ -88,7 +100,7 @@ public class Templates {
 					"<a href='mailto:rajan.valencia@au.com'>rajan.valencia@au.com</a><br>",
 					"<img src=\"https://drive.google.com/uc?id=11msmk5NI2MplO4qpaBklVzvq7PVpCV8q\" width=\"200\" style=\"height: auto;\" />",
 					"<p><a href='https://myouth.jp/'>myouth</a>", "</td>", "</tr>", "</table>");
-			
+
 			String TEXTBODY =  name + "さん\n"
 					+"お申込みありがとうございます\n"
 					+"開催場所:" + place + "\n"
@@ -109,15 +121,12 @@ public class Templates {
 					+"rajan.valencia@au.com\n"
 					+"イベント管理システム（サイト)\n"
 					+"https://myouth.jp/";
-			
 
 			ArrayList<String> TO = new ArrayList<String>();
 			TO.add(email);
-
 			Mail mail = new Mail();
 			mail.send(FROM, TO, FROMNAME, SUBJECT, TEXTBODY, HTMLBODY);
 			return true;
-
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -129,14 +138,16 @@ public class Templates {
 		try {
 			String FROM = event + "@myouth.jp";
 			String FROMNAME = eventname;
+			
 			Events db = new Events();
 			db.open();
 			String place = db.eventLocation(event);
 			db.close();
-			
+
 			String HTMLTEXTBODY = StringEscapeUtils.escapeHtml4(TEXTBODY);
+
 			HTMLTEXTBODY = TEXTBODY.replaceAll("(\r\n|\n)", "<br />");
-			
+
 			String HTMLBODY = String.join(System.getProperty("line.separator"),
 					HTMLTEXTBODY,
 					"<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\">", "<tr>",
@@ -151,9 +162,9 @@ public class Templates {
 					eventname + "会場までのルート<br>https://www.google.com/maps/dir/?api=1&destination=" + place + "<br><br>",
 					"<img src=\"https://drive.google.com/uc?id=11msmk5NI2MplO4qpaBklVzvq7PVpCV8q\" width=\"200\" style=\"height: auto;\" /><br>",
 					"イベント管理システム(サイト)<br>https://myouth.jp", "</td>", "</tr>", "</table>");
-			
+
 			TEXTBODY = TEXTBODY.replaceAll("(\r\n|\n)", "");
-			
+
 			TEXTBODY = TEXTBODY
 					+ username + "さんが\n"
 					+"myouthメールシステムにて送信されました\n"
@@ -169,15 +180,18 @@ public class Templates {
 					+"https://myouth.jp/events/" + event + "/survey\n"
 					+ "イベント管理システム(サイト)\n"
 					+"https://myouth.jp";
-			
+
 			Mail mail = new Mail();
 			Boolean res = mail.send(FROM, TO, FROMNAME, SUBJECT, TEXTBODY, HTMLBODY);
-			
+
 			if(res)
 				return true;
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return false;
 	}
+
 }
+ 

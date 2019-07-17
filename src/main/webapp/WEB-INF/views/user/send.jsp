@@ -20,8 +20,6 @@
 	String userId = (String)session.getAttribute("userId");
 	String event = (String) session.getAttribute("event");
 	
-	request.setCharacterEncoding("UTF-8");
-	
 	ArrayList<String> TO = new ArrayList<String>();
 	
 	Events db = new Events();
@@ -29,10 +27,29 @@
 	String eventName = db.eventName(event);
 	db.close();
 	
+	String startPeriod;
+	String endPeriod;
+	
+	request.setCharacterEncoding("UTF-8");
+	String periodType = request.getParameter("periodType");
+	
+	if(periodType.equals("freePeriod")){
+		startPeriod = request.getParameter("startYear")+"-"+request.getParameter("startMonth")+"-"+request.getParameter("startDay");
+		endPeriod = request.getParameter("endYear")+"-"+request.getParameter("endMonth")+"-"+request.getParameter("endDay");	
+	} else if(periodType.equals("recruitmentPeriod")){
+		db.open();
+		startPeriod = db.recruitmentStartDate(event).get(0)+"-"+db.recruitmentStartDate(event).get(1)+"-"+db.recruitmentStartDate(event).get(2);
+		endPeriod = db.recruitmentEndDate(event).get(0)+"-"+db.recruitmentEndDate(event).get(1)+"-"+db.recruitmentEndDate(event).get(2);
+		db.close();
+	} else /*else if(periodType.equals("allPeriod"))*/{
+		startPeriod = null;
+		endPeriod = null;
+	}
+	
 	User db1 = new User();
 	db1.open();
 	String senderEmail = db1.userEmailAddress(userId);
-	String userName = db1.fname(userId);
+	String userName = db1.name(userId);
 	db1.close();
 	
 	Participants db2 = new Participants();
@@ -41,7 +58,7 @@
 	*イベントに合計参加者数を習得
 	*/
 	Integer totalParticipants = db2.totalParticipantsByEmailAddress(event, senderEmail);
-	TO = db2.participantsEmailAddress(event, totalParticipants, senderEmail);
+	TO = db2.participantsEmailAddress(event, senderEmail, periodType, startPeriod, endPeriod);
 	db2.close();
 	
 	TO.add(senderEmail);
@@ -84,6 +101,9 @@ out.println("<br>send: "+res);
 
 for(String string : TO)
 	out.println("<br />"+string);
+
+out.println("startPeriod: "+startPeriod);
+out.println("endperiod"+endPeriod);
 %>
 	<div class="loading">
 		<img src="https://a.top4top.net/p_1990j031.gif" alt="Loading">

@@ -36,9 +36,10 @@
 <head>
 <meta charset="UTF-8" />
 <title>
-	<%
+	myouth
+	 <%
 		out.print(eventName);
-	%>ホーム
+	%>イベント
 </title>
 <link rel="apple-touch-icon" sizes="180x180"
 	href="/resources/favicon/apple-touch-icon.png">
@@ -60,6 +61,15 @@
 <script
 	src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js'></script>
 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-143752853-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-143752853-1');
+</script>
 
 </head>
 <body class="is-preload">
@@ -522,7 +532,8 @@
 						out.print(", " + string + "]");
 					i++;
 				}
-			}%>
+			}
+			%>
 		]);
 
 			var options = {
@@ -560,7 +571,8 @@
 						out.print(", " + string + "]");
 					i++;
 				}
-			}%>
+			}
+			db.close();%>
 		]);
 
 			var options = {

@@ -5,6 +5,7 @@
 <%@ page import="java.text.SimpleDateFormat"%>
 <%@ page import="org.apache.commons.text.StringEscapeUtils"%>
 <%@ page import="jp.myouth.db.Events"%>
+<%@ page import="jp.myouth.db.Simplification"%>
 <%@ page import="jp.myouth.mail.Templates"%>
 <% 
 String event = (String) session.getAttribute("event");
@@ -114,6 +115,11 @@ request.setCharacterEncoding("UTF-8");
 		db.open();
 		boolean res = db.insertParticipantData(event, name, fname, gender, email, phone, birth, career, company, country, country2, country3, zip, pref, address, allergy, way);
 		db.close();
+		
+		Simplification db1 = new Simplification();
+		db1.open();
+		db1.simplifyCompany();
+		db1.close();
 		
 		Templates send = new Templates();
 		boolean res1 = send.joinConfirmedMail(event, name, email);

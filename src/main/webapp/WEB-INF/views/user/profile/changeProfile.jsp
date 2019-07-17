@@ -3,6 +3,20 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ page import="jp.myouth.security.Authorization"%>
 <%@ page import="jp.myouth.db.User"%>
+<%
+	String userId = (String) session.getAttribute("userId");
+	request.setCharacterEncoding("UTF-8");
+	String name = request.getParameter("name");
+	String word = request.getParameter("word");
+	User db = new User();
+	db.open();
+	Boolean res = db.introduction(userId, name, word);
+	db.close();
+	if (res)
+		response.sendRedirect("/home");
+	else 
+		out.println("Change failed.");
+%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -15,20 +29,10 @@
 </head>
 <body>
 	<%
-		String userId = (String) session.getAttribute("userId");
-		request.setCharacterEncoding("UTF-8");
-		String name = request.getParameter("name");
-		String word = request.getParameter("word");
-		User db = new User();
-		db.open();
-		Boolean res = db.introduction(userId, name, word);
-		db.close();
-		if(res)
-			response.sendRedirect("/home");
-		else
-			out.print("Change failed.");
+		out.println("<br />userId:" + userId);
+		out.println("<br />name:" + name);
+		out.println("<br />word:" + word);
 	%>
-
 	<div class="loading">
 		<img src="https://a.top4top.net/p_1990j031.gif" alt="Loading">
 	</div>
