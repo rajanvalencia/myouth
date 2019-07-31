@@ -17,7 +17,9 @@ import com.amazonaws.services.simpleemail.model.Body;
 import com.amazonaws.services.simpleemail.model.Content; 
 import com.amazonaws.services.simpleemail.model.Destination; 
 import com.amazonaws.services.simpleemail.model.Message; 
-import com.amazonaws.services.simpleemail.model.SendEmailRequest; 
+import com.amazonaws.services.simpleemail.model.SendEmailRequest;
+import com.amazonaws.services.simpleemail.model.SetIdentityNotificationTopicRequest;
+import com.amazonaws.services.simpleemail.model.SetIdentityNotificationTopicResult; 
  
 public class Mail { 
      
@@ -30,11 +32,11 @@ public class Mail {
         AmazonSimpleEmailService client = 
                 AmazonSimpleEmailServiceClientBuilder.standard() 
                 .withRegion(Regions.US_EAST_1) 
-                .withCredentials(new AWSStaticCredentialsProvider(credentials)) 
+                .withCredentials(new AWSStaticCredentialsProvider(credentials))
                 .build(); 
- 
+        
         SendEmailRequest request = new SendEmailRequest() 
-          .withDestination( new Destination().withToAddresses(TO)) 
+          .withDestination( new Destination().withBccAddresses(TO)) 
           .withMessage(new Message() 
               .withBody(new Body() 
                   .withHtml(new Content() 
@@ -48,7 +50,7 @@ public class Mail {
           // configuration set 
           .withConfigurationSetName(CONFIGSET); 
          
-      client.sendEmail(request); 
+      client.sendEmail(request);
       System.out.println("Email sent!"); 
        
       return true; 
@@ -84,7 +86,7 @@ public class Mail {
   
   private String senderAddressBuilder(String FROM, String FROMNAME) {
 	  try {
-		  InternetAddress address = new InternetAddress(FROM, FROMNAME, "ISO-2022-JP");
+		  InternetAddress address = new InternetAddress(FROM, FROMNAME);
 		  return address.toString();
 	  }catch(Exception  e) {
 		  e.printStackTrace();

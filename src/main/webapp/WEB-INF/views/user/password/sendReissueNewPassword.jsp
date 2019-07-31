@@ -16,16 +16,22 @@
 	<%
 		String userId = (String) session.getAttribute("userId");
 		request.setCharacterEncoding("UTF-8");
-		String email = request.getParameter("email");
-		String birthdate = request.getParameter("birth-year") + "-" + request.getParameter("birth-month") + "-" + request.getParameter("birth-day");
+		String authToken = request.getParameter("authToken");
+		String password = request.getParameter("password");
 		Authentication auth = new Authentication();
-		Boolean res = auth.identify(email, birthdate);
+		out.println("authToken: "+authToken);
+		out.println("<br>password: "+password);
+		Boolean res = auth.changePassword(authToken, password);
 		if (res){
-			out.println("<br>Insert succeeded");
-		response.sendRedirect("/registerComplete");	
+			out.println("<br>Update succeeded");
+			session.setAttribute("reissueNewPasswordSuccess", "");
+			response.sendRedirect("/reissueNewPassword/"+authToken);	
 		}
-		else
-			out.println("<br>Insert failed.");
+		else {
+			out.println("<br>Update failed.");
+			session.setAttribute("reissueNewPasswordFailure", "");
+			response.sendRedirect("/reissueNewPassword/"+authToken);
+		}
 	%>
 
 	<div class="loading">

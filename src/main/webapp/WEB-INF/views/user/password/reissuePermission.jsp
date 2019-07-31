@@ -1,6 +1,10 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
 	pageEncoding="utf-8"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<% 
+	String success = (String) session.getAttribute("reissuePermissionSuccess");
+	String failure = (String) session.getAttribute("reissuePermissionFailure");
+%>
 <!DOCTYPE HTML>
 <!--
 	Alpha by HTML5 UP
@@ -39,9 +43,20 @@
 					class="fas fa-arrow-left fa-3x faa-passing-reverse animated"></span></a>
 			</section>
 			<header>
-				<h2>Password Reissue Permission</h2>
+				<h2>Reissue Permission</h2>
 			</header>
 				<!-- Form -->
+			<section style="background-color: #E8F9DF;" class="box <%out.print(success); session.setAttribute("reissuePermissionSuccess", "hidden");%>" id="success">
+				<p>
+					パスワードを再発行するために必要なurlは登録されたメールに送信されました <i class="fa fa-check faa-tada animated"></i> 
+					<br />30分経過したら自動的に無効になりますのでご注意ください。
+				</p>
+			</section>
+			<section style="background-color: #F4BAA7;" class="box <%out.print(failure); session.setAttribute("reissuePermissionFailure", "hidden");%>" id="success">
+				<p>
+					メールアドレスまたは生年月日は間違っています<i class="fa fa-times faa-pulse animated"></i> 
+				</p>
+			</section>
 			<section class="box">
 				<form id="form" method="post" action="/sendReissuePermission">
 					<div class="row gtr-50 gtr-uniform">

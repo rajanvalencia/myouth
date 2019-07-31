@@ -303,10 +303,11 @@ public class Participants {
 		ArrayList<String> data = new ArrayList<String>();
 		String query = new String();
 		try {
-			query = "SELECT DISTINCT email FROM participants, event, event_participants WHERE english_e_name = ? AND participants.participant_id = event_participants.participant_id AND event_participants.event_id = event.event_id AND participants.email != ? ";
+			query = "SELECT DISTINCT email FROM participants, event, event_participants WHERE english_e_name = ? AND participants.participant_id = event_participants.participant_id AND event_participants.event_id = event.event_id AND participants.email != ? AND participants.email NOT IN(SELECT email FROM bounced_recipients) ";
 			
 			if(!periodType.equals("allPeriod")) 
-				query += "AND event_participants.join_date >= ? AND event_participants.join_date <= ?";
+				query += "AND event_participants.join_date >= ? AND event_participants.join_date <= ? ";
+			
 			
 			PreparedStatement stmt = conn.prepareStatement(query);
 			stmt.setString(1, event);
@@ -315,7 +316,7 @@ public class Participants {
 			if(!periodType.equals("allPeriod")) {
 				stmt.setString(3, startPeriod);
 				stmt.setString(4, endPeriod);
-			} 
+			}
 			
 			ResultSet rset = stmt.executeQuery();
 			while (rset.next())
@@ -355,10 +356,10 @@ public class Participants {
 		
 		Participants db = new Participants();
 		db.open();
-		ArrayList<String> data = db.survey(event, periodType, startPeriod, endPeriod);
-		int total = db.totalParticipants(event, periodType, startPeriod, endPeriod);
+		//ArrayList<String> data = db.survey(event, periodType, startPeriod, endPeriod);
+		ArrayList<String> data = db.participantsEmailAddress(event, "rajan.valencia@au.com", periodType, startPeriod, endPeriod);
 		db.close();
-		System.out.println(total);
+		//System.out.println(res);
 		System.out.println(data);
 	}
 }

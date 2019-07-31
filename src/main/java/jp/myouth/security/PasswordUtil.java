@@ -1,6 +1,6 @@
 package jp.myouth.security;
 
-import jp.myouth.storage.S3;
+import jp.myouth.storage.DownloadObject;
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -92,7 +92,7 @@ private static final String CLIENT_REGION  = "ap-northeast-1";
     
     public static void main(String[] args) throws IOException { 
         GenerateSecureString gen = new GenerateSecureString(); 
-        S3 s3 = new S3();
+        DownloadObject s3 = new DownloadObject();
         String pepper = s3.download(CLIENT_REGION, BUCKETNAME, KEY);
         String hashedPasswordWithSalt = PasswordUtil.getSafetyPassword("1234", gen.string(500)); 
         String hashedPasswordWithSaltAndPepper = PasswordUtil.getSafetyPassword(hashedPasswordWithSalt, pepper);

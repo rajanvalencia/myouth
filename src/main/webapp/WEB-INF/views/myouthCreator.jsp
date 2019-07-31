@@ -60,6 +60,7 @@
 									<li>Java</li>
 									<li>SQL</li>
 									<li>JavaScript(JQuery)</li>
+									<li>NodeJs</li>
 									<li>HTML</li>
 									<li>CSS</li>
 								</ul>
@@ -90,6 +91,7 @@
 									<li>Certificate Manager</li>
 									<li>Cloud9</li>
 									<li>Cloudfront</li>
+									<li>CloudWatch</li>
 									<li>CodeBuild</li>
 									<li>CodeCommit</li>
 									<li>CodeDeploy</li>
@@ -97,10 +99,12 @@
 									<li>CodeStar</li>
 									<li>EC2</li>
 									<li>IAM</li>
+									<li>Lambda</li>
 									<li>RDS</li>
 									<li>Route53</li>
 									<li>S3</li>
 									<li>SES</li>
+									<li>SNS</li>
 								</ul>
 							</div>
 

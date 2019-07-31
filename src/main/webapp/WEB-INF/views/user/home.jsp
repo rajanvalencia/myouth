@@ -51,7 +51,7 @@
 		<!-- Main -->
 		<section id="main" class="container">
 		<section  class="back-button">
-		<a href="/logoutRedirect"><span class="fas fa-door-open fa-3x"></span><span class="fas fa-arrow-left fa-3x faa-passing-reverse animated"></span></a>
+		<a href="/logoutRedirect"><span class="fas fa-door-open fa-2x"></span><span class="fas fa-arrow-left fa-2x faa-passing-reverse animated"></span></a>
 		</section>
 			<div class="row">
 				<div class="col-12">
@@ -59,7 +59,7 @@
 					<!-- Image -->
 					<section class="box">
 					<span class="image left"><img class="img-responsive" src="https://s3-ap-northeast-1.amazonaws.com/jp.myouth.images/users/default/profile_pic.PNG" alt="" /></span>
-					<span class="image right"><a href="/home/profile" style="border-bottom-color: transparent;"><i class="fa fa-pencil fa-2x faa-wrench animated"></i></a></span>
+					<span class="image right"><a href="/home/profile" style="border-bottom-color: transparent;"><i class="fa fa-2x fa-pencil"></i></a></span>
 					<h2><%out.print(name);%></h2>
 					<h4><%out.print(fname);%></h4>
 					<p><%out.print(word);%></p>

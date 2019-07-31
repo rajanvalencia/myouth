@@ -94,20 +94,86 @@ public class HelloWorldController {
 	}
 	
 	@RequestMapping("registerUser")
-	public ModelAndView registerUser() {
+	public ModelAndView registerUser(HttpServletRequest request) {
+		HttpSession session = request.getSession();
+		
+		if(session.getAttribute("registerUserSuccess") == null)
+			session.setAttribute("registerUserSuccess", "hidden");
+		
+		if(session.getAttribute("registerUserFailure") == null)
+			session.setAttribute("registerUserFailure", "hidden");
+		
+		if(session.getAttribute("registerUserName") == null)
+			session.setAttribute("registerUserName", "");
+		
+		if(session.getAttribute("registerUserFname") == null)
+			session.setAttribute("registerUserFname", "");
+		
+		if(session.getAttribute("registerUserPhone") == null)
+			session.setAttribute("registerUserPhone", "");
+		
+		if(session.getAttribute("registerUserYear") == null)
+			session.setAttribute("registerUserYear", "");
+		
+		if(session.getAttribute("registerUserMonth") == null)
+			session.setAttribute("registerUserMonth", "");
+		
+		if(session.getAttribute("registerUserDay") == null)
+			session.setAttribute("registerUserDay", "\" \"");
+		
 		ModelAndView mv = new ModelAndView("user/registerUser");
+		return mv;
+	}
+	
+	@RequestMapping("insertUser")
+	public ModelAndView insertUser() {
+		ModelAndView mv = new ModelAndView("user/insertUser");
+		return mv;
+	}
+	
+	@RequestMapping("reissueNewPassword/{token}")
+	public ModelAndView reissueNewPassword(HttpServletRequest request, @PathVariable("token") String token) {
+		HttpSession session = request.getSession();
+		session.setAttribute("token", token);
+		
+		if(session.getAttribute("reissueNewPasswordSuccess") == null)
+			session.setAttribute("reissueNewPasswordSuccess", "hidden");
+		
+		if(session.getAttribute("reissueNewPasswordFailure") == null)
+			session.setAttribute("reissueNewPasswordFailure", "hidden");
+		
+		if(session.getAttribute("reissueNewPassword") == null)
+			session.setAttribute("reissueNewPassword", "hidden");
+		
+		ModelAndView mv = new ModelAndView("user/password/reissueNewPassword");
+		return mv;
+	}
+	
+	@RequestMapping("sendReissueNewPassword")
+	public ModelAndView sendReissueNewPassword() {
+		ModelAndView mv = new ModelAndView("user/password/sendReissueNewPassword");
 		return mv;
 	}
 	
 	@RequestMapping("sendReissuePermission")
 	public ModelAndView sendReissuePermission() {
-		ModelAndView mv = new ModelAndView("user/sendReissuePermission");
+		ModelAndView mv = new ModelAndView("user/password/sendReissuePermission");
 		return mv;
 	}
 	
 	@RequestMapping("reissuePermission")
-	public ModelAndView reissuePermission() {
-		ModelAndView mv = new ModelAndView("user/reissuePermission");
+	public ModelAndView reissuePermission(HttpServletRequest request) {
+		HttpSession session = request.getSession();
+		
+		String success = (String) session.getAttribute("reissuePermissionSuccess");
+		if(success == null)
+			session.setAttribute("reissuePermissionSuccess", "hidden");
+		
+		String failure = (String) session.getAttribute("reissuePermissionFailure");
+		if(failure == null)
+			session.setAttribute("reissuePermissionFailure", "hidden");
+		
+		ModelAndView mv = new ModelAndView("user/password/reissuePermission");
 		return mv;
 	}
 	
@@ -146,12 +212,22 @@ public class HelloWorldController {
 	}
 	
 	@RequestMapping("home/changeProfile")
-	public ModelAndView userEdit(HttpServletRequest request) {
+	public ModelAndView changeProfile(HttpServletRequest request) {
 		HttpSession session = request.getSession();
 		Boolean user = (Boolean)session.getAttribute("user");
 		if(user == null)
 			session.setAttribute("user", false);
 		ModelAndView mv = new ModelAndView("user/profile/changeProfile");
+		return mv;
+	}
+	
+	@RequestMapping("home/cropProfilePicture")
+	public ModelAndView cropProfilePicture(HttpServletRequest request) {
+		HttpSession session = request.getSession();
+		Boolean user = (Boolean)session.getAttribute("user");
+		if(user == null)
+			session.setAttribute("user", false);
+		ModelAndView mv = new ModelAndView("user/profile/cropProfilePicture");
 		return mv;
 	}
 	

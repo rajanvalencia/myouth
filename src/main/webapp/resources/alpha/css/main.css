@@ -1474,7 +1474,7 @@
 		}
 
 		@media screen and (max-width: 736px) {
-
+		
 			.row {
 				display: flex;
 				flex-wrap: wrap;
@@ -1719,6 +1719,13 @@
 		}
 
 		@media screen and (max-width: 480px) {
+		
+			.profile-image-center {
+				display: block;
+				margin-left: auto;
+				margin-right: auto;
+				width: 50%;
+			}
 
 			.row {
 				display: flex;
@@ -2161,6 +2168,7 @@
 	input[type="number"],
 	input[type="password"],
 	input[type="email"],
+	input[type="file"],
 	select {
 		height: 3em;
 	}
@@ -2475,6 +2483,14 @@
 		.image img {
 			border-radius: 6px;
 			display: block;
+		}
+		
+		/*Inserted by Rajan Valencia*/	  
+		.profile-image-center {
+			display: block;
+  			margin-left: 0 auto;
+  			margin-right: auto;
+  			width: 50%;
 		}
 
 		.image.left {
@@ -3367,6 +3383,7 @@
 
 			#cta input[type="text"]:focus,
 			#cta input[type="password"]:focus,
+			#cta input[type="email"]:focus,
 			#cta input[type="email"]:focus,
 			#cta select:focus,
 			#cta textarea:focus {

@@ -73,6 +73,9 @@
 				<a href="/home/<%out.print(event);%>/settings"><span
 					class="fas fa-arrow-left fa-3x faa-passing-reverse animated"></span></a>
 			</section>
+			<header>
+				<h2>Edit Event Details</h2>
+			</header>
 			<div class="row">
 				<div class="col-12">
 
@@ -82,7 +85,6 @@
 						<p>詳細設定は変更されました <i class="fa fa-check faa-tada animated"></i></p>
 					</section>
 					<section class="box">
-						<h3><%out.print(eventName);%>詳細設定</h3>
 						<form id="form" method="post"
 							action="/home/<%out.print(event);%>/settings/details/change">
 							<div class="row gtr-uniform gtr-50">

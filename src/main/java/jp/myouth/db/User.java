@@ -126,15 +126,16 @@ public class User {
 		return false;
 	}
 
-	public Boolean register(String userId, String name, String fname, String email, String birthdate) {
+	public Boolean register(String userId, String name, String fname, String email, String phone, String birthdate) {
 		try {
-			String update = "INSERT INTO users (user_id, name, fname, email, birthdate) VALUES(?,?,?,?,?)";
+			String update = "INSERT INTO users (user_id, name, fname, email, phone, birthdate) VALUES(?,?,?,?,?,?)";
 			PreparedStatement stmt = conn.prepareStatement(update);
 			stmt.setString(1, userId);
 			stmt.setString(2, name);
 			stmt.setString(3, fname);
 			stmt.setString(4, email);
-			stmt.setString(5, birthdate);
+			stmt.setString(5, phone);
+			stmt.setString(6, birthdate);
 			int res = stmt.executeUpdate();
 			
 			if(res > 0)
@@ -333,6 +334,23 @@ public class User {
 			else
 				return false;
 			
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
+	public Boolean checkIfEmailDoesNotExist(String email) {
+		try {
+			String query = "SELECT email FROM users WHERE email = ?";
+			PreparedStatement stmt = conn.prepareStatement(query);
+			stmt.setString(1, email);
+			ResultSet rset = stmt.executeQuery();
+			
+			if(rset.next())
+				return false;
+			else 
+				return true;
 		}catch(Exception e) {
 			e.printStackTrace();
 		}

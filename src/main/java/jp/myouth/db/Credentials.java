@@ -99,6 +99,26 @@ public class Credentials {
 		return false;
 	}
 	
+	public Boolean changeUserCredentials(String userId, String hashedPassword, String salt) {
+		try {
+			String update = "UPDATE users_password SET password = ?, salt = ? WHERE user_id = ?";
+			PreparedStatement stmt = conn.prepareStatement(update);
+			stmt.setString(1, hashedPassword);
+			stmt.setString(2, salt);
+			stmt.setString(3, userId);
+			int res = stmt.executeUpdate();
+			
+			if(res > 0)
+				return true;
+			else
+				return false;
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
 	public Boolean checkEmailAndBirthdate(String email, String birthdate) {
 		try {
 			String query = "SELECT email, birthdate FROM users WHERE email = ? AND birthdate = ?";
@@ -114,5 +134,45 @@ public class Credentials {
 			e.printStackTrace();
 		}
 		return false;
+	}
+	
+	public Boolean insertPasswordReissueToken(String token, String userId) {
+		try {
+			String update = "INSERT INTO reissue_password_token (user_id, token) VALUES(?,?)";
+			PreparedStatement stmt = conn.prepareStatement(update);
+			stmt.setString(1, userId);
+			stmt.setString(2, token);
+			int res = stmt.executeUpdate();
+			
+			if(res > 0)
+				return true;
+			else
+				return false;
+			
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
+	public String authTokenUserId(String authToken) {
+		try {
+			String query = "SELECT user_id FROM reissue_password_token WHERE token = ?";
+			PreparedStatement stmt = conn.prepareStatement(query);
+			stmt.setString(1, authToken);
+			ResultSet rset = stmt.executeQuery();
+			
+			String update = "DELETE FROM reissue_password_token WHERE token = ?";
+			PreparedStatement stmt1 = conn.prepareStatement(update);
+			stmt1.setString(1, authToken);
+			stmt1.executeUpdate();
+			
+			if(rset.next())
+				return rset.getString("user_id");
+			return null;
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 }

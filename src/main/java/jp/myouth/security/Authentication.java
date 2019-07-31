@@ -2,9 +2,10 @@ package jp.myouth.security;
 
 import jp.myouth.mail.Templates;
 
+
 import jp.myouth.db.Credentials;
 import jp.myouth.db.User;
-import jp.myouth.storage.S3;
+import jp.myouth.storage.DownloadObject;
 
 import java.io.IOException;
 import java.security.MessageDigest;
@@ -93,7 +94,7 @@ public class Authentication {
 	}
 
 	public Boolean authenticate(String email, String password) throws IOException {
-		S3 s3 = new S3();
+		DownloadObject s3 = new DownloadObject();
 		String pepper = s3.download(CLIENT_REGION, BUCKETNAME, KEY);
 		
 		Credentials db = new Credentials();
@@ -116,12 +117,12 @@ public class Authentication {
 			return false;
 	}
 
-	public Boolean registerUser(String name, String fname, String email, String birthdate, String password) throws Exception {
+	public Boolean registerUser(String name, String fname, String email, String phone, String birthdate, String password) throws Exception {
 		GenerateSecureString gen = new GenerateSecureString();
 		String userId = gen.string(11);
 		String salt = gen.string(50);
 
-		S3 s3 = new S3();
+		DownloadObject s3 = new DownloadObject();
 		String pepper = s3.download(CLIENT_REGION, BUCKETNAME, KEY);
 		String hashedPasswordWithSalt = Authentication.getSafetyPassword(password, salt);
 		String hashedPasswordWithSaltAndPepper = Authentication.getSafetyPassword(hashedPasswordWithSalt, pepper);
@@ -133,7 +134,7 @@ public class Authentication {
 
 		User db1 = new User();
 		db1.open();
-		Boolean res1 = db1.register(userId, name, fname, email, birthdate);
+		Boolean res1 = db1.register(userId, name, fname, email, phone, birthdate);
 		Boolean res2 = db1.verifyEmail(userId, false);
 		db1.close();
 
@@ -146,19 +147,67 @@ public class Authentication {
 			return false;
 	}
 	
+	/*
+	 * メールアドレスと青年月日が一致したらメールアドレスにパスワード再発行するためのurlをメールにて送る*/
 	public Boolean identify(String email, String birthdate) {
+		
+		GenerateSecureString gen = new GenerateSecureString();
+		String token = gen.string(100);
+		
 		Credentials db = new Credentials();
 		db.open();
 		Boolean res = db.checkEmailAndBirthdate(email, birthdate);
+		if(res) {
+			String userId = db.userId(email);
+			db.insertPasswordReissueToken(token, userId);
+		}
 		db.close();
-		if(res)
-			return true;
+		
+		if(res) {
+			Templates send = new Templates();
+			Boolean res1 = send.reissuePassword(email, token);
+			if(res1)
+				return true;
+			else
+				return false;
+		}
 		else
 			return false;
 	}
 	
+	public Boolean changePassword(String authToken, String password) {
+		try {
+			GenerateSecureString gen = new GenerateSecureString();
+			String salt = gen.string(50);
+
+			DownloadObject s3 = new DownloadObject();
+			String pepper = s3.download(CLIENT_REGION, BUCKETNAME, KEY);
+			String hashedPasswordWithSalt = Authentication.getSafetyPassword(password, salt);
+			String hashedPasswordWithSaltAndPepper = Authentication.getSafetyPassword(hashedPasswordWithSalt, pepper);
+
+			Credentials db = new Credentials();
+			db.open();
+			String userId = db.authTokenUserId(authToken);
+			if(userId == null) {
+				db.close();
+				return false;
+			}
+			Boolean res = db.changeUserCredentials(userId, hashedPasswordWithSaltAndPepper, salt);
+			db.close();
+			
+			if(res)
+				return true;
+			else 
+				return false;
+			
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
 	public static void main(String... args) throws IOException{
-		S3 s3 = new S3();
+		DownloadObject s3 = new DownloadObject();
 		String pepper = s3.download(CLIENT_REGION, BUCKETNAME, KEY);
 		System.out.println(pepper);
 	}
