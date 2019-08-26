@@ -17,6 +17,41 @@
 
     <dependencies>
     	<dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <version>2.10.0.pr1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.10.0.pr1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <version>2.10.0.pr1</version>
+        </dependency>
+		<dependency>
+    		<groupId>com.levigo</groupId>
+    		<artifactId>gwt-awt</artifactId>
+    		<version>1.0.1</version>
+		</dependency>
+		<dependency>
+    		<groupId>com.amazonaws</groupId>
+    		<artifactId>aws-java-sdk-translate</artifactId>
+    		<version>1.11.613</version>
+		</dependency>
+		<dependency>
+    		<groupId>com.amazonaws</groupId>
+    		<artifactId>aws-java-sdk-comprehend</artifactId>
+    		<version>1.11.613</version>
+		</dependency>
+    	<dependency>
+    		<groupId>com.amazonaws</groupId>
+    		<artifactId>aws-java-sdk-rekognition</artifactId>
+    		<version>1.11.603</version>
+		</dependency>
+    	<dependency>
     		<groupId>com.itextpdf</groupId>
     		<artifactId>itext-asian</artifactId>
     		<version>5.2.0</version>
@@ -46,31 +81,6 @@
     		<artifactId>poi-ooxml</artifactId>
     		<version>4.1.0</version>
 		</dependency>
-    	<dependency>
-     		<groupId>com.fasterxml.jackson.core</groupId>
-     		<artifactId>jackson-core</artifactId>
-     		<version>2.9.5</version>
- 		</dependency>
- 		<dependency>
-     			<groupId>com.fasterxml.jackson.core</groupId>
-     			<artifactId>jackson-annotations</artifactId>
-     			<version>2.9.0</version>
- 		</dependency>
- 		<dependency>
-     			<groupId>com.fasterxml.jackson.core</groupId>
-     			<artifactId>jackson-databind</artifactId>
-     			<version>2.9.9</version>
-     		<exclusions>
-         	<exclusion>
-             	<groupId>com.fasterxml.jackson.core</groupId>
-             	<artifactId>jackson-core</artifactId>       
-         	</exclusion>
-         	<exclusion>
-             	<groupId>com.fasterxml.jackson.core</groupId>
-             	<artifactId>jackson-annotations</artifactId>        
-         		</exclusion>
-     			</exclusions>
- 		</dependency> 
 		<dependency>
     		<groupId>com.amazonaws</groupId>
     		<artifactId>aws-java-sdk-s3</artifactId>

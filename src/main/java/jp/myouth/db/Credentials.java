@@ -99,6 +99,22 @@ public class Credentials {
 		return false;
 	}
 	
+	public Boolean insertAccountVerificationToken(String userId, String token) {
+		try {
+			String update = "INSERT INTO account_verification_token (user_id, token) VALUES(?,?)";
+			PreparedStatement stmt = conn.prepareStatement(update);
+			stmt.setString(1, userId);
+			stmt.setString(2, token);
+			int res = stmt.executeUpdate();
+			
+			if(res > 0)
+				return true;
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
 	public Boolean changeUserCredentials(String userId, String hashedPassword, String salt) {
 		try {
 			String update = "UPDATE users_password SET password = ?, salt = ? WHERE user_id = ?";
@@ -119,12 +135,11 @@ public class Credentials {
 		return false;
 	}
 	
-	public Boolean checkEmailAndBirthdate(String email, String birthdate) {
+	public Boolean checkEmail(String email) {
 		try {
-			String query = "SELECT email, birthdate FROM users WHERE email = ? AND birthdate = ?";
+			String query = "SELECT email FROM users WHERE email = ?";
 			PreparedStatement stmt = conn.prepareStatement(query); 
 			stmt.setString(1, email);
-			stmt.setString(2, birthdate);
 			ResultSet rset = stmt.executeQuery();
 			if(rset.next())
 				return true;

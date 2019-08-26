@@ -66,7 +66,7 @@ db2.close();
 
 			<!-- Header -->
 			 <header id="header" class="alt reveal">
-				 <h1 class="hidden">誰でも無料にイベント管理が出来るWeb上にあるシステムです。参加申し込み、アンケートデータの分析までの自動処理を行います。一般公開されるまで数か月お待ちください</h1>
+				 <h1 class="hidden">誰でも無料にイベント管理が出来るウエブサービスです。参加申し込み、アンケートデータの分析までの自動処理を行います。</h1>
 					  <!-- <nav id="nav">
 						<ul>
 							<li><a href="index.html">Home</a></li>
@@ -103,7 +103,7 @@ db2.close();
 						<li><a href="login" class="button primary">ログイン</a></li>
 					</ul>
 					<ul>
-					<li><a href="events" class="button">イベント一覧</a></li>
+						<li style="list-style-type: none;"><a href="events" class="button">イベント一覧</a></li>
 					</ul>
 					<h4>現在のイベント数は <% out.print(totalEvents);%></h4>
 					<h4>利用者(管理者)数は <% out.print(totalUsers);%> 人</h4>
@@ -115,12 +115,12 @@ db2.close();
 					<section class="box special">
 						<header class="major">
 							<h2>myouthとは？</h2>
-							<p>誰でも簡単にイベントを主催し、管理することができるサービスです。
+							<p>イベントを管理することができるウエブサービスです。
 							<br />
-							あなたもmyouthでイベントを管理してみませんか?
+							あなたもmyouthでイベントを管理して仕事の大幅な時間短縮を目指しませんか?
 							</p>
 						</header>
-						<span class="image featured"><img src="/resources/images/event.jpg" alt="" /></span>
+						<span class="image featured"><img class="center" src="https://media.giphy.com/media/3oKIPEqDGUULpEU0aQ/giphy.gif" alt="" style="border-radius: 10px;"/></span>
 					</section>
 
 					<section class="box special features">
@@ -133,7 +133,7 @@ db2.close();
 							<section>
 								<span class="icon solid major fa-envelope faa-pulse animated accent3"></span>
 								<h3>コンタクト</h3>
-								<p>一人一人の参加者に対してのメールやイベントごとの参加者への一斉送信などの連絡ができます。</p>
+								<p>各イベントの全参加者への一斉送信などの連絡ができます。その上、既読者数または既読者を把握することができます。</p>
 							</section>
 						</div>
 						<div class="features-row">
@@ -143,33 +143,23 @@ db2.close();
 								<p>利用者（管理者）のアカウント一つでいくつものイベントを運用することができます。その上、各イベントに管理者を登録可能です。</p>
 							</section>
 							<section>
-								<span class="icon solid major fa-lock faa-pulse animated accent5"></span>
-								<h3>セキュリティー</h3>
-								<p>パスワードをデータベースに保存しないアルゴリズムとによって厳重なセキュリティーを確立しています。その他のセキュリティ対策もしています。</p>
+								<span class="icon solid major fa-image faa-pulse animated accent5"></span>
+								<h3>コンテンツ</h3>
+								<p>不適切な画像や投稿を機械学習で自動的に排除します。投稿は多様な言語に対応しています。デザインはレスポンシブであるためPC,スマホー、タブレットで操作可能です。</p>
 							</section>
 						</div>
 					</section>
 
 					<div class="row">
-					<div class="col-6 col-12-narrower">
-
+						<div class="col-12">
 							<section class="box special">
-								<span class="image featured"><img src="https://s3-ap-northeast-1.amazonaws.com/jp.myouth.images/events/multiculturalyouth/myouth-1.jpg" alt="" /></span>
-								<h3>多文化ユース</h3>
-								<p>多文化ユースはmyouthで管理されている最初のイベントです。myouthは多文化ユースの英訳である「multiculturalyouth」からきています。
-								多文化ユースにご興味のある方は詳細をクリックしてください。</p>
-								<ul class="actions special">
-									<li><a href="/events/multiculturalyouth" class="button alt">詳細</a></li>
-								</ul>
-							</section>
-
-						</div>
-						<div class="col-6 col-12-narrower">
-							<section class="box special">
-								<span class="image featured"><img src="https://s3-ap-northeast-1.amazonaws.com/jp.myouth.images/rajanValencia/creator.jpg" alt="" /></span>
-								<h3>Developer</h3>
-								<p>日本に来て<span id="stay"></span>年、フィリピンとインドのミックスで多文化ユースの実行委員の一人でもあります。第一回のイベントで参加者名簿の担当でしたが、その大変さを知ってしまい、自らイベント管理システムを製作しました。
-								資格や成果物などを閲覧したい場合は詳細をクリックしてください。</p>
+								<div class="center">
+									<h3>開発者</h3>
+									<span class="image featured"><img src="https://s3-ap-northeast-1.amazonaws.com/jp.myouth.images/rajanValencia/creator.jpg" alt="" style="border-radius: 10px;"/></span>
+									<p>バレンシア・ラジャン・ザモラです。日本に来て<span id="stay"></span>年、フィリピンとインドのミックスで多文化ユースの実行委員の一人でもあります。</p>
+									<p>第一回のイベントで参加者名簿の担当でしたが、その大変さを知ってしまい、自らイベント管理システムを開発しました。
+									資格や過去のプロジェクトなどを閲覧したい場合は詳細をクリックしてください。</p>
+								</div>
 								<ul class="actions special">
 									<li><a href="myouthCreator" class="button alt">詳細</a></li>
 								</ul>
@@ -218,7 +208,7 @@ db2.close();
 			<script src="/resources/alpha/js/browser.min.js"></script>
 			<script src="/resources/alpha/js/breakpoints.min.js"></script>
 			<script src="/resources/alpha/js/util.js"></script>
-			<script src="/resources/alpha/js/main.js"></script>
+			<!-- <script src="/resources/alpha/js/main.js"></script> -->
 	</body>
 	
 	<script>

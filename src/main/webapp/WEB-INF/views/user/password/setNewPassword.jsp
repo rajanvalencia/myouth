@@ -2,9 +2,7 @@
 	pageEncoding="utf-8"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <% 
-	String success = (String) session.getAttribute("reissueNewPasswordSuccess");
-	String failure = (String) session.getAttribute("reissueNewPasswordFailure");
-	String authToken = (String) session.getAttribute("token");
+	String success = (String) session.getAttribute("setNewPasswordSuccess");
 %>
 <!DOCTYPE HTML>
 <!--
@@ -47,22 +45,17 @@
 				<h2>New Password</h2>
 			</header>
 				<!-- Form -->
-			<section style="background-color: #E8F9DF;" class="box <%out.print(success); session.setAttribute("reissueNewPasswordSuccess", "hidden");%>" id="success">
+			<section style="background-color: #E8F9DF;" class="box <%out.print(success); session.setAttribute("setNewPasswordSuccess", "hidden");%>" id="success">
 				<p>
 					パスワードは正常に変更されました <i class="fa fa-check faa-tada animated"></i> 
 				</p>
 			</section>
-			<section style="background-color: #F4BAA7;" class="box <%out.print(failure); session.setAttribute("reissueNewPasswordFailure", "hidden");%>" id="success">
-				<p>
-					パースワードを変更する権利がありません<i class="fa fa-times faa-pulse animated"></i> 
-				</p>
-			</section>
 			<section class="box">
-				<form id="form" method="post" action="/sendReissueNewPassword">
+				<form id="form" method="post" action="/changeToNewPassword">
 					<div class="row gtr-50 gtr-uniform">
 						<div class="col-12">
-							<label for="password">パスワード<br />(8文字以上で1文字以上の数字、小文字アルファベット、大文字アルファベットがそれぞれ含まれていること)
-							</label> <input type="password" name="password" id="password"
+							<label for="password">パスワード<br />(8文字以上で1文字以上の数字、小文字アルファベット、大文字アルファベットがそれぞれ含まれていること)</label> 
+							<input type="password" name="password" id="password"
 								pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
 								title="8文字以上で1文字以上の数字、小文字アルファベット、大文字アルファベットがそれぞれ含まれていること"
 								value="" required />
@@ -73,7 +66,7 @@
 								pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" value="" required />
 							<br /> <span id='message'></span>
 						</div>
-						<input type="hidden" name="authToken" value="<%out.print(authToken);%>">
+						<input type="hidden" name="userId" value="<%out.print(session.getAttribute("userId"));%>">
 						<div class="col-12">
 							<ul class="actions" id="swap">
 								<li><input id="btn" type="submit" value="パスワードを変更" disabled /></li>
@@ -82,10 +75,6 @@
 					</div>
 				</form>
 			</section>
-			<section class="back-button">
-		<a href="/home"><span
-			class="fas fa-arrow-left fa-3x faa-passing-reverse animated"></span></a>
-	</section>
 	</section>
 
 	<!-- Footer -->

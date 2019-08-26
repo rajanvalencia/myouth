@@ -63,7 +63,7 @@
 							%>ダウンロード
 						</h3>
 						<form id="form" method="post"
-							action="/home/<%out.print(event);%>/download">
+							action="/download">
 							<div class="row gtr-uniform gtr-50">
 								<div class="col-12">
 									<label for="">データの種類を選択</label>

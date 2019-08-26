@@ -63,7 +63,7 @@
 					<div class="box">
 					<div class="row">
 					
-						<form id="form" method="post" action="/events/<%out.print(event);%>/survey/insertSurvey">
+						<form id="form" method="post" action="/insertSurveyData">
 						<div class="row gtr-50 gtr-uniform">
 							<div class="col-6 col-12-mobilep">
 								<label for="eventName">イベント名</label> <input type="text"

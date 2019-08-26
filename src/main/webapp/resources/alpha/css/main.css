@@ -249,6 +249,13 @@
 	.align-right {
 		text-align: right;
 	}
+	
+	.center {
+		display: block;
+		margin-right: auto;
+		margin-left: auto;
+		max-width: 500px;
+	}
 
 /* Row */
 

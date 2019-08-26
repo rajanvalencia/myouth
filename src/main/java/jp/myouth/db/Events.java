@@ -42,9 +42,6 @@ public class Events {
 			}
 	}
 
-	/**
-	 * イベントの情報を取得
-	 */
 	public ArrayList<ArrayList<String>> eventInfo(String event) {
 		ArrayList<ArrayList<String>> list = new ArrayList<ArrayList<String>>();
 		ArrayList<String> info = new ArrayList<String>();
@@ -81,9 +78,6 @@ public class Events {
 		return null;
 	}
 
-	/**
-	 * Instagramのurlを取得
-	 */
 	public String instagramUrl(String event) {
 		String data = new String();
 		try {
@@ -100,9 +94,6 @@ public class Events {
 		return null;
 	}
 
-	/**
-	 * Facebookのurlを取得
-	 */
 	public String facebookUrl(String event) {
 		String data = new String();
 		try {
@@ -119,9 +110,6 @@ public class Events {
 		return null;
 	}
 
-	/**
-	 * Twitterのurlを取得
-	 */
 	public String twitterUrl(String event) {
 		String data = new String();
 		try {
@@ -138,9 +126,6 @@ public class Events {
 		return null;
 	}
 
-	/**
-	 * イベントの開催場所を取得
-	 */
 	public String eventLocation(String event) {
 		String data = new String();
 		try {
@@ -157,9 +142,6 @@ public class Events {
 		return null;
 	}
 
-	/**
-	 * イベントの管理者のメールを取得
-	 */
 	public String eventEmail(String event) {
 		String data = new String();
 		try {
@@ -176,9 +158,6 @@ public class Events {
 		return null;
 	}
 
-	/**
-	 * イベントの目的など取得する
-	 */
 	public String eventDescription(String event) {
 		String data = new String();
 		try {
@@ -195,9 +174,6 @@ public class Events {
 		return null;
 	}
 
-	/**
-	 * イベントのロゴを取得する
-	 */
 	public String eventLogo(String event) {
 		String data = new String();
 		try {
@@ -214,9 +190,6 @@ public class Events {
 		return null;
 	}
 
-	/**
-	 * イベントの名前を取得
-	 */
 	public String eventName(String event) {
 		String data = new String();
 		try {
@@ -321,10 +294,6 @@ public class Events {
 		return null;
 	}
 
-	/*
-	 * イベントの募集開始期間を取得
-	 */
-
 	public ArrayList<String> recruitmentStartDate(String event) {
 		ArrayList<String> data = new ArrayList<String>();
 		try {
@@ -345,10 +314,6 @@ public class Events {
 		}
 		return null;
 	}
-
-	/*
-	 * イベントの募集終了期間を取得
-	 */
 
 	public ArrayList<String> recruitmentEndDate(String event) {
 		ArrayList<String> data = new ArrayList<String>();
@@ -371,9 +336,6 @@ public class Events {
 		return null;
 	}
 
-	/*
-	 * イベントの募集人数制限を取得する
-	 */
 	public int recruitmentLimit(String event) {
 		int data = 0;
 		try {
@@ -410,17 +372,16 @@ public class Events {
 		return null;
 	}
 
-	/**
-	 * イベントの全情報の取得
-	 */
 	public ArrayList<String> allEvents() {
 		ArrayList<String> data = new ArrayList<String>();
 		try {
-			String query = "SELECT e_name, english_e_name FROM event";
+			String query = "SELECT english_e_name, logo_url, e_name, description FROM event, event_logo, event_description WHERE event.event_id = event_logo.event_id AND event.event_id = event_description.event_id";
 			ResultSet rset = stmt.executeQuery(query);
 			while (rset.next()) {
 				data.add(rset.getString("english_e_name"));
+				data.add(rset.getString("logo_url"));
 				data.add(rset.getString("e_name"));
+				data.add(rset.getString("description"));
 			}
 			rset.close();
 			return data;
@@ -430,9 +391,6 @@ public class Events {
 		return null;
 	}
 
-	/**
-	 * 出身国ごとの参加数を取得
-	 */
 	public ArrayList<ArrayList<String>> geoMap(String event) {
 		ArrayList<ArrayList<String>> list = new ArrayList<ArrayList<String>>();
 		ArrayList<String> data = new ArrayList<String>();
@@ -458,9 +416,6 @@ public class Events {
 		return null;
 	}
 
-	/**
-	 * 参加申し込みのデータをデータベスに書き込む
-	 */
 	public Boolean insertParticipantData(String event, String name, String fname, String gender, String email,
 			String phone, Date birthdate, String career, String company, String country, String country2,
 			String country3, String zip, String pref, String address, String allergy, String way) {
@@ -510,9 +465,6 @@ public class Events {
 		return false;
 	}
 
-	/**
-	 * パイチャート用の職種または学年ごとの情報を取得
-	 */
 	public ArrayList<ArrayList<String>> careerPieChart(String event) {
 		ArrayList<ArrayList<String>> list = new ArrayList<ArrayList<String>>();
 		ArrayList<String> data = new ArrayList<String>();
@@ -541,9 +493,6 @@ public class Events {
 		return null;
 	}
 
-	/**
-	 * パイチャート用の参加のきっかけの情報を取得
-	 */
 	public ArrayList<ArrayList<String>> wayPieChart(String event) {
 		ArrayList<ArrayList<String>> list = new ArrayList<ArrayList<String>>();
 		ArrayList<String> data = new ArrayList<String>();
@@ -572,11 +521,7 @@ public class Events {
 		return null;
 	}
 
-	/**
-	 * 会社ごとの参加人数
-	 */
-	public ArrayList<ArrayList<String>> companyTable(String event) {
-		ArrayList<ArrayList<String>> list = new ArrayList<ArrayList<String>>();
+	public ArrayList<String> companyTable(String event) {
 		ArrayList<String> data = new ArrayList<String>();
 		try {
 			String query = "SELECT company, COUNT(*) AS participant_per_company FROM participants, event_participants, event WHERE english_e_name = ? AND event.event_id = event_participants.event_id AND participants.participant_id = event_participants.participant_id GROUP BY company";
@@ -588,19 +533,14 @@ public class Events {
 				data.add(rset.getString("company"));
 				data.add(rset.getString("participant_per_company"));
 			}
-			list.add(data);
-			return list;
+			return data;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return null;
 	}
 
-	/**
-	 * 各イベントのコメントを取得
-	 */
-	public ArrayList<ArrayList<String>> commentsTable(String event) {
-		ArrayList<ArrayList<String>> list = new ArrayList<ArrayList<String>>();
+	public ArrayList<String> commentsTable(String event) {
 		ArrayList<String> data = new ArrayList<String>();
 		try {
 			String query = "SELECT event_survey.satisfaction, event_survey.date, event_survey.time, event_survey.comments FROM event_survey, event WHERE english_e_name = ? AND event.event_id = event_survey.event_id ORDER BY survey_id DESC";
@@ -613,17 +553,13 @@ public class Events {
 				data.add(rset.getString("date") + " " + rset.getString("time"));
 				data.add(rset.getString("comments"));
 			}
-			list.add(data);
-			return list;
+			return data;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return null;
 	}
 
-	/**
-	 * 各イベントの改善案を取得
-	 */
 	public ArrayList<ArrayList<String>> improvementPlansTable(String event) {
 		ArrayList<ArrayList<String>> list = new ArrayList<ArrayList<String>>();
 		ArrayList<String> data = new ArrayList<String>();
@@ -647,14 +583,10 @@ public class Events {
 		return null;
 	}
 
-	/**
-	 * 画像のurlを取得
-	 */
-	public ArrayList<ArrayList<String>> getImage(String event) {
-		ArrayList<ArrayList<String>> list = new ArrayList<ArrayList<String>>();
+	public ArrayList<String> getImage(String event) {
 		ArrayList<String> data = new ArrayList<String>();
 		try {
-			String query = "SELECT url, description FROM event, event_images WHERE event.event_id = event_images.event_id AND english_e_name = ?";
+			String query = "SELECT url, description FROM event, event_images WHERE event.event_id = event_images.event_id AND english_e_name = ? ORDER BY image_id DESC";
 			PreparedStatement stmt = conn.prepareStatement(query);
 			stmt.setString(1, event);
 			ResultSet rset = stmt.executeQuery();
@@ -663,17 +595,13 @@ public class Events {
 				data.add(rset.getString("url"));
 				data.add(rset.getString("description"));
 			}
-			list.add(data);
-			return list;
+			return data;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return null;
 	}
 
-	/**
-	 * イベントのフォームの質問を取得する
-	 */
 	public ArrayList<Boolean> formQuestion(String event) {
 		ArrayList<Boolean> data = new ArrayList<Boolean>();
 		try {
@@ -707,9 +635,6 @@ public class Events {
 		return null;
 	}
 
-	/**
-	 * イベントのアンケートの質問を取得する
-	 */
 	public ArrayList<Boolean> surveyQuestion(String event) {
 		ArrayList<Boolean> data = new ArrayList<Boolean>();
 		try {
@@ -736,9 +661,6 @@ public class Events {
 		return null;
 	}
 
-	/**
-	 * アンケートの結果を入力する
-	 */
 	public Boolean insertSurveyData(String event, String name, String fname, String satisfaction, String comments,
 			String improvement, ArrayList<Boolean> transportation, String repetition) {
 		String event_id = new String();
@@ -818,10 +740,6 @@ public class Events {
 		return null;
 	}
 
-	/*
-	 * イベントの合計参加者を取得する
-	 */
-
 	public int totalParticipants(String event) {
 		try {
 			Integer total = 0;
@@ -839,10 +757,6 @@ public class Events {
 		}
 		return 0;
 	}
-
-	/*
-	 * イベントの詳細を変更する
-	 */
 
 	public Boolean changeEventDetails(String event, String eventName, String eventPlace, String eventDate,
 			String recruitmentStartDate, String recruitmentEndDate, String eventTime, String recruitNo) {
@@ -869,10 +783,23 @@ public class Events {
 		}
 		return false;
 	}
-
-	/*
-	 * イベントの参加申し込みの質問を変更する
-	 */
+	
+	public Boolean updateEventDescription(String event, String description) {
+		try {
+		String update = "UPDATE event, event_description SET event_description.description = ? WHERE event.event_id = event_description.event_id AND event.english_e_name = ?";
+		PreparedStatement stmt = conn.prepareStatement(update);
+		stmt.setString(1, description);
+		stmt.setString(2, event);
+		int res = stmt.executeUpdate();
+		
+		if(res > 0)
+			return true;
+		
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
 
 	public Boolean changeFormQuestion(String event, Boolean name, Boolean fname, Boolean gender, Boolean email,
 			Boolean phone, Boolean birthdate, Boolean company, Boolean career, Boolean country, Boolean country2,
@@ -916,10 +843,6 @@ public class Events {
 		}
 		return false;
 	}
-
-	/*
-	 * イベントの参加申し込みの質問を変更する
-	 */
 
 	public Boolean changeSurveyQuestion(String event, Boolean name, Boolean fname, Boolean satisfaction,
 			Boolean comments, Boolean transportation, Boolean improvements, Boolean repetition) {
@@ -1103,5 +1026,47 @@ public class Events {
 		}
 		return data;
 	}
-		
+	
+	public ArrayList<String> eventPageMember(String event){
+		ArrayList<String> data = new ArrayList<String>();
+		try {
+			String query = "SELECT user_profile_picture.path, users.name FROM users, user_event, event, user_profile_picture WHERE users.user_id = user_profile_picture.user_id AND users.user_id = user_event.user_id AND event.event_id = user_event.event_id AND event.english_e_name = ?";
+			PreparedStatement stmt = conn.prepareStatement(query);
+			stmt.setString(1, event);
+			ResultSet rset = stmt.executeQuery();
+
+			while(rset.next()) {
+				data.add(rset.getString("path"));
+				data.add(rset.getString("name"));
+			}
+			
+			return data;
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public ArrayList<String> searchEvents(String search) {
+		ArrayList<String> data = new ArrayList<String>();
+		try {
+			String query = "SELECT english_e_name, logo_url, e_name, SUBSTRING(description, 1, 38) AS description FROM event, event_logo, event_description WHERE event.event_id = event_logo.event_id AND event.event_id = event_description.event_id AND (e_name LIKE ? OR english_e_name LIKE ?)";
+			PreparedStatement stmt = conn.prepareStatement(query);
+			stmt.setString(1, "%"+search+"%");
+			stmt.setString(2, "%"+search+"%");
+			ResultSet rset = stmt.executeQuery();
+			
+			while(rset.next()) {
+				data.add(rset.getString("english_e_name"));
+				data.add(rset.getString("logo_url"));
+				data.add(rset.getString("e_name"));
+				data.add(rset.getString("description"));
+			}
+			
+			return data;
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 }

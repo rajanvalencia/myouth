@@ -1,20 +1,22 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
 	pageEncoding="utf-8"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
-<%@ page import="java.util.ArrayList" %>
+<%@ page import="jp.myouth.tables.*" %>
 <%@ page import="jp.myouth.db.User"%>
 <%
 	Boolean user = (Boolean) session.getAttribute("user");
 	if (!user)
 		response.sendRedirect("/login");
+	
 	String userId = (String) session.getAttribute("userId");
 	String event = (String) session.getAttribute("event");
+	
 	User db = new User();
 	db.open();
 	String name = db.name(userId);
 	String fname = db.fname(userId);
 	String word = db.word(userId);
-	ArrayList<String> list = db.managingEvents(userId);
+	String path = db.userProfilePicture(userId);
 	db.close();
 %>
 <!DOCTYPE HTML>
@@ -31,8 +33,7 @@
 	content="width=device-width, initial-scale=1, user-scalable=no" />
 <link rel="stylesheet" href="/resources/alpha/css/main.css" />
 <link rel="stylesheet" href="/resources/css/font-awesome-animation.css">
-<link rel="stylesheet"
-	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css">
 
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=UA-143752853-1"></script>
@@ -58,45 +59,38 @@
 
 					<!-- Image -->
 					<section class="box">
-					<span class="image left"><img class="img-responsive" src="https://s3-ap-northeast-1.amazonaws.com/jp.myouth.images/users/default/profile_pic.PNG" alt="" /></span>
-					<span class="image right"><a href="/home/profile" style="border-bottom-color: transparent;"><i class="fa fa-2x fa-pencil"></i></a></span>
-					<h2><%out.print(name);%></h2>
-					<h4><%out.print(fname);%></h4>
-					<p><%out.print(word);%></p>
+						<div class="row gtr-50 gtr-uniform">
+							<div class="col-3 col-5-mobile">
+								<img style="border-radius: 50%;" src="https://s3-ap-northeast-1.amazonaws.com/jp.myouth.images/<% out.print(path);%>" alt="" width="130"/>
+							</div>
+							<div class="col-8 col-5-mobile">
+								<h3><%out.print(name);%></h3>
+								<h4><%out.print(fname);%></h4>
+								<p><%out.print(word);%></p>
+							</div>
+							<div class="col-1 col-2-mobile">
+								<a href="/home/profile" style="border-bottom-color: transparent;"><span class="fa fa-cog fa-2x faa-spin animated"></span></a>
+							</div>
+						</div>
 					</section>
 					
 					<section class="box">
 					<div class="row">
 					<div class="col-6 col-12-mobilep">
-					<h3>Events</h3>
+					<h3>管理するイベント</h3>
 					</div>
 					<div class="col-6 col-12-mobilep">
 					<ul class="actions">
-						<li><a href="#" class="button special"><i class="fa fa-plus faa-pulse animated"></i>    イベント作成</a></li>
+						<li><a href="#" class="button special"><span class="fa fa-plus faa-pulse animated"></span> イベント作成</a></li>
 					</ul>
 					</div>
 					</div>
-					<div class="table-wrapper">
-					<table>
-					<tbody>
 					<%
-					int i = 0;
-					for(String string : list){
-						if(i % 2 == 0)
-							out.println("<tr><td>"+string+"</td>");
-						else {
-							out.println("<td><a href=\"/events/"+string+"\"><i class=\"fa fa-home faa-tada animated-hover\"></i></a></td>");
-							out.println("<td><a href=\"/home/"+string+"/settings\"><i class=\"fa fa-cog faa-spin animated-hover\"></i></a></td>");
-							out.println("<td><a href=\"/home/"+string+"/participants\"><i class=\"fa fa-users faa-tada animated-hover\"></i></a></td>");
-							out.println("<td><a href=\"/home/"+string+"/downloadSettings\"><i class=\"fa fa-download faa-tada animated-hover\"></i></a></td>");
-							out.println("<td><a href=\"/home/"+string+"/mail\"><i class=\"fa fa-envelope faa-tada animated-hover\"></i></a></td>");
-						}
-						i++;
-					}
+						UserPageEventLists lists = new UserPageEventLists();
+						lists.append(request);
+						out.print(request.getAttribute("userPageEventLists"));
+						request.removeAttribute("userPageEventLists");
 					%>
-					</tbody>
-					</table>
-					</div>
 					</section>
 				</div>
 			</div>
@@ -128,49 +122,5 @@
 	<script src="/resources/alpha/js/breakpoints.min.js"></script>
 	<script src="/resources/alpha/js/util.js"></script>
 	<script src="/resources/alpha/js/main.js"></script>
-	<script>
-	$(window).on('load', function(){
-		
-		$('.img-responsive').each(function() {
-			var maxWindowWidth = $(window).width(); // New width
-			if(maxWindowWidth >= 1240){
-				var maxWidth = 350; // Max width for the image
-			    var maxHeight = 150; // Max height for the image
-			} else if(maxWindowWidth <= 736 && maxWindowWidth > 480){
-				var maxWidth = 200; // Max width for the image
-			    var maxHeight = 150; // Max height for the image
-			}
-			else {
-		    	var maxWidth = 100; // Max width for the image
-		    	var maxHeight = 150; // Max height for the image
-			}
-		    var ratio = 0;  // Used for aspect ratio
-		    var width = $(this).width();    // Current image width
-		    var height = $(this).height();  // Current image height
-
-		    // Check if the current width is larger than the max
-		    if(width > maxWidth){
-		        ratio = maxWidth / width;   // get ratio for scaling image
-		        $(this).css("width", maxWidth); // Set new width
-		        $(this).css("height", height * ratio);  // Scale height based on ratio
-		        height = height * ratio;    // Reset height to match scaled image
-		    }
-
-		    var width = $(this).width();    // Current image width
-		    var height = $(this).height();  // Current image height
-
-		    // Check if current height is larger than max
-		    if(height > maxHeight){
-		        ratio = maxHeight / height; // get ratio for scaling image
-		        $(this).css("height", maxHeight);   // Set new height
-		        $(this).css("width", width * ratio);    // Scale width based on ratio
-		        width = width * ratio;    // Reset width to match scaled image
-		    }
-			
-			});
-			
-		});
-	</script>
-
 </body>
 </html>

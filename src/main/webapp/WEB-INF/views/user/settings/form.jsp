@@ -85,7 +85,7 @@
 					<section class="box">
 						<h3><%out.print(eventName);%>参加申し込み設定</h3>
 						<form id="form" method="post"
-							action="/home/multiculturalyouth/settings/form/change">
+							action="/changeForm">
 							<div class="row gtr-uniform gtr-50">
 								<div class="col-4 col-12-narrower">
 									<input type="checkbox" id="name" name="name" value="true" <%if(name) out.print("checked");%>>

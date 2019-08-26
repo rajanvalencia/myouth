@@ -1,23 +1,11 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
 	pageEncoding="utf-8"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
-<%@ page import="jp.myouth.db.User"%>
 <%@ page import="java.util.ArrayList"%>
-<%
-	Boolean user = (Boolean) session.getAttribute("user");
-	if (!user)
-		response.sendRedirect("/login");
-	String userId = (String) session.getAttribute("userId");
-	String event = (String) session.getAttribute("event");
-	
-	ArrayList<String> searchResults = (ArrayList<String>) session.getAttribute("searchResults");
-	
-	User db = new User();
-	db.open();
-	ArrayList<String> data = db.eventMember(event);
-	db.close();
-	
-	int i = 0;
+<%@ page import="jp.myouth.tables.*" %>
+<% 
+String event = (String) session.getAttribute("event");
+ArrayList<String> searchResults = (ArrayList<String>) session.getAttribute("searchResults");
 %>
 <!DOCTYPE HTML>
 <!--
@@ -64,7 +52,7 @@
 					<section class="box">
 						<div class="col-12 col-12-mobilep">
 							<section class="box">
-								<form method="post" action="/home/<%out.print(event);%>/settings/member/search">
+								<form method="post" action="/memberSearch">
 									<div class="row gtr-uniform gtr-50">
 										<div class="col-9 col-12-mobilep">
 											<input type="text" name="search" id="search" value=""
@@ -79,17 +67,9 @@
 								<tbody>
 										<%
 											if (searchResults != null) {
-												i = 0;
-												for (String string : searchResults) {
-													if (i % 2 == 0)
-														out.print(
-																"<tr><td><img class=\"img-responsive\" src=\"https://s3-ap-northeast-1.amazonaws.com/jp.myouth.images/users/default/profile_pic.PNG\" alt=\"\" /></td><td>"
-																		+ string + "</td>");
-													else
-														out.println("<td><a href=\"/home/" + event + "/settings/member/add/"+ string
-																+ "\"><i class=\"fa fa-user-plus faa-pulse animated faa-hover\"></i></a></td></tr>");
-													i++;
-												}
+												SearchMemberList searchMemberList = new SearchMemberList();
+												searchMemberList.append(request, response);
+												out.println(request.getAttribute("searchMemberList"));
 											}
 										%>
 									</tbody>
@@ -99,19 +79,10 @@
 								<tbody>
 								<%
 									if (searchResults == null) {
-										i = 0;
-										for (String string : data) {
-											if (i % 2 == 0)
-												out.print(
-														"<tr><td><img class=\"img-responsive\" src=\"https://s3-ap-northeast-1.amazonaws.com/jp.myouth.images/users/default/profile_pic.PNG\" alt=\"\" /></td><td>"
-																+ string + "</td>");
-											else
-												out.println("<td><a href=\"/home/" + event + "/settings/member/remove/"+ string
-														+ "\"><i class=\"fa fa-remove faa-pulse animated faa-hover\"></i></a></td></tr>");
-											i++;
-										}
+										MemberList memberList = new MemberList();
+										memberList.append(request, response);
+										out.println(request.getAttribute("memberList"));
 									}
-								session.setAttribute("searchResults", null);
 								%>
 								</tbody>
 							</table>
@@ -154,49 +125,5 @@
 	<script src="/resources/alpha/js/breakpoints.min.js"></script>
 	<script src="/resources/alpha/js/util.js"></script>
 	<script src="/resources/alpha/js/main.js"></script>
-	<script>
-	$(window).on('load', function(){
-		
-		$('.img-responsive').each(function() {
-			var maxWindowWidth = $(window).width(); // New width
-			if(maxWindowWidth >= 1240){
-				var maxWidth = 70; // Max width for the image
-			    var maxHeight = 70; // Max height for the image
-			} else if(maxWindowWidth <= 736 && maxWindowWidth > 480){
-				var maxWidth = 50; // Max width for the image
-			    var maxHeight = 50; // Max height for the image
-			}
-			else {
-		    	var maxWidth = 50; // Max width for the image
-		    	var maxHeight = 50; // Max height for the image
-			}
-		    var ratio = 0;  // Used for aspect ratio
-		    var width = $(this).width();    // Current image width
-		    var height = $(this).height();  // Current image height
-
-		    // Check if the current width is larger than the max
-		    if(width > maxWidth){
-		        ratio = maxWidth / width;   // get ratio for scaling image
-		        $(this).css("width", maxWidth); // Set new width
-		        $(this).css("height", height * ratio);  // Scale height based on ratio
-		        height = height * ratio;    // Reset height to match scaled image
-		    }
-
-		    var width = $(this).width();    // Current image width
-		    var height = $(this).height();  // Current image height
-
-		    // Check if current height is larger than max
-		    if(height > maxHeight){
-		        ratio = maxHeight / height; // get ratio for scaling image
-		        $(this).css("height", maxHeight);   // Set new height
-		        $(this).css("width", width * ratio);    // Scale width based on ratio
-		        width = width * ratio;    // Reset width to match scaled image
-		    }
-			
-			});
-			
-		});
-	</script>
-	
 </body>
 </html>

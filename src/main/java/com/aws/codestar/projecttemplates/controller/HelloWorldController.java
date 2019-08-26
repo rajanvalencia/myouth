@@ -1,6 +1,9 @@
 package com.aws.codestar.projecttemplates.controller;
 
+import java.io.IOException;
+
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.stereotype.Controller;
@@ -8,6 +11,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+
+import jp.myouth.db.User;
 
 /**
  * Basic Spring MVC controller that handles all GET requests.
@@ -81,18 +86,6 @@ public class HelloWorldController {
 		return mv;
 	}
 	
-	@RequestMapping("logoutRedirect")
-	public ModelAndView logoutRedirect() {
-		ModelAndView mv = new ModelAndView("logoutRedirect");
-		return mv;
-	}
-
-	@RequestMapping("loginRedirect")
-	public ModelAndView loginRedirect() {
-		ModelAndView mv = new ModelAndView("loginRedirect");
-		return mv;
-	}
-	
 	@RequestMapping("registerUser")
 	public ModelAndView registerUser(HttpServletRequest request) {
 		HttpSession session = request.getSession();
@@ -125,39 +118,20 @@ public class HelloWorldController {
 		return mv;
 	}
 	
-	@RequestMapping("insertUser")
-	public ModelAndView insertUser() {
-		ModelAndView mv = new ModelAndView("user/insertUser");
-		return mv;
-	}
-	
-	@RequestMapping("reissueNewPassword/{token}")
-	public ModelAndView reissueNewPassword(HttpServletRequest request, @PathVariable("token") String token) {
+	@RequestMapping("setNewPassword/{token}")
+	public void setNewPasswordWithToken(HttpServletRequest request, HttpServletResponse response, @PathVariable("token") String token) throws IOException {
 		HttpSession session = request.getSession();
 		session.setAttribute("token", token);
-		
-		if(session.getAttribute("reissueNewPasswordSuccess") == null)
-			session.setAttribute("reissueNewPasswordSuccess", "hidden");
-		
-		if(session.getAttribute("reissueNewPasswordFailure") == null)
-			session.setAttribute("reissueNewPasswordFailure", "hidden");
-		
-		if(session.getAttribute("reissueNewPassword") == null)
-			session.setAttribute("reissueNewPassword", "hidden");
-		
-		ModelAndView mv = new ModelAndView("user/password/reissueNewPassword");
-		return mv;
+		response.sendRedirect("/processPasswordToken");
 	}
 	
-	@RequestMapping("sendReissueNewPassword")
-	public ModelAndView sendReissueNewPassword() {
-		ModelAndView mv = new ModelAndView("user/password/sendReissueNewPassword");
-		return mv;
-	}
-	
-	@RequestMapping("sendReissuePermission")
-	public ModelAndView sendReissuePermission() {
-		ModelAndView mv = new ModelAndView("user/password/sendReissuePermission");
+	@RequestMapping("setNewPassword")
+	public ModelAndView setNewPassword(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		HttpSession session = request.getSession();
+		if(session.getAttribute("setNewPasswordSuccess") == null)
+			session.setAttribute("setNewPasswordSuccess", "hidden");
+		
+		ModelAndView mv = new ModelAndView("/user/password/setNewPassword");
 		return mv;
 	}
 	
@@ -177,17 +151,16 @@ public class HelloWorldController {
 		return mv;
 	}
 	
-	@RequestMapping("registerComplete")
-	public ModelAndView registerComplete() {
-		ModelAndView mv = new ModelAndView("user/registerComplete");
-		return mv;
+	@RequestMapping("emailVerification/{token}")
+	public void verifyEmail(HttpServletRequest request, HttpServletResponse response, @PathVariable ("token") String token) throws IOException {
+		HttpSession session= request.getSession();
+		session.setAttribute("token", token);
+		response.sendRedirect("/verifyEmail");
 	}
 	
-	@RequestMapping("emailVerification/{userId}")
-	public ModelAndView emailVerification(HttpServletRequest request, @PathVariable ("userId") String userId) {
-		HttpSession session = request.getSession();
-		session.setAttribute("userId", userId);
-		ModelAndView mv = new ModelAndView("user/verification");
+	@RequestMapping("emailVerification")
+	public ModelAndView emailVerification() {
+		ModelAndView mv = new ModelAndView("user/emailVerification");
 		return mv;
 	}
 
@@ -253,18 +226,7 @@ public class HelloWorldController {
 		ModelAndView mv = new ModelAndView("user/downloadSettings");
 		return mv;
     }
-	
-	@RequestMapping("home/{event}/download")
-	public ModelAndView download(HttpServletRequest request, @PathVariable("event") String event) {
-		HttpSession session = request.getSession();
-		Boolean user = (Boolean)session.getAttribute("user");
-		if(user == null)
-			session.setAttribute("user", false);
-		session.setAttribute("event", event);
-		ModelAndView mv = new ModelAndView("user/download");
-		return mv;
-    }
-	
+
 	@RequestMapping("home/{event}/mail")
 	public ModelAndView mail(HttpServletRequest request, @PathVariable("event") String event) {
 		HttpSession session = request.getSession();
@@ -276,17 +238,6 @@ public class HelloWorldController {
 			session.setAttribute("success", "hidden");
 		session.setAttribute("event", event);
 		ModelAndView mv = new ModelAndView("user/mail");
-		return mv;
-	}
-	
-	@RequestMapping("home/{event}/mail/send")
-	public ModelAndView sendMail(HttpServletRequest request, @PathVariable("event") String event) {
-		HttpSession session = request.getSession();
-		Boolean user = (Boolean)session.getAttribute("user");
-		if(user == null)
-			session.setAttribute("user", false);
-		session.setAttribute("event", event);
-		ModelAndView mv = new ModelAndView("user/send");
 		return mv;
 	}
 	
@@ -329,17 +280,6 @@ public class HelloWorldController {
 		return mv;
 	}
 	
-	@RequestMapping("home/{event}/settings/form/change")
-	public ModelAndView changeFormSettings(HttpServletRequest request, @PathVariable("event") String event) {
-		HttpSession session = request.getSession();
-		Boolean user = (Boolean)session.getAttribute("user");
-		if(user == null)
-			session.setAttribute("user", false);
-		session.setAttribute("event", event);
-		ModelAndView mv = new ModelAndView("user/settings/changeForm");
-		return mv;
-	}
-	
 	@RequestMapping("home/{event}/settings/survey")
 	public ModelAndView surveySettings(HttpServletRequest request, @PathVariable("event") String event) {
 		HttpSession session = request.getSession();
@@ -354,28 +294,6 @@ public class HelloWorldController {
 		return mv;
 	}
 	
-	@RequestMapping("home/{event}/settings/survey/change")
-	public ModelAndView changeSurveySettings(HttpServletRequest request, @PathVariable("event") String event) {
-		HttpSession session = request.getSession();
-		Boolean user = (Boolean)session.getAttribute("user");
-		if(user == null)
-			session.setAttribute("user", false);
-		session.setAttribute("event", event);
-		ModelAndView mv = new ModelAndView("user/settings/changeSurvey");
-		return mv;
-	}
-	
-	@RequestMapping("home/{event}/settings/details/change")
-	public ModelAndView changeDetails(HttpServletRequest request, @PathVariable("event") String event) {
-		HttpSession session = request.getSession();
-		Boolean user = (Boolean)session.getAttribute("user");
-		if(user == null)
-			session.setAttribute("user", false);
-		session.setAttribute("event", event);
-		ModelAndView mv = new ModelAndView("user/settings/changeDetails");
-		return mv;
-	}
-	
 	@RequestMapping("home/{event}/settings/member")
 	public ModelAndView member(HttpServletRequest request, @PathVariable("event") String event) {
 		HttpSession session = request.getSession();
@@ -387,38 +305,39 @@ public class HelloWorldController {
 		return mv;
 	}
 	
-	@RequestMapping("home/{event}/settings/member/search")
-	public ModelAndView memberSearch(HttpServletRequest request, @PathVariable("event") String event) {
-		HttpSession session = request.getSession();
-		Boolean user = (Boolean)session.getAttribute("user");
-		if(user == null)
-			session.setAttribute("user", false);
-		session.setAttribute("event", event);
-		ModelAndView mv = new ModelAndView("user/settings/memberSearch");
-		return mv;
-	}
-	
 	@RequestMapping("home/{event}/settings/member/add/{userId}")
-	public ModelAndView memberAdd(HttpServletRequest request, @PathVariable("event") String event, @PathVariable("userId") String userId) {
+	public ModelAndView memberAdd(HttpServletRequest request, HttpServletResponse response, @PathVariable("event") String event, @PathVariable("userId") String userId) throws IOException {
 		HttpSession session = request.getSession();
-		Boolean user = (Boolean)session.getAttribute("user");
-		if(user == null)
-			session.setAttribute("user", false);
-		session.setAttribute("event", event);
-		session.setAttribute("addUser", userId);
-		ModelAndView mv = new ModelAndView("user/settings/memberAdd");
+		
+		Boolean user = (Boolean) session.getAttribute("user");
+		
+		if(!user)
+			response.sendRedirect("/login");
+		
+		User db = new User();
+		db.open();
+		db.memberAdd(event, userId);
+		db.close();
+		
+		ModelAndView mv = new ModelAndView("user/settings/member");
 		return mv;
 	}
 	
 	@RequestMapping("home/{event}/settings/member/remove/{userId}")
-	public ModelAndView memberRemove(HttpServletRequest request, @PathVariable("event") String event, @PathVariable("userId") String userId) {
+	public ModelAndView memberRemove(HttpServletRequest request, HttpServletResponse response, @PathVariable("event") String event, @PathVariable("userId") String userId) throws IOException {
 		HttpSession session = request.getSession();
-		Boolean user = (Boolean)session.getAttribute("user");
-		if(user == null)
-			session.setAttribute("user", false);
-		session.setAttribute("event", event);
-		session.setAttribute("removeUser", userId);
-		ModelAndView mv = new ModelAndView("user/settings/memberRemove");
+		
+		Boolean user = (Boolean) session.getAttribute("user");
+		
+		if(!user)
+			response.sendRedirect("/login");
+		
+		User db = new User();
+		db.open();
+		db.memberRemove(event, userId);
+		db.close();
+		
+		ModelAndView mv = new ModelAndView("user/settings/member");
 		return mv;
 	}
 	
@@ -443,41 +362,10 @@ public class HelloWorldController {
 		return "survey";
 	}
 
-	@RequestMapping("events/{eventname}/survey/insertSurvey")
-	public String insertSurveyData(HttpServletRequest request, @PathVariable("eventname") String eventname) {
-		HttpSession session = request.getSession(true);
-		session.setAttribute("event", eventname);
-		return "insertSurvey";
-	}
-
-	@RequestMapping("events/{eventname}/survey/success")
-	public String surveysuccess(HttpServletRequest request, @PathVariable("eventname") String eventname) {
-		HttpSession session = request.getSession(true);
-		session.setAttribute("event", eventname);
-		session.setAttribute("survey", true);
-		return "success";
-	}
-
 	@RequestMapping("events/{eventname}")
 	public String eventPage(HttpServletRequest request, @PathVariable("eventname") String eventname) {
 		HttpSession session = request.getSession(true);
 		session.setAttribute("event", eventname);
 		return "eventPageTemplate";
-	}
-
-	@RequestMapping("events/{eventname}/form/success")
-	public ModelAndView success(HttpServletRequest request, @PathVariable("eventname") String eventname) {
-		HttpSession session = request.getSession(true);
-		session.setAttribute("event", eventname);
-		session.setAttribute("survey", false);
-		ModelAndView mv = new ModelAndView("success");
-		return mv;
-	}
-
-	@RequestMapping("events/{eventname}/form/insertForm")
-	public String insert(HttpServletRequest request, @PathVariable("eventname") String eventname) {
-		HttpSession session = request.getSession(true);
-		session.setAttribute("event", eventname);
-		return "insertForm";
 	}
 }

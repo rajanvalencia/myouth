@@ -2,8 +2,12 @@
   font-size: 25px;
 }
 
-.checked {
+.light {
   color: orange;
+}
+
+.dark {
+	color: #979696;
 }
 
 /* Three column layout */

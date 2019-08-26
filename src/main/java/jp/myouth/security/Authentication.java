@@ -117,10 +117,11 @@ public class Authentication {
 			return false;
 	}
 
-	public Boolean registerUser(String name, String fname, String email, String phone, String birthdate, String password) throws Exception {
+	public Boolean registerUser(String name, String fname, String email, String phone, String birthdate, String password) throws IOException {
 		GenerateSecureString gen = new GenerateSecureString();
 		String userId = gen.string(11);
 		String salt = gen.string(50);
+		String token = gen.string(100);
 
 		DownloadObject s3 = new DownloadObject();
 		String pepper = s3.download(CLIENT_REGION, BUCKETNAME, KEY);
@@ -130,18 +131,20 @@ public class Authentication {
 		Credentials db = new Credentials();
 		db.open();
 		Boolean res = db.insertUserCredentials(userId, hashedPasswordWithSaltAndPepper, salt);
+		Boolean res1 = db.insertAccountVerificationToken(userId, token);
 		db.close();
 
 		User db1 = new User();
 		db1.open();
-		Boolean res1 = db1.register(userId, name, fname, email, phone, birthdate);
-		Boolean res2 = db1.verifyEmail(userId, false);
+		Boolean res2 = db1.register(userId, name, fname, email, phone, birthdate);
+		Boolean res3 = db1.verifyEmail(userId, false);
+		Boolean res4 = db1.insertOrUpdateUserProfilePicture(userId, "users/default/profile_pic.PNG");
 		db1.close();
 
 		Templates send = new Templates();
-		Boolean res3 = send.accountVerificationMail(name, email, userId);
+		Boolean res5 = send.accountVerificationMail(name, email, token);
 
-		if (res && res1 && res2 && res3)
+		if (res && res1 && res2 && res3 && res4 && res5)
 			return true;
 		else
 			return false;
@@ -149,14 +152,14 @@ public class Authentication {
 	
 	/*
 	 * メールアドレスと青年月日が一致したらメールアドレスにパスワード再発行するためのurlをメールにて送る*/
-	public Boolean identify(String email, String birthdate) {
+	public Boolean identify(String email) {
 		
 		GenerateSecureString gen = new GenerateSecureString();
 		String token = gen.string(100);
 		
 		Credentials db = new Credentials();
 		db.open();
-		Boolean res = db.checkEmailAndBirthdate(email, birthdate);
+		Boolean res = db.checkEmail(email);
 		if(res) {
 			String userId = db.userId(email);
 			db.insertPasswordReissueToken(token, userId);
@@ -165,7 +168,7 @@ public class Authentication {
 		
 		if(res) {
 			Templates send = new Templates();
-			Boolean res1 = send.reissuePassword(email, token);
+			Boolean res1 = send.setNewPassword(email, token);
 			if(res1)
 				return true;
 			else
@@ -175,7 +178,7 @@ public class Authentication {
 			return false;
 	}
 	
-	public Boolean changePassword(String authToken, String password) {
+	public Boolean changePassword(String userId, String password) {
 		try {
 			GenerateSecureString gen = new GenerateSecureString();
 			String salt = gen.string(50);
@@ -187,11 +190,6 @@ public class Authentication {
 
 			Credentials db = new Credentials();
 			db.open();
-			String userId = db.authTokenUserId(authToken);
-			if(userId == null) {
-				db.close();
-				return false;
-			}
 			Boolean res = db.changeUserCredentials(userId, hashedPasswordWithSaltAndPepper, salt);
 			db.close();
 			

@@ -74,7 +74,7 @@
 							%>一斉送信
 						</h3>
 						<form id="form" method="post"
-							action="/home/<%out.print(event);%>/mail/send">
+							action="/sendMessage">
 							<div class="row gtr-uniform gtr-50">
 							<div class="col-12">
 									<label for="">参加者の申し込み期間を選択</label>

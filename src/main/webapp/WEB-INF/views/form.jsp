@@ -81,7 +81,7 @@
 					<div class="box">
 					<div class="row">
 					
-						<form id="form" method="post" action="/events/<%out.print(event);%>/form/insertForm">
+						<form id="form" method="post" action="/insertParticipantData">
 						<div class="row gtr-50 gtr-uniform">
 							<div class="col-6 col-12-mobilep">
 								<h3><%out.print(eventName);%>参加申し込み</h3>

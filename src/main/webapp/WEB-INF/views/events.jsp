@@ -1,14 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
 	pageEncoding="utf-8"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
-<%@ page import="jp.myouth.db.Events"%>
-<%@ page import="java.util.ArrayList"%>
-<% 
-Events db = new Events();
-db.open();
-ArrayList<String> data = db.allEvents();
-db.close();
-%>
+<%@ page import="jp.myouth.tables.EventLists" %>
 <!DOCTYPE HTML>
 <!--
 	Alpha by HTML5 UP
@@ -44,28 +37,28 @@ db.close();
 		<section  class="back-button">
 		<a href="/"><span class="fas fa-arrow-left fa-3x faa-passing-reverse animated"></span></a>
 		</section>
-		<header>
-		<h2>Events</h2>
-		</header>
 			<div class="row">
 				<div class="col-12">
 
 					<!-- Image -->
 					<section class="box">
-					<div class="col-3 col-6-narrower col-12-mobilep">
-					<ul class="actions">
-					<%
-					int i = 0;
-					for(String string : data){
-						if(i % 2 == 0)
-							out.print("<li><a href=\"/events/"+string+"\" class=\"button special fit\">");
-						else
-							out.println(string+"</a></li>");
-						i++;
-					}
-					%>
-					</ul>
-					</div>
+						<form method="post" action="/eventSearch">
+							<div class="row gtr-uniform gtr-50">
+								<div class="col-9 col-12-mobilep">
+									<input type="text" name="search" id="search" value=""
+										placeholder="イベントを検索" />
+								</div>
+								<div class="col-3 col-12-mobilep">
+									<input type="submit" value="検索" class="fit" />
+								</div>
+							</div>
+						</form>
+						<%
+							EventLists list = new EventLists();
+							list.append(request, response);
+							out.print(request.getAttribute("result"));
+							request.removeAttribute("result");
+						%>
 					</section>
 				</div>
 			</div>

@@ -50,8 +50,8 @@
 				</header>
 				<section style="background-color: #E8F9DF;" class="box <%out.print(success); session.setAttribute("registerUserSuccess", "hidden");%>" id="success">
 					<p>まだ途中です
-					<br />只今入力されたアカウントを承認するためのurlはメールに送信されました <i class="fa fa-check faa-tada animated"></i> 
-					<br />ご承認ください
+					<br />只今入力されたアカウントを承認するためのurlは入力されたメールアドレスに送信致しました <i class="fa fa-check faa-tada animated"></i> 
+					<br />30分経過したら無効になってしまいますのでご了承ください
 					</p>
 				</section>
 				<section style="background-color: #F4BAA7;" class="box <%out.print(failure); session.setAttribute("registerUserFailure", "hidden");%>" id="success">
@@ -59,7 +59,7 @@
 				</section>
 					<div class="box">
 					<div class="row">
-						<form id="form" method="post" action="/insertUser">
+						<form id="form" method="post" action="/register">
 							<div class="row gtr-50 gtr-uniform">
 								<div class="col-12">
 									<label for="name">名前</label>
@@ -109,7 +109,7 @@
 									<br />
 									<span id='message'></span>
 								</div>
-								<div class="col-12">
+								<div class="col-4 col-12-mobile">
 									<ul class="actions" id="swap">
 										<li><input id="btn" type="submit" value="登録 " disabled/></li>
 									</ul>

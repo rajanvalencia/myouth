@@ -2,8 +2,8 @@
 	pageEncoding="utf-8"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ page import="jp.myouth.db.Events"%>
+<%@ page import="jp.myouth.tables.*"%>
 <%@ page import="java.util.ArrayList"%>
-<%@ page session="true"%>
 <!DOCTYPE html>
 <%
 	Events db = new Events();
@@ -36,10 +36,7 @@
 <head>
 <meta charset="UTF-8" />
 <title>
-	myouth
-	 <%
-		out.print(eventName);
-	%>イベント
+	 <%out.print(eventName);%>
 </title>
 <link rel="apple-touch-icon" sizes="180x180"
 	href="/resources/favicon/apple-touch-icon.png">
@@ -56,10 +53,7 @@
 	content="width=device-width, initial-scale=1, user-scalable=no" />
 <link rel="stylesheet" href="/resources/prologue/css/main.css" />
 <link rel="stylesheet" href="/resources/css/starRatings.css" />
-<link rel="stylesheet"
-	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<script
-	src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js'></script>
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css">
 
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=UA-143752853-1"></script>
@@ -84,9 +78,7 @@
 				<span class="image avatar48"><img
 					src="<%out.print(db.eventLogo(event));%>" alt="" /></span>
 				<h1 id="title">
-					<%
-						out.print(eventName);
-					%>
+					<%out.print(eventName);%>
 				</h1>
 			</div>
 
@@ -125,10 +117,6 @@
 					if (eventEmail.length() > 0)
 						out.println("<li><a href=\"mailto:" + eventEmail
 								+ "?subject=MYouthサイトから\" class=\"icon fa-envelope\"><span class=\"label\">お問い合わせ</span></a></li>");
-
-					if (eventLocation.length() > 0)
-						out.println("<li><a href=\"https://www.google.com/maps/dir/?api=1&destination=" + eventLocation
-								+ "\" class=\"icon fa-map-marker\"><span class=\"label\">アクセスマップ</span></a></li>");
 				%>
 			</ul>
 
@@ -144,14 +132,6 @@
 			<div class="container">
 
 				<header>
-
-					<h2>
-						<strong> <%
- 	out.print(db.eventName(event));
- %></strong>
-					</h2>
-					<br>
-
 				</header>
 
 			</div>
@@ -160,12 +140,19 @@
 
 		<section id="" class="two">
 			<div class="container">
-				<h2>開催場所</h2>
-				<h2><%out.print(eventPlace);%></h2>
+				<h2><%out.print(eventName);%></h2>
 				<br />
 				
-				<h2>開催日</h2>
-				<h2><% 
+				<p>
+				<span class="icon fa-map-marker"></span>
+				<a target="blank" href="https://www.google.com/maps/dir/?api=1&destination=<% out.print(eventLocation);%>">
+				<%out.print(eventPlace);%>
+				</a>
+				</p>
+				
+				<p>
+				<span class="icon fa-calendar-check"></span>
+				<% 
 				i = 0;
 				for(String string : eventDate){
 					if(i == 2)
@@ -174,11 +161,12 @@
 						out.print(string+"-");
 					i++;
 				}
-				%></h2>
-				<br />
+				%>
+				</p>
 				
-				<h2>開始時間</h2>
-				<h2><% 
+				<p>
+				<span class="icon fa-clock"></span>
+				<% 
 				i = 0;
 				for(String string : eventTime){
 					if(i == 1){
@@ -191,28 +179,27 @@
 						out.print(string+":");
 					i++;
 				}
-				%></h2>
-				<br />
+				%>
+				</p>
 				
-				<h2>残り募集人数</h2>
-				<h2><%out.print(recruitLimit-recruitNo);%></h2>
-				<br />
+				<p>
+				<span class="icon fa-user-plus"></span>
+				<%out.print(recruitLimit-recruitNo);%>
+				</p>
 				
-				<h2>募集開始</h2>
-				<h2><% 
+				<p>
+				<span class="icon fa-calendar-alt"></span>
+				<% 
 				i = 0;
 				for(String string : recruitmentStartDate){
 					if(i == 2)
-						out.print(string);
+						out.print(string+" ~ ");
 					else 
 						out.print(string+"-");
 					i++;
 				}
-				%></h2>
-				<br />
-				
-				<h2>募集〆切</h2>
-				<h2><% 
+				%>
+				<% 
 				i = 0;
 				for(String string : recruitmentEndDate){
 					if(i == 2)
@@ -221,52 +208,32 @@
 						out.print(string+"-");
 					i++;
 				}
-				%></h2>
-				<br>
+				%>
+				</p>
 				<p>
 					<%
 						out.print(db.eventDescription(event));
 					%>
 				</p>
 
-
+				<h3>管理者</h3>
 				<div class="row">
 					<%
-						list = null;
-						list = db.getImage(event);
-						i = 0;
-						int len1 = 0, len2 = 0, len3 = 0;
-						for (ArrayList<String> row : list) {
-							len1 = row.size() / 3;
-							len2 = (row.size() / 3) * 2;
-							len3 = row.size();
-							for (String string : row) {
-								if (i == 0 || i == len1 || i == len2)
-									out.println("<div class=\"col-4 col-12-mobile\">");
-
-								if (i % 2 == 0) {
-									out.println("<article class=\"item\">");
-									out.println("<a href=\"#\" class=\"image fit\">");
-									out.println("<img src=\"https://s3-ap-northeast-1.amazonaws.com/jp.myouth.images/events/"
-											+ event + "/" + string + "\" alt=\"\" />");
-									out.println("</a>");
-								}
-
-								else if (i % 2 == 1 && string != null) {
-									out.println("<header><h3>" + string + "</h3></header>");
-									out.println("</article>");
-								}
-
-								else {
-									out.println("</article>");
-								}
-
-								if (i == len1 - 1 || i == len2 - 1 || i == len3 - 1)
-									out.println("</div>");
-
-								i++;
-							}
-						}
+						EventPageMemberLists memberLists = new EventPageMemberLists();
+						memberLists.append(request);
+						out.print(request.getAttribute("memberLists"));
+						request.removeAttribute("memberLists");
+					%>
+				</div>
+				
+				<br />
+				<h3>写真</h3>
+				<div class="row">
+					<%
+						EventPageImageLists imageLists = new EventPageImageLists();
+						imageLists.append(request);
+						out.print(request.getAttribute("imageLists"));
+						request.removeAttribute("imageLists");
 					%>
 				</div>
 			</div>
@@ -280,12 +247,10 @@
 					<h2>参加申し込み</h2>
 				</header>
 
-				<p>
-					参加申し込み後、<%
-					out.print(eventName);
-				%>から<br />のメールが送信されますので<br />ご確認ください。<br /> 参加申し込みは<a
-						href="<%out.print(event);%>/form/">こちら</a>です。
-				</p>
+				<p>参加申し込み後、<% out.print(eventName); %>から
+				<br />のメールが送信されますので
+				<br />ご確認ください。
+				<br /> 参加申し込みは<a href="<%out.print(event);%>/form/">こちら</a>です。</p>
 
 			</div>
 		</section>
@@ -298,12 +263,10 @@
 					<h2>アンケート</h2>
 				</header>
 
-				<p>
-					<%
-						out.print(eventName);
-					%>に<br />参加して頂きありがとうございます。<br /> 最後にアンケートにご協力ください。 <br />アンケートは<a
-						href="/events/<%out.print(event);%>/survey">こちら</a>です。
-				</p>
+				<p><%out.print(eventName);%>に
+				<br />参加して頂きありがとうございます。
+				<br /> 最後にアンケートにご協力ください。 
+				<br />アンケートは<a href="/events/<%out.print(event);%>/survey">こちら</a>です。</p>
 
 			</div>
 		</section>
@@ -321,127 +284,24 @@
 				<div id="piechart_career" class="piechart"></div>
 				<div id="piechart_way" class="piechart"></div>
 				
-				<table>
-					<thead>
-						<tr>
-							<%
-								list = null;
-								list = db.companyTable(event);
-								i = 0;
-								if(list.get(0).size() != 0)
-									out.println("<th>学校名または会社名</th><th>参加人数</th>");
-							%>
-						</tr>
-					</thead>
-					<tbody>
-						<%
-							for (ArrayList<String> row : list) {
-								for (String string : row) {
-									if (i % 2 == 0) {
-										out.println("<tr>");
-										out.println("<td>" + string + "</td>");
-									} else {
-										out.println("<td>" + string + "</td>");
-										out.println("</tr>");
-									}
-									i++;
-								}
-							}
-						%>
-					</tbody>
-				</table>
+				<% 
+					EventPageCompanyTable companyTable = new EventPageCompanyTable();
+					companyTable.append(request);
+					out.print(request.getAttribute("companyTable"));
+					request.removeAttribute("companyTable");
+				%>
 			</div>
 		</section>
 
 
 
 		<!-- Reviews -->
-		<section id="reviews" class="four">
-			<div class="container">
-
-				<header>
-					<h2>評価</h2>
-				</header>
-				<%
-					ArrayList<Double> ratingData = db.ratingData(event);
-					int totalRatings;
-					double averageRatings;
-
-					totalRatings = ratingData.get(0).intValue();
-					averageRatings = ratingData.get(1);
-					for (i = 1; i <= 5; i++) {
-						if (i <= averageRatings)
-							out.println("<span class=\"fa fa-star checked\"></span>");
-						else {
-							if ((double) i - 0.5 <= averageRatings) {
-								out.println("<span class=\"fa fa-star-half-o checked\"></span>");
-							} else
-								out.println("<span class=\"fa fa-star-o\"></span>");
-						}
-					}
-					out.println("<p>" + totalRatings + " 件中　平均満足度は " + averageRatings + "<p>");
-					out.println("<div class=\"row\">");
-					i = 0;
-					j = 0;
-					ratingData = null;
-					ratingData = db.totalPerSatisfaction(event);
-					double total = totalRatings;
-					for (Double data : ratingData) {
-						if (i % 2 == 0) {
-							out.println("<div class=\"side\"><div>");
-							out.println("<span style=\"margin-right: 18px;\">" + data.intValue()
-									+ "</span><span class=\"fa fa-star checked\"></span>");
-							out.println("</div></div>");
-							out.print("<div class=\"middle\"><div class=\"bar-container\"><div class=\"bar-" + data.intValue()
-									+ "\"");
-						} else {
-							out.print(" style=\"width:" + (data / total) * 100 + "%;\"></div></div></div>");
-							out.println("<div class=\"side right\"><div>" + data.intValue() + "</div></div>");
-						}
-						i++;
-					}
-					out.println("</div>");
-				%>
-				<br /> <br />
-				<%
-					list = null;
-					i = 0;
-					list = db.commentsTable(event);
-					if (list.get(0).size() == 0)
-						out.println("データはありません<br />");
-				%>
-				<table>
-					<tbody>
-						<%
-							for (ArrayList<String> row : list) {
-								for (String string : row) {
-									if (i % 3 == 0) {
-										out.println("<tr>");
-										out.println("<td><span>");
-										int stars = Integer.parseInt(string);
-										for (j = 0; j < stars; j++)
-											out.println("<span class=\"fa fa-star checked\"></span>");
-
-										for (; j < 5; j++)
-											out.println("<span class=\"fa fa-star-o\"></span>");
-
-										out.println("</span>");
-									} else if (i % 3 == 1) {
-										out.println(string + "</td>");
-										out.println("</tr>");
-									} else {
-										out.println("<tr>");
-										out.println("<td>" + string + "</td>");
-										out.println("</tr>");
-									}
-									i++;
-								}
-							}
-						%>
-					</tbody>
-				</table>
-			</div>
-		</section>
+		<% 
+			Ratings ratings = new Ratings();
+			ratings.append(request);
+			out.println(request.getAttribute("eventRatings"));
+			request.removeAttribute("eventRatings");
+		%>
 
 	</div>
 
@@ -451,7 +311,6 @@
 		<!-- Copyright -->
 		<ul class="copyright">
 			<li>Design: <a href="http://html5up.net">HTML5 UP</a>.</li>
-			<li>Image: <a href="https://unsplash.com">Unsplash</a>.</li>
 		</ul>
 
 	</div>

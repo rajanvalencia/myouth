@@ -16,6 +16,7 @@
 	String name = db.name(userId);
 	String fname = db.fname(userId);
 	String word = db.word(userId);
+	String path = db.userProfilePicture(userId);
 	db.close();
 	
 %>
@@ -63,14 +64,10 @@
 				<div class="col-12">
 
 					<!-- Form -->
-					<section style="background-color: #E8F9DF;" class="box <%out.print(success);session.setAttribute("success", "hidden");%>"
-						id="success">
-						<p>プロフィールは更新されました <i class="fa fa-check faa-tada animated"></i></p>
-					</section>
 					<section class="box">
 						<form id="profilePicUplaodForm" enctype="multipart/form-data" method="post" action="/uploadProfilePicture">
 								<input type="file" class="hidden" name="profilePicture" id="imgupload">
-								<span class="image profile-image-center"><img class="img-responsive" style="border-radius: 50%;" src="https://s3-ap-northeast-1.amazonaws.com/jp.myouth.images/users/default/profile_pic.PNG" alt="" /></span>
+								<span class="image profile-image-center"><img style="border-radius: 50%;" src="https://s3-ap-northeast-1.amazonaws.com/jp.myouth.images/<% out.print(path);%>" alt="" width="130"/></span>
 								<div class="col-12">
 									<ul class="actions">
 										<li><input id="OpenImgUpload" type="button" value="プロフィール写真を変更する" /></li>
@@ -78,7 +75,7 @@
   								</div>
   						</form>
 						<form id="form" method="post"
-							action="#">
+							action="/uploadProfileInfo">
 							<div class="row gtr-uniform gtr-50">
 								<div class="col-12">
 								<label for="name">名前</label>
@@ -136,44 +133,9 @@
 	<script src="/resources/alpha/js/util.js"></script>
 	<script src="/resources/alpha/js/main.js"></script>
 	<script type="text/javascript">
-	$('#OpenImgUpload').click(function(){ $('#imgupload').trigger('click'); });
-	
-	$('#imgupload').on('change', function(){ $('#profilePicUplaodForm').submit(); });
-	
-$(window).on('load', function(){
-		
-		$('.img-responsive').each(function() {
-			var maxWindowWidth = $(window).width(); // New width
-			var maxWidth = 200; // Max width for the image
-			var maxHeight = 150; // Max height for the image
-		    var ratio = 0;  // Used for aspect ratio
-		    var width = $(this).width();    // Current image width
-		    var height = $(this).height();  // Current image height
-
-		    // Check if the current width is larger than the max
-		    if(width > maxWidth){
-		        ratio = maxWidth / width;   
-		        $(this).css("width", maxWidth); // Set new width
-		        $(this).css("height", height * ratio);  // Scale height based on ratio
-		        height = height * ratio;    // Reset height to match scaled image
-		    }
-
-		    var width = $(this).width();    // Current image width
-		    var height = $(this).height();  // Current image height
-
-		    // Check if current height is larger than max
-		    if(height > maxHeight){
-		        ratio = maxHeight / height; 
-		        $(this).css("height", maxHeight);   // Set new height
-		        $(this).css("width", width * ratio);    // Scale width based on ratio
-		        width = width * ratio;    // Reset width to match scaled image
-		    }
-			
-			});
-			
-		});
-		
+ 		$('#OpenImgUpload').click(function(){ $('#imgupload').trigger('click'); });
+ 	
+	 	$('#imgupload').on('change', function(){ $('#profilePicUplaodForm').submit(); });
 	</script>
-	
 </body>
 </html>

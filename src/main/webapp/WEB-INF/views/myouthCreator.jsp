@@ -97,14 +97,17 @@
 									<li>CodeDeploy</li>
 									<li>CodePipeline</li>
 									<li>CodeStar</li>
+									<li>Comprehend</li>
 									<li>EC2</li>
 									<li>IAM</li>
 									<li>Lambda</li>
 									<li>RDS</li>
+									<li>Rekognition</li>
 									<li>Route53</li>
 									<li>S3</li>
 									<li>SES</li>
 									<li>SNS</li>
+									<li>Translate</li>
 								</ul>
 							</div>
 
@@ -136,6 +139,7 @@
 									<li>CプログラミングのStudent Assistantとして6ヶ月間勤務</li>
 									<li>外国人高校生向けの進路相談活動に参加</li>
 									<li><a href="/events/multiculturalyouth">多文化ユース</a>実行委員</li>
+									<li>外国人小・中学生夏休み宿題にボランティアとして参加</li>
 								</ul>
 							</div>
 						</div>
@@ -219,7 +223,9 @@
 								</ul>
 							</div>
 						</div>
-						<p>本サイトです。</p>
+						<div  style="text-align: center">ログインページ</div >
+						<video class="image fit" controls loop autoplay><source
+							src="https://s3-ap-northeast-1.amazonaws.com/jp.myouth.images/rajanValencia/myouthDemo1.mp4" type="video/mp4"></source></video>
 					</section>
 				</div>
 			</div>

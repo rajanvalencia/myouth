@@ -13,7 +13,7 @@
 -->
 <html>
 <head>
-<title>メール送信</title>
+<title>パスワード忘れ</title>
 <meta charset="utf-8" />
 <meta name="viewport"
 	content="width=device-width, initial-scale=1, user-scalable=no" />
@@ -54,7 +54,7 @@
 			</section>
 			<section style="background-color: #F4BAA7;" class="box <%out.print(failure); session.setAttribute("reissuePermissionFailure", "hidden");%>" id="success">
 				<p>
-					メールアドレスまたは生年月日は間違っています<i class="fa fa-times faa-pulse animated"></i> 
+					メールアドレスは登録されてません。<i class="fa fa-times faa-pulse animated"></i> 
 				</p>
 			</section>
 			<section class="box">
@@ -64,24 +64,6 @@
 							<label for="email">登録されてるメールアドレス</label> <input type="email"
 								name="email" id="email" value="" placeholder="" required />
 						</div>
-						<div class="col-4 col-4-mobilep">
-							<label for="years">生年月日 年</label> <select name="birth-year"
-								id="years" required>
-								<option label="" selected></option>
-							</select>
-						</div>
-						<div class="col-4 col-4-mobilep">
-							<label for="months">月</label> <select name="birth-month"
-								id="months" required>
-								<option label="" selected></option>
-							</select>
-						</div>
-						<div class="col-4 col-4-mobilep">
-							<label for="days">日</label> <select name="birth-day" id="days"
-								required>
-								<option value="" selected></option>
-							</select>
-						</div>
 						<div class="col-12">
 							<ul class="actions" id="swap">
 								<li><input id="btn" type="submit" value="パスワード再発行 " /></li>
@@ -90,10 +72,6 @@
 					</div>
 				</form>
 			</section>
-			<section class="back-button">
-		<a href="/home"><span
-			class="fas fa-arrow-left fa-3x faa-passing-reverse animated"></span></a>
-	</section>
 	</section>
 
 	<!-- Footer -->
@@ -122,44 +100,5 @@
 	<script src="/resources/alpha/js/breakpoints.min.js"></script>
 	<script src="/resources/alpha/js/util.js"></script>
 	<script src="/resources/alpha/js/main.js"></script>
-	<script type="text/javascript">
-
-		$(function() {
-
-		    //populate our years select box
-		    for ( i = new Date().getFullYear()-70; i <= new Date().getFullYear()-18; i++){
-		        $('#years').append($('<option />').val(i).html(i));
-		    }
-		    //populate our months select box
-		    for (i = 1; i <= 12; i++){
-		        $('#months').append($('<option />').val(i).html(i));
-		    }
-		    //populate our Days select box
-		    updateNumberOfDays(); 
-
-		    //"listen" for change events
-		    $('#years, #months').change(function(){
-		        updateNumberOfDays(); 
-		    });
-
-		});
-
-		//function to update the days based on the current values of month and year
-		function updateNumberOfDays(){
-		    $('#days').html('');
-		    month = $('#months').val();
-		    year = $('#years').val();
-		    days = daysInMonth(month, year);
-
-		    for(i = ''; i <= days ; i++){
-		            $('#days').append($('<option />').val(i).html(i));
-		    }
-		}
-
-		//helper function
-		function daysInMonth(month, year) {
-		    return new Date(year, month, 0).getDate();
-		}
-	</script>
 </body>
 </html>

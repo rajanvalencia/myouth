@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import org.apache.commons.text.StringEscapeUtils;
 
 import jp.myouth.db.Events;
+import jp.myouth.db.Messages;
 
 public class Templates {
 
@@ -51,7 +52,7 @@ public class Templates {
 			"}" + 
 			"</style>";
 	
-	public Boolean accountVerificationMail(String name, String email, String userId) {
+	public Boolean accountVerificationMail(String name, String email, String token) {
 		try {
 			String FROM = "admin@myouth.jp";
 
@@ -63,9 +64,9 @@ public class Templates {
 					STYLE,
 					"<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\">", "<tr>",
 					"<td style=\"text-align: center;\">",
-					"<img src=\"https://drive.google.com/uc?id=1sWErf5BURqJPnQaEeVfK26dRCpjyqZ95\" width=\"350\" style=\"height: auto;\" />",
-					"<h3>" + name + "さん<br>myouthアカウントのご登録<br>ありがとうございます</h1>",
-					"<p>このメールアドレスを承認するには<a href='https://myouth.jp/emailVerification/" + userId + "'>こちら</a>をクリックしてください",
+					"<p>このメールアドレスを承認するには以下のリンクをアクセスしてください。30分経過したら無効になります。</p>",
+					"<a href=\"https://myouth.jp/emailVerification/" + token + "\">https://myouth.jp/emailVerification/" + token + "</a>",
+					"<img src=\"https://media.giphy.com/media/3og0IuymsB9sy0C2Vq/giphy.gif\" width=\"100%\" style=\"height: auto;\">",
 					"<p>このアドレスは配信専用です<br>返信しないでください", "<p>ご相談がある場合こちらのメールアドレスへ</p>",
 					"<a href='mailto:multi.c.youth@gmail.com'>multi.c.youth@gmail.com</a>", "<p>サイトのシステムに関しての相談<br>",
 					"<a href='mailto:rajan.valencia@au.com'>rajan.valencia@au.com</a><br>",
@@ -75,9 +76,9 @@ public class Templates {
 			String TEXTBODY = name + "さん\n"
 					+"myouthアカウントのご登録\n"
 					+"ありがとうございます\n"
-					+"このメールアドレスを承認するには\n\n"
-					+"https://myouth.jp/emailVerification/" + userId + "\n\n"
-					+"をクリックしてください\n"
+					+"このメールアドレスを承認するには以下のリンクをアクセスしてください\n"
+					+"30分経過したら無効になります"
+					+"https://myouth.jp/emailVerification/" + token + "\n\n"
 					+"このアドレスは配信専用です\n"
 					+"返信しないでください\n"
 					+"サイトのシステムに関しての相談\n"
@@ -124,22 +125,18 @@ public class Templates {
 					STYLE,
 					"<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\">", "<tr>",
 					"<td style=\"text-align: center;\">",
-					"<img src=\"https://drive.google.com/uc?id=1sWErf5BURqJPnQaEeVfK26dRCpjyqZ95\" width=\"350\" style=\"height: auto;\" />",
+					"<img src=\"https://media.giphy.com/media/l3q2FnW3yZRJVZH2g/giphy.gif\" width=\"350\" style=\"height: auto;\" />",
 					"<h3>" + name + "さん<br>お申込みありがとうございます</h1>", "<p>開催場所:<br><b>" + place + "</b>",
 					"<br>開催日:<br><b>" + year + "年" + month + "月" + day + "日</b>", "<br>集合時間:<br><b>" + hour + "時" + minute + "分</b>",
 					"<p><a href=\"https://www.google.com/maps/dir/?api=1&destination=" + place
 							+ "\">現在地から会場までのルートはこちら</a></p>",
-					"<img src=\"http://cdn.worldslargestlesson.globalgoals.org/2016/08/Invent-Innovate-Campaign.gif\" width=\"350\" style=\"height: auto;\" />",
-					"<p>" + name + "さんに会えることを<br>楽しみにしています ", "<p>このアドレスは配信専用です<br>返信しないでください",
-					"<p>ご相談がある場合こちらのメールアドレスへ</p>",
-					"<p><a href='mailto:multi.c.youth@gmail.com'>multi.c.youth@gmail.com</a></p>", 
-					"<p>サイトのシステムに関しての相談<br>",
-					"<a class=\"myButton\" href='mailto:rajan.valencia@au.com'>rajan.valencia@au.com</a></p>",
+					"<p>このアドレスは配信専用です<br>返信しないでください",
 					"<p><a class=\"myButton\" href=\"https://myouth.jp/events/" + event + "\">" + eventName + "ホーム</a></p>",
 					"<p><a class=\"myButton\" href=\"https://myouth.jp/events/" + event + "/form\">" + eventName + "参加申し込み</a></p>",
 					"<p><a class=\"myButton\" href=\"https://myouth.jp/events/" + event + "/survey\">" + eventName + "アンケート</a></p>",
 					"<p><a class=\"myButton\" href=\"https://www.google.com/maps/dir/?api=1&destination=" + place + "\">" + eventName + "会場までのルート</a></p>",
 					"<img src=\"https://drive.google.com/uc?id=11msmk5NI2MplO4qpaBklVzvq7PVpCV8q\" width=\"200\" style=\"height: auto;\" />",
+					"<br />イベント管理システム（サイト)<br />"+
 					"<p><a href='https://myouth.jp/'>myouth</a>", "</td>", "</tr>", "</table>");
 
 			String TEXTBODY =  name + "さん\n"
@@ -151,15 +148,8 @@ public class Templates {
 					+"https://www.google.com/maps/dir/?api=1&destination=" + place + "\n"
 					+"連絡事項はこちらのメールアドレス\n"
 					+"で送信致します。ご了承ください。\n"
-					+name + "さんの多様性を生かし,より良い社会を築きましょう\n"
-					+name + "さんに会えることを\n"
-					+"楽しみにしています \n"
 					+"このアドレスは配信専用です\n"
 					+"返信しないでください\n"
-					+"ご相談がある場合こちらのメールアドレスへ\n"
-					+"multi.c.youth@gmail.com\n"
-					+"サイトのシステムに関しての相談\n"
-					+"rajan.valencia@au.com\n"
 					+"イベント管理システム（サイト)\n"
 					+"https://myouth.jp/";
 
@@ -224,10 +214,14 @@ public class Templates {
 					+"https://myouth.jp";
 
 			Mail mail = new Mail();
-			Boolean res = mail.send(FROM, TO, FROMNAME, SUBJECT, TEXTBODY, HTMLBODY);
+			String messageId = mail.send(FROM, TO, FROMNAME, SUBJECT, TEXTBODY, HTMLBODY);
 
-			if(res)
-				return true;
+			Messages db1 = new Messages();
+			db1.open();
+			db1.sentMessage(messageId, SUBJECT, TEXTBODY);
+			db1.close();
+			
+			return true;
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -235,7 +229,7 @@ public class Templates {
 		return false;
 	}
 	
-	public Boolean reissuePassword(String email, String token) {
+	public Boolean setNewPassword(String email, String token) {
 		try {
 			String FROM = "reissuePassword@myouth.jp";
 			String FROMNAME = "myouth";
@@ -249,7 +243,7 @@ public class Templates {
 					"<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\">", "<tr>",
 					"<td style=\"text-align: center;\">",
 					"<br>myouthで登録されてるアカウント"+email+"<br>のパスワードを再発行するためのurlです",
-					"<br><br><a href=\"https://myouth.jp/reissueNewPassword/"+ token +"\">https://myouth.jp/reissueNewPassword/"+token+"</a><br>",
+					"<br><br><a href=\"https://myouth.jp/setNewPassword/"+ token +"\">https://myouth.jp/reissueNewPassword/"+token+"</a><br>",
 					"<br><img src=\"https://media.giphy.com/media/3og0IuymsB9sy0C2Vq/giphy.gif\" width=\"100%\" style=\"height: auto;\">",
 					"<br><br>myouthメールシステムにて送信されました<br>このアドレスは配信専用アドレスです<br>",
 					"返信しないでください<br><br>", 
@@ -257,7 +251,7 @@ public class Templates {
 					"イベント管理システム(サイト)<br><a href=\"https://myouth.jp\">https://myouth.jp</a>", "</td>", "</tr>", "</table>");
 			
 			String TEXTBODY = "myouthで登録されてるアカウント\n"+email+"\nのパスワードを再発行するためのurlです\n\n"
-					+"https://myouth.jp/reissueNewPassword/" + token + "\n\n"
+					+"https://myouth.jp/setNewPassword/" + token + "\n\n"
 					+"このアドレスは配信専用アドレスです\n"
 					+"返信しないでください\n\n"
 					+"イベント管理システム(サイト)\n"
@@ -265,12 +259,15 @@ public class Templates {
 
 			
 			Mail mail = new Mail();
-			Boolean res = mail.send(FROM, TO, FROMNAME, SUBJECT, TEXTBODY, HTMLBODY);
+			String messageId = mail.send(FROM, TO, FROMNAME, SUBJECT, TEXTBODY, HTMLBODY);
 			
-			if(res)
-				return true;
-			else
-				return false;
+			Messages db1 = new Messages();
+			db1.open();
+			db1.sentMessage(messageId, SUBJECT, TEXTBODY);
+			db1.close();
+			
+			return true;
+
 		}catch(Exception e) {
 			e.printStackTrace();
 		}

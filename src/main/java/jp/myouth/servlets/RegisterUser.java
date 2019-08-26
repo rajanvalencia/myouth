@@ -1,22 +1,25 @@
-<%@ page language="java" contentType="text/html; charset=utf-8"
-	pageEncoding="utf-8"%>
-<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
-<%@ page import="jp.myouth.security.Authentication"%>
-<%@ page import="jp.myouth.db.User" %>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<!-- Pikachu Credits: Hazem Ashraf https://codepen.io/Tetsu/pen/rLJyPp -->
-<meta charset="UTF-8">
-<title>ユーザー登録</title>
-<link rel="stylesheet" href="/resources/css/insert.css">
-<meta name="viewport"
-	content="width=device-width, initial-scale=1, viewport-fit=cover">
-</head>
-<body>
-	<%
+package jp.myouth.servlets;
+
+import java.io.IOException;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import jp.myouth.db.User;
+import jp.myouth.security.Authentication;
+
+@WebServlet("/register")
+public class RegisterUser extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		HttpSession session = request.getSession();
+		
 		request.setCharacterEncoding("UTF-8");
-	
+		
 		String name = request.getParameter("name");
 		session.setAttribute("registerUserName", name);
 		
@@ -43,7 +46,6 @@
 		db.close();
 		
 		String password = request.getParameter("password");
-		out.print("name: " + name + "<br>fname: " + fname + "<br>email: " + email + "<br>phone: " + phone + "<br>birthdate: " + birthdate + "<br>password: " + password);
 		Authentication auth = new Authentication();
 		Boolean res1;
 		if(res)
@@ -51,28 +53,12 @@
 		else
 			res1 = false;
 		
-		if (res1){
-			out.println("<br>Insert succeeded");
+		if (res1)
 			session.setAttribute("registerUserSuccess", "");
-		}
-		else {
-			out.println("<br>Insert failed.");
+		else 
 			session.setAttribute("registerUserFailure", "");
-		}
-		response.sendRedirect("/registerUser");	
-	%>
+		
+		response.sendRedirect("/registerUser");
+	}
 
-	<div class="loading">
-		<img src="https://a.top4top.net/p_1990j031.gif" alt="Loading">
-	</div>
-	<div class="mouse original"></div>
-	<script src='https://code.jquery.com/jquery-2.2.4.min.js'></script>
-
-
-
-	<script src="/resources/js/insert.js"></script>
-
-
-</body>
-
-</html>
+}

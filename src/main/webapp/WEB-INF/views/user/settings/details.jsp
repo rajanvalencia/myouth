@@ -18,6 +18,7 @@
 	ArrayList<String> eventTime = db.eventTime(event);
 	ArrayList<String> recruitmentStartDate = db.recruitmentStartDate(event);
 	ArrayList<String> recruitmentEndDate = db.recruitmentEndDate(event);
+	String description = db.eventDescription(event);
 	int recruitNo = db.recruitmentLimit(event);
 	db.close();
 
@@ -86,7 +87,7 @@
 					</section>
 					<section class="box">
 						<form id="form" method="post"
-							action="/home/<%out.print(event);%>/settings/details/change">
+							action="/changeEventDetails">
 							<div class="row gtr-uniform gtr-50">
 								<div class="col-12">
 								<label for="eventName">イベント名</label>
@@ -214,6 +215,11 @@
 											%>
 										</option>
 									</select>
+								</div>
+								<div class="col-12">
+									<label for="description">イベント紹介</label>
+									<textarea name="description" id="description" placeholder="<%out.print(description);%>"
+										rows="6"></textarea>
 								</div>
 								<div class="col-12">
 									<ul class="actions" id="swap">

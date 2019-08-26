@@ -1,12 +1,14 @@
 package jp.myouth.downloads; 
  
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.OutputStream; 
 import java.util.ArrayList; 
  
 import javax.servlet.http.HttpServletResponse; 
  
-import com.itextpdf.text.Document; 
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Font; 
 import com.itextpdf.text.PageSize; 
 import com.itextpdf.text.Phrase; 
@@ -17,8 +19,7 @@ import com.itextpdf.text.pdf.PdfWriter;
  
 public class PDF { 
  
-    public void createPDFFile(HttpServletResponse response, String event, ArrayList<String> data, int total, String fontSize) 
-            throws Exception { 
+    public void createPDFFile(HttpServletResponse response, String event, ArrayList<String> data, int total, String fontSize) throws Exception { 
  
         Document document = new Document(PageSize.A4.rotate()); 
 
