@@ -22,21 +22,26 @@ public class EventPageCompanyTable {
 
 		int i = 0;
 
-		String result = "<table><thead><tr>";
-		result += "<th>学校名または会社名</th><th>参加人数</th>";
-		result += "</tr></thead><tbody>";
+		String result = "<table>"
+				+ "\n\t\t\t\t\t<thead>"
+				+ "\n\t\t\t\t\t\t<tr>";
+		result += "\n\t\t\t\t\t\t\t<th>学校名または会社名</th><th>参加人数</th>";
+		result += "\n\t\t\t\t\t\t</tr>"
+				+ "\n\t\t\t\t\t</thead>"
+				+ "\n\t\t\t\t\t<tbody>";
 
 		for (String string : companyLists) {
 			if (i % 2 == 0) {
-				result += "<tr>";
-				result += "<td>" + string + "</td>";
+				result += "\n\t\t\t\t\t\t<tr>";
+				result += "\n\t\t\t\t\t\t\t<td>" + string + "</td>";
 			} else {
-				result += "<td>" + string + "</td>";
-				result += "</tr>";
+				result += "\n\t\t\t\t\t\t\t<td>" + string + "</td>";
+				result += "\n\t\t\t\t\t\t</tr>";
 			}
 			i++;
 		}
-		result += "</tbody></table>";
+		result += "\n\t\t\t\t\t</tbody>"
+				+ "\n\t\t\t\t</table>";
 		request.setAttribute("companyTable", result);
 	}
 }

@@ -42,10 +42,8 @@ public class Download extends HttpServlet {
 		} else if (periodType.equals("recruitmentPeriod")) {
 			Events db = new Events();
 			db.open();
-			startPeriod = db.recruitmentStartDate(event).get(0) + "-" + db.recruitmentStartDate(event).get(1) + "-"
-					+ db.recruitmentStartDate(event).get(2);
-			endPeriod = db.recruitmentEndDate(event).get(0) + "-" + db.recruitmentEndDate(event).get(1) + "-"
-					+ db.recruitmentEndDate(event).get(2);
+			startPeriod = db.recruitmentStartDate(event);
+			endPeriod = db.recruitmentEndDate(event);
 			db.close();
 		} else /*else if(periodType.equals("allPeriod"))*/ {
 			startPeriod = null;
@@ -59,16 +57,16 @@ public class Download extends HttpServlet {
 		db1.open();
 		if (dataType.equals("applicationFormData")) {
 			data = db1.participants(event, periodType, startPeriod, endPeriod);
-			total = db1.totalParticipants(event, periodType, startPeriod, endPeriod);
+			total = db1.totalParticipants(event, periodType, startPeriod, endPeriod) + 1;
 		} else /*else if(dataType.equals("surveyData"))*/ {
 			data = db1.survey(event, periodType, startPeriod, endPeriod);
-			total = db1.totalSurveyAnswers(event, periodType, startPeriod, endPeriod);
+			total = db1.totalSurveyAnswers(event, periodType, startPeriod, endPeriod) + 1;
 		}
 		db1.close();
 
 		if (fileType.equals("csv")) {
 			CSV csv = new CSV();
-			csv.createCSVFile(response, event, data, total);
+			csv.create(response, event, data, total);
 		} else /*else  if(fileType.equals("pdf"))*/ {
 			PDF pdf = new PDF();
 			try {

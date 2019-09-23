@@ -1,14 +1,12 @@
 package jp.myouth.servlets;
 
 import jp.myouth.ai.DetectModeration;
-import jp.myouth.db.User;
+
+import jp.myouth.db.Images;
 import jp.myouth.security.GenerateSecureString;
 import jp.myouth.storage.UploadObject;
 
-import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.geom.AffineTransform;
-import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -33,7 +31,7 @@ public class UploadProfilePicture extends HttpServlet {
 
 	static final String BUCKET_NAME = "jp.myouth.images";
 
-	static final String EXPLICIT_CONTENT_PHOTO = "users/default/ExplicitContentPhoto.jpg";
+	static final String EXPLICIT_CONTENT_PHOTO = "https://s3-ap-northeast-1.amazonaws.com/jp.myouth.images/events/ExplicitContentPhoto.jpg";
 
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -53,7 +51,7 @@ public class UploadProfilePicture extends HttpServlet {
 		HttpSession session = request.getSession();
 		String userId = (String) session.getAttribute("userId");
 
-		String path = "users/" + userId + "/profilePicture/temp/" + fileName + ".jpg";
+		String path = "users/" + userId + "/" + fileName + ".jpg";
 		String photoUrl = "https://s3-ap-northeast-1.amazonaws.com/jp.myouth.images/" + path;
 
 		UploadObject s3 = new UploadObject();
@@ -61,11 +59,11 @@ public class UploadProfilePicture extends HttpServlet {
 
 		Boolean res = null;
 		DetectModeration moderation = new DetectModeration();
-		res = moderation.detect(userId, path);
+		res = moderation.detect(userId, path, "profile_picture", 0);
 
 		Boolean res1 = null;
 		if (!res) {
-			User db = new User();
+			Images db = new Images();
 			db.open();
 			res1 = db.checkIfPhotoIsSuggestive(photoUrl);
 			db.close();
@@ -73,11 +71,12 @@ public class UploadProfilePicture extends HttpServlet {
 			res1 = true;
 
 		if (res1)
-			session.setAttribute("path", path);
+			session.setAttribute("photoUrl", photoUrl);
 		else
-			session.setAttribute("path", EXPLICIT_CONTENT_PHOTO);
+			session.setAttribute("photoUrl", EXPLICIT_CONTENT_PHOTO);
 
-		response.sendRedirect("/home/cropProfilePicture");
+		session.setAttribute("postUrl", "/cropAndSaveProfilePicture");
+		response.sendRedirect("/home/cropImage");
 	}
 
 	private static InputStream resizeImage(HttpServletRequest request, InputStream inputStream) throws IOException {

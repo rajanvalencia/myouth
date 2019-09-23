@@ -1,6 +1,7 @@
 package jp.myouth.db;
 
 import java.sql.Date;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -8,6 +9,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+
+import jp.myouth.security.GenerateSecureString;
 
 public class Events {
 	private Connection conn = null;
@@ -42,40 +45,65 @@ public class Events {
 			}
 	}
 
-	public ArrayList<ArrayList<String>> eventInfo(String event) {
-		ArrayList<ArrayList<String>> list = new ArrayList<ArrayList<String>>();
-		ArrayList<String> info = new ArrayList<String>();
+	public ArrayList<String> eventInfo(String event) {
+		ArrayList<String> data = new ArrayList<String>();
 		try {
-			String query = "SELECT * FROM event where english_e_name = ?";
+			String query = "SELECT event_logo.logo_url, event.e_name AS current_e_name, event.place, event.date, TIME_FORMAT(event.time, \"%H:%i\") AS time, CONCAT(recruitment_start, \" ~ \", recruitment_end) AS recruitment_period, (SELECT COUNT(*) FROM event, event_participants WHERE event_participants.event_id = event.event_id AND recruitment_start <= event_participants.time AND recruitment_end >= event_participants.time AND event.e_name = current_e_name) AS current_total_participants, (SELECT event.recruitno - current_total_participants FROM event WHERE english_e_name = ?) AS current_recruitno, event_description.description FROM event, event_logo, event_description WHERE event.event_id = event_description.event_id AND event.english_e_name = ? AND event.event_id = event_logo.event_id";
 			PreparedStatement stmt = conn.prepareStatement(query);
 			stmt.setString(1, event);
+			stmt.setString(2, event);
 			ResultSet rset = stmt.executeQuery();
 
 			while (rset.next()) {
-				info.add(rset.getString("e_name"));
-				info.add(rset.getString("place"));
-				info.add(rset.getString("date"));
-				info.add(rset.getString("time"));
-				info.add(rset.getString("recruitno"));
+				data.add(rset.getString("logo_url"));
+				data.add(rset.getString("current_e_name"));
+				data.add(rset.getString("description"));
+				data.add(rset.getString("place"));
+				data.add(rset.getString("date"));
+				data.add(rset.getString("time"));
+				data.add(rset.getString("current_total_participants"));
+				data.add(rset.getString("recruitment_period"));
+				data.add(rset.getString("current_recruitno"));
 			}
 			rset.close();
 
-			String query1 = "SELECT recruitno-COUNT(*) AS participants_per_event FROM event_participants, event WHERE english_e_name = ? AND event.event_id = event_participants.event_id AND join_date > recruitment_start AND join_date < recruitment_end";
-			PreparedStatement stmt1 = conn.prepareStatement(query1);
-			stmt1.setString(1, event);
-			ResultSet rset1 = stmt1.executeQuery();
-
-			while (rset1.next()) {
-				info.add(rset1.getString("participants_per_event"));
-			}
-			rset1.close();
-			list.add(info);
-			return list;
-
+			return data;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return null;
+	}
+	
+	public String event(String eventId) {
+		try {
+			String query = "SELECT english_e_name FROM event WHERE event_id = ?";
+			PreparedStatement stmt = conn.prepareStatement(query);
+			stmt.setString(1, eventId);
+			ResultSet rset = stmt.executeQuery();
+			
+			if(rset.next())
+				return rset.getString("english_e_name");
+			
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public Integer eventId(String event) {
+		try {
+			String query = "SELECT event_id FROM event WHERE english_e_name = ?";
+			PreparedStatement stmt = conn.prepareStatement(query);
+			stmt.setString(1, event);
+			ResultSet rset = stmt.executeQuery();
+			
+			if(rset.next())
+				return rset.getInt("event_id");
+			
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		return 0;
 	}
 
 	public String instagramUrl(String event) {
@@ -225,39 +253,133 @@ public class Events {
 		return null;
 	}
 
-	public ArrayList<String> eventTime(String event) {
+	public String eventTime(String event) {
 		try {
-			ArrayList<String> data = new ArrayList<String>();
-			String query = "SELECT EXTRACT(HOUR FROM time) AS hour, EXTRACT(MINUTE FROM time) as minute FROM event WHERE english_e_name= ?";
+			String time = new String();
+			String query = "SELECT TIME_FORMAT(time, \"%H時:%i分\") AS time FROM event WHERE english_e_name = ?";
 			PreparedStatement stmt = conn.prepareStatement(query);
 			stmt.setString(1, event);
 			ResultSet rset = stmt.executeQuery();
-			while (rset.next()) {
-				data.add(rset.getString("hour"));
-				data.add(rset.getString("minute"));
-			}
+			
+			while (rset.next()) 
+				time = rset.getString("time");
 			rset.close();
-			return data;
+			
+			return time;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return null;
 	}
-
-	public ArrayList<String> eventDate(String event) {
-		ArrayList<String> data = new ArrayList<String>();
+	
+	public Integer eventTimeHour(String event) {
 		try {
-			String query = "SELECT EXTRACT(YEAR FROM date) AS year, EXTRACT(MONTH FROM date) AS month, EXTRACT(DAY FROM date) AS day FROM event WHERE english_e_name= ?";
+			int time = 0;
+			String query = "SELECT EXTRACT(HOUR FROM time) AS hour FROM event WHERE english_e_name = ?";
 			PreparedStatement stmt = conn.prepareStatement(query);
 			stmt.setString(1, event);
 			ResultSet rset = stmt.executeQuery();
-			if (rset.next()) {
-				data.add(rset.getString("year"));
-				data.add(rset.getString("month"));
-				data.add(rset.getString("day"));
-			}
+			
+			while (rset.next()) 
+				time = rset.getInt("hour");
 			rset.close();
-			return data;
+			
+			return time;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+	
+	public Integer eventTimeMinute(String event) {
+		try {
+			int time = 0;
+			String query = "SELECT EXTRACT(MINUTE FROM time) AS minute FROM event WHERE english_e_name = ?";
+			PreparedStatement stmt = conn.prepareStatement(query);
+			stmt.setString(1, event);
+			ResultSet rset = stmt.executeQuery();
+			
+			while (rset.next()) 
+				time = rset.getInt("time");
+			rset.close();
+			
+			return time;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+
+	public String eventDate(String event) {
+		String date = new String();
+		try {
+			String query = "SELECT (DATE_FORMAT(date, \"%Y年%m月%d日\")) AS date FROM event WHERE english_e_name = ?";
+			PreparedStatement stmt = conn.prepareStatement(query);
+			stmt.setString(1, event);
+			ResultSet rset = stmt.executeQuery();
+			
+			if (rset.next()) 
+				date = rset.getString("date");
+			rset.close();
+			
+			return date;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public String eventDateYear(String event) {
+		String date = new String();
+		try {
+			String query = "SELECT EXTRACT(YEAR FROM date) AS year FROM event WHERE english_e_name = ?";
+			PreparedStatement stmt = conn.prepareStatement(query);
+			stmt.setString(1, event);
+			ResultSet rset = stmt.executeQuery();
+			
+			if (rset.next()) 
+				date = rset.getString("year");
+			rset.close();
+			
+			return date;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public String eventDateMonth(String event) {
+		String date = new String();
+		try {
+			String query = "SELECT EXTRACT(MONTH FROM date) AS month FROM event WHERE english_e_name = ?";
+			PreparedStatement stmt = conn.prepareStatement(query);
+			stmt.setString(1, event);
+			ResultSet rset = stmt.executeQuery();
+			
+			if (rset.next()) 
+				date = rset.getString("month");
+			rset.close();
+			
+			return date;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public String eventDateDay(String event) {
+		String date = new String();
+		try {
+			String query = "SELECT EXTRACT(DAY FROM date) AS day FROM event WHERE english_e_name = ?";
+			PreparedStatement stmt = conn.prepareStatement(query);
+			stmt.setString(1, event);
+			ResultSet rset = stmt.executeQuery();
+			
+			if (rset.next()) 
+				date = rset.getString("day");
+			rset.close();
+			
+			return date;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -294,42 +416,152 @@ public class Events {
 		return null;
 	}
 
-	public ArrayList<String> recruitmentStartDate(String event) {
-		ArrayList<String> data = new ArrayList<String>();
+	public String recruitmentStartDate(String event) {
+		String date = new String();
 		try {
-			String query = "SELECT EXTRACT(YEAR FROM recruitment_start) AS year, EXTRACT(MONTH FROM recruitment_start) AS month, EXTRACT(DAY FROM recruitment_start) AS day FROM event WHERE english_e_name = ?";
+			String query = "SELECT DATE_FORMAT(recruitment_start, \"%Y-%m-%d\") AS date FROM event WHERE english_e_name = ?";
 			PreparedStatement stmt = conn.prepareStatement(query);
 			stmt.setString(1, event);
 			ResultSet rset = stmt.executeQuery();
 
-			while (rset.next()) {
-				data.add(rset.getString("year"));
-				data.add(rset.getString("month"));
-				data.add(rset.getString("day"));
-			}
+			if (rset.next()) 
+				date = rset.getString("date");
 			rset.close();
-			return data;
+			
+			return date;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public String recruitmentStartDateYear(String event) {
+		String date = new String();
+		try {
+			String query = "SELECT EXTRACT(YEAR FROM recruitment_start) AS year FROM event WHERE english_e_name = ?";
+			PreparedStatement stmt = conn.prepareStatement(query);
+			stmt.setString(1, event);
+			ResultSet rset = stmt.executeQuery();
+
+			if (rset.next()) 
+				date = rset.getString("year");
+			rset.close();
+			
+			return date;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public String recruitmentStartDateMonth(String event) {
+		String date = new String();
+		try {
+			String query = "SELECT EXTRACT(MONTH FROM recruitment_start) AS month FROM event WHERE english_e_name = ?";
+			PreparedStatement stmt = conn.prepareStatement(query);
+			stmt.setString(1, event);
+			ResultSet rset = stmt.executeQuery();
+
+			if (rset.next()) 
+				date = rset.getString("month");
+			rset.close();
+			
+			return date;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public String recruitmentStartDateDay(String event) {
+		String date = new String();
+		try {
+			String query = "SELECT EXTRACT(DAY FROM recruitment_start) AS day FROM event WHERE english_e_name = ?";
+			PreparedStatement stmt = conn.prepareStatement(query);
+			stmt.setString(1, event);
+			ResultSet rset = stmt.executeQuery();
+
+			if (rset.next()) 
+				date = rset.getString("day");
+			rset.close();
+			
+			return date;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return null;
 	}
 
-	public ArrayList<String> recruitmentEndDate(String event) {
-		ArrayList<String> data = new ArrayList<String>();
+	public String recruitmentEndDate(String event) {
+		String date = new String();
 		try {
-			String query = "SELECT EXTRACT(YEAR FROM recruitment_end) AS year, EXTRACT(MONTH FROM recruitment_end) AS month, EXTRACT(DAY FROM recruitment_end) AS day FROM event WHERE english_e_name = ?";
+			String query = "SELECT DATE_FORMAT(recruitment_end, \"%Y-%m-%d\") AS date FROM event WHERE english_e_name = ?";
 			PreparedStatement stmt = conn.prepareStatement(query);
 			stmt.setString(1, event);
 			ResultSet rset = stmt.executeQuery();
 
-			while (rset.next()) {
-				data.add(rset.getString("year"));
-				data.add(rset.getString("month"));
-				data.add(rset.getString("day"));
-			}
+			if (rset.next()) 
+				date = rset.getString("date");
 			rset.close();
-			return data;
+			
+			return date;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public String recruitmentEndDateYear(String event) {
+		String date = new String();
+		try {
+			String query = "SELECT EXTRACT(YEAR FROM recruitment_end) AS year FROM event WHERE english_e_name = ?";
+			PreparedStatement stmt = conn.prepareStatement(query);
+			stmt.setString(1, event);
+			ResultSet rset = stmt.executeQuery();
+
+			if (rset.next()) 
+				date = rset.getString("year");
+			rset.close();
+			
+			return date;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public String recruitmentEndDateMonth(String event) {
+		String date = new String();
+		try {
+			String query = "SELECT EXTRACT(MONTH FROM recruitment_end) AS month FROM event WHERE english_e_name = ?";
+			PreparedStatement stmt = conn.prepareStatement(query);
+			stmt.setString(1, event);
+			ResultSet rset = stmt.executeQuery();
+
+			if (rset.next()) 
+				date = rset.getString("month");
+			rset.close();
+			
+			return date;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public String recruitmentEndDateDay(String event) {
+		String date = new String();
+		try {
+			String query = "SELECT EXTRACT(DAY FROM recruitment_end) AS day FROM event WHERE english_e_name = ?";
+			PreparedStatement stmt = conn.prepareStatement(query);
+			stmt.setString(1, event);
+			ResultSet rset = stmt.executeQuery();
+
+			if (rset.next()) 
+				date = rset.getString("day");
+			rset.close();
+			
+			return date;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -418,7 +650,7 @@ public class Events {
 
 	public Boolean insertParticipantData(String event, String name, String fname, String gender, String email,
 			String phone, Date birthdate, String career, String company, String country, String country2,
-			String country3, String zip, String pref, String address, String allergy, String way) {
+			String country3, String zip, String pref, String address, String allergy, String way) throws IOException {
 		try {
 			String query = "SELECT event_id FROM event WHERE english_e_name = \"" + event + "\"";
 			ResultSet rset = stmt.executeQuery(query);
@@ -428,33 +660,50 @@ public class Events {
 			}
 			rset.close();
 			stmt.close();
+			
+			int res = 1;
+			String participantId = new String();
+			
+			while (res != 0) {
+				GenerateSecureString gen = new GenerateSecureString();
+				participantId = gen.string(11);
+				
+				String query1 = "SELECT * FROM participants WHERE participant_id = ?";
+				PreparedStatement stmt2 = conn.prepareStatement(query1);
+				stmt2.setString(1, participantId);
+				ResultSet rset1 = stmt2.executeQuery();
+				res = rset1.getRow();
+			}
+			
 
-			String insert = "INSERT INTO participants (name, fname, gender, email, phone, birthdate, country, country2, country3, career, company, zip, address, allergy) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+			String insert = "INSERT INTO participants (participant_id, name, fname, gender, email, phone, birthdate, country, country2, country3, career, company, zip, address, allergy) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			PreparedStatement stmt1 = conn.prepareStatement(insert);
-			stmt1.setString(1, name);
-			stmt1.setString(2, fname);
-			stmt1.setString(3, gender);
-			stmt1.setString(4, email);
-			stmt1.setString(5, phone);
-			stmt1.setDate(6, birthdate);
-			stmt1.setString(7, country);
-			stmt1.setString(8, country2);
-			stmt1.setString(9, country3);
-			stmt1.setString(10, career);
-			stmt1.setString(11, company);
-			stmt1.setString(12, zip);
+			stmt1.setString(1, participantId);
+			stmt1.setString(2, name);
+			stmt1.setString(3, fname);
+			stmt1.setString(4, gender);
+			stmt1.setString(5, email);
+			stmt1.setString(6, phone);
+			stmt1.setDate(7, birthdate);
+			stmt1.setString(8, country);
+			stmt1.setString(9, country2);
+			stmt1.setString(10, country3);
+			stmt1.setString(11, career);
+			stmt1.setString(12, company);
+			stmt1.setString(13, zip);
 			if (pref == null || address == null)
-				stmt1.setString(13, null);
+				stmt1.setString(14, null);
 			else
-				stmt1.setString(13, pref + address);
-			stmt1.setString(14, allergy);
+				stmt1.setString(14, pref + address);
+			stmt1.setString(15, allergy);
 			stmt1.executeUpdate();
 			stmt1.close();
 
-			String insert1 = "INSERT INTO event_participants (event_id, participant_id, join_date, join_time, way) VALUES(\""
-					+ event_id + "\", LAST_INSERT_ID(), now(), now(), ?)";
+			String insert1 = "INSERT INTO event_participants (event_id, participant_id, way) VALUES(?, ?, ?)";
 			PreparedStatement stmt2 = conn.prepareStatement(insert1);
-			stmt2.setString(1, way);
+			stmt2.setString(1, event_id);
+			stmt2.setString(2, participantId);
+			stmt2.setString(3, way);
 			stmt2.executeUpdate();
 			stmt2.close();
 
@@ -586,7 +835,7 @@ public class Events {
 	public ArrayList<String> getImage(String event) {
 		ArrayList<String> data = new ArrayList<String>();
 		try {
-			String query = "SELECT url, description FROM event, event_images WHERE event.event_id = event_images.event_id AND english_e_name = ? ORDER BY image_id DESC";
+			String query = "SELECT url, description FROM event, event_images WHERE event.event_id = event_images.event_id AND english_e_name = ? ORDER BY event_images.time DESC";
 			PreparedStatement stmt = conn.prepareStatement(query);
 			stmt.setString(1, event);
 			ResultSet rset = stmt.executeQuery();
@@ -601,7 +850,7 @@ public class Events {
 		}
 		return null;
 	}
-
+	
 	public ArrayList<Boolean> formQuestion(String event) {
 		ArrayList<Boolean> data = new ArrayList<Boolean>();
 		try {
@@ -943,7 +1192,7 @@ public class Events {
 		return null;
 	}
 	
-	public ArrayList<String> formQuestionColumnName(ArrayList<String> columnList){
+	public ArrayList<String> formQuestionColumnNames(ArrayList<String> columnList){
 		ArrayList<String> data = new ArrayList<String>();
 		
 		data.add("申込日");
@@ -998,6 +1247,61 @@ public class Events {
 			}
 		}
 		return data;
+	}
+	
+	public String formQuestionColumnName(String column) {
+
+		String columnName = new String();
+		
+		switch (column) {
+		case "name":
+			columnName = "名前";
+			break;
+		case "fname":
+			columnName = "フリガナ";
+			break;
+		case "gender":
+			columnName = "性別";
+			break;
+		case "email":
+			columnName = "メールアドレス";
+			break;
+		case "phone":
+			columnName = "電話番号";
+			break;
+		case "birthdate":
+			columnName = "生年月日";
+			break;
+		case "country":
+			columnName = "ルーツをもつ国";
+			break;
+		case "country2":
+			columnName = "ルーツをもつ国";
+			break;
+		case "country3":
+			columnName = "ルーツをもつ国";
+			break;
+		case "career":
+			columnName = "学年または職業";
+			break;
+		case "company":
+			columnName = "学校名または会社名";
+			break;
+		case "allergy":
+			columnName = "アレルギー";
+			break;
+		case "zip":
+			columnName = "郵便番号";
+			break;
+		case "address":
+			columnName = "住所";
+			break;
+		case "way":
+			columnName = "参加のきっかけ";
+			break;
+		}
+		
+		return columnName;
 	}
 
 	public ArrayList<String> surveyQuestionColumnName(ArrayList<String> columnList) {

@@ -1,9 +1,9 @@
 package jp.myouth.security;
 
-import jp.myouth.mail.Templates;
-
-
+import jp.myouth.mailTemplates.EmailVerification;
+import jp.myouth.mailTemplates.SetNewPasswordMail;
 import jp.myouth.db.Credentials;
+import jp.myouth.db.Images;
 import jp.myouth.db.User;
 import jp.myouth.storage.DownloadObject;
 
@@ -36,7 +36,7 @@ public class Authentication {
 	 * 生成される鍵の長さ
 	 */
 	private static final int KEY_LENGTH = 2048;
-
+	
 	/**
 	 * 平文のパスワードとソルトから安全なパスワードを生成し、返却します
 	 *
@@ -119,7 +119,17 @@ public class Authentication {
 
 	public Boolean registerUser(String name, String fname, String email, String phone, String birthdate, String password) throws IOException {
 		GenerateSecureString gen = new GenerateSecureString();
-		String userId = gen.string(11);
+		String userId = new String();
+		Boolean res = false;
+		
+		while(res == false) {
+			userId = gen.string(11);
+			User db = new User();
+			db.open();
+			res = db.checkIfUserIdDoesNotExist(userId);
+			db.close();
+		}
+		
 		String salt = gen.string(50);
 		String token = gen.string(100);
 
@@ -130,21 +140,24 @@ public class Authentication {
 
 		Credentials db = new Credentials();
 		db.open();
-		Boolean res = db.insertUserCredentials(userId, hashedPasswordWithSaltAndPepper, salt);
-		Boolean res1 = db.insertAccountVerificationToken(userId, token);
+		Boolean res1 = db.insertUserCredentials(userId, hashedPasswordWithSaltAndPepper, salt);
+		Boolean res2 = db.insertAccountVerificationToken(userId, token);
 		db.close();
 
 		User db1 = new User();
 		db1.open();
-		Boolean res2 = db1.register(userId, name, fname, email, phone, birthdate);
-		Boolean res3 = db1.verifyEmail(userId, false);
-		Boolean res4 = db1.insertOrUpdateUserProfilePicture(userId, "users/default/profile_pic.PNG");
+		Boolean res3 = db1.register(userId, name, fname, email, phone, birthdate);
+		Boolean res4 = db1.verifyEmail(userId, false);
 		db1.close();
+		
+		Images db3 = new Images();
+		db3.open();
+		Boolean res5 = db3.insertOrUpdateUserProfilePicture(userId, "https://s3-ap-northeast-1.amazonaws.com/jp.myouth.images/users/default/default_image.jpg");
+		db3.close();
+		EmailVerification mail = new EmailVerification();
+		Boolean res6 = mail.template(name, email, token);
 
-		Templates send = new Templates();
-		Boolean res5 = send.accountVerificationMail(name, email, token);
-
-		if (res && res1 && res2 && res3 && res4 && res5)
+		if (res && res1 && res2 && res3 && res4 && res5 && res6)
 			return true;
 		else
 			return false;
@@ -167,8 +180,8 @@ public class Authentication {
 		db.close();
 		
 		if(res) {
-			Templates send = new Templates();
-			Boolean res1 = send.setNewPassword(email, token);
+			SetNewPasswordMail mail = new SetNewPasswordMail();
+			Boolean res1 = mail.template(email, token);
 			if(res1)
 				return true;
 			else

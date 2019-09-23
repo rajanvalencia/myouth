@@ -3,7 +3,6 @@ package jp.myouth.tables;
 import java.util.ArrayList;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import jp.myouth.db.Events;
@@ -39,27 +38,25 @@ public class EventPageMemberLists {
 		
 		for (String string : memberData) {
 			if (i == 0 || i == row2 || i == row3)
-				result += "<div class=\"col-4\">";
+				result += "\n\t\t\t\t\t<div class=\"col-4\">";
 
 			if (i % 2 == 0) {
-				result += "<article class=\"item\">";
-				result += "<a href=\"#\" class=\"image fit\">";
-				result += "<img style=\"border-radius: 50%;\" src=\"https://s3-ap-northeast-1.amazonaws.com/jp.myouth.images/"
-						+ string + "\" alt=\"\" />";
-				result += "</a>";
+				result += "\n\t\t\t\t\t\t<article class=\"item\">";
+				result += "\n\t\t\t\t\t\t\t<a href=\"#\" class=\"image fit\">";
+				result += "<img style=\"border-radius: 50%;\" src=\""+ string + "\" alt=\"\" /></a>";
 			}
 
 			else if (i % 2 == 1 && string != null) {
 				result += string;
-				result += "</article>";
+				result += "\n\t\t\t\t\t\t</article>";
 			}
 
 			else {
-				result += "</article>";
+				result += "\n\t\t\t\t\t\t</article>";
 			}
 
 			if (i == row2 - 1 || i == row3 - 1 || i == len - 1)
-				result += "</div>";
+				result += "\n\t\t\t\t\t</div>";
 
 			i++;
 		}

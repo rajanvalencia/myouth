@@ -14,7 +14,7 @@ import org.apache.commons.text.StringEscapeUtils;
 
 import jp.myouth.db.Events;
 import jp.myouth.db.Simplification;
-import jp.myouth.mail.Templates;
+import jp.myouth.mailTemplates.EventJoinedConfirmationMail;
 
 @WebServlet("/insertParticipantData")
 public class InsertParticipantData extends HttpServlet {
@@ -103,8 +103,8 @@ public class InsertParticipantData extends HttpServlet {
 		db1.simplifyCompany();
 		db1.close();
 		
-		Templates send = new Templates();
-		boolean res1 = send.joinConfirmedMail(event, name, email);
+		EventJoinedConfirmationMail mail = new EventJoinedConfirmationMail();
+		boolean res1 = mail.template(event, name, email);
 
 		if (res && res1) {
 				session.setAttribute("success","");

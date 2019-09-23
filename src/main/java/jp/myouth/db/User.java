@@ -1,16 +1,18 @@
 package jp.myouth.db;
 
 import java.sql.Connection;
+
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+
 import java.sql.ResultSet;
 
 public class User {
-	private Connection conn = null;
-	private static Statement stmt = null;
+	private static Connection conn = null;
+	private Statement stmt = null;
 
 	RDSVariables var = new RDSVariables();
 	
@@ -253,19 +255,14 @@ public class User {
 	public ArrayList<String> managingEvents(String userId) {
 		ArrayList<String> data = new ArrayList<String>();
 		try {
-			String query = "SELECT event.english_e_name, event_logo.logo_url, event.e_name AS permanent_e_name, event.place, event.date, TIME_FORMAT(event.time, \"%H:%i\") AS time, CONCAT(recruitment_start, \"~\", recruitment_end) AS recruitment_period, (SELECT COUNT(*) FROM event, event_participants WHERE event_participants.event_id = event.event_id AND recruitment_start <= join_date AND recruitment_end >= join_date AND event.e_name = permanent_e_name) AS current_total_participants FROM event, user_event, event_logo WHERE user_event.user_id = ? AND event.event_id = user_event.event_id AND event.event_id = event_logo.event_id";
+			String query = "SELECT event.english_e_name, event_logo.logo_url, event.e_name FROM event, user_event, event_logo WHERE user_event.user_id = ? AND event.event_id = user_event.event_id AND event.event_id = event_logo.event_id";
 			PreparedStatement stmt = conn.prepareStatement(query);
 			stmt.setString(1, userId);
 			ResultSet rset = stmt.executeQuery();
 			while (rset.next()) {
 				data.add(rset.getString("english_e_name"));
 				data.add(rset.getString("logo_url"));
-				data.add(rset.getString("permanent_e_name"));
-				data.add(rset.getString("place"));
-				data.add(rset.getString("date"));
-				data.add(rset.getString("time"));
-				data.add(rset.getString("recruitment_period"));
-				data.add(rset.getString("current_total_participants"));
+				data.add(rset.getString("e_name"));
 				data.add(rset.getString("english_e_name"));
 			}
 			return data;
@@ -397,95 +394,35 @@ public class User {
 		return false;
 	}
 	
-	public Boolean insertOrUpdateUserProfilePicture(String userId, String path) {
+	public Boolean checkIfUserIdDoesNotExist(String userId) {
 		try {
-			String query = "SELECT * FROM user_profile_picture WHERE user_id = ?";
-			PreparedStatement checkExistence = conn.prepareStatement(query);
-			checkExistence.setString(1, userId);
-			ResultSet rset = checkExistence.executeQuery();
-			
-			if(!rset.next()) {
-				String insert = "INSERT INTO user_profile_picture (user_id, path) VALUES(?,?)";
-				PreparedStatement stmt = conn.prepareStatement(insert);
-				stmt.setString(1, userId);
-				stmt.setString(2, path);
-				int res = stmt.executeUpdate();
-				if(res > 0)
-					return true;
-			} else {
-			
-			String update = "UPDATE user_profile_picture SET path = ? WHERE user_id = ?";
-			PreparedStatement stmt = conn.prepareStatement(update);
-			stmt.setString(1, path);
-			stmt.setString(2, userId);
-			int res = stmt.executeUpdate();
-			
-			if(res > 0)
-				return true;
-			}
-			
-				return false;
-			
-		}catch(Exception e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-	
-	public String userProfilePicture(String userId) {
-		try {
-			String query = "SELECT path FROM user_profile_picture WHERE user_id = ?";
+			String query = "SELECT * FROM users WHERE user_id = ?";
 			PreparedStatement stmt = conn.prepareStatement(query);
 			stmt.setString(1, userId);
 			ResultSet rset = stmt.executeQuery();
 			
-			if(rset.next())
-				return rset.getString("path");
-			else 
-				return "users/default/profile_pic.PNG";
+			if(rset.next()) 
+				return false;
 			
-		}catch(Exception e) {
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		return true;
+	}
+	
+	public ArrayList<String> userEmailAddresses(){
+		ArrayList<String> data = new ArrayList<String>();
+		try {
+			String query = "SELECT email FROM users";
+			ResultSet rset = stmt.executeQuery(query);
+			
+			while(rset.next())
+				data.add(rset.getString("email"));
+			
+			return data;
+		} catch(Exception e) {
 			e.printStackTrace();
 		}
 		return null;
 	}
-	
-	public Boolean insertProfilePictureModerationLabel(String userId, String photoUrl, String moderationName, String moderationParentName, float confidence) {
-		try {
-			String query = "INSERT INTO profile_picture_moderation_label (user_id, photo_url, name, parent_name, confidence) VALUES(?,?,?,?,?)";
-			PreparedStatement stmt = conn.prepareStatement(query);
-			stmt.setString(1, userId);
-			stmt.setString(2, photoUrl);
-			stmt.setString(3, moderationName);
-			stmt.setString(4, moderationParentName);
-			stmt.setFloat(5, confidence);
-			int res = stmt.executeUpdate();
-			
-			if(res > 0)
-				return true;
-			else
-				return false;
-		}catch(Exception e) {
-			e.printStackTrace();
-		}
-		return false;
-	}
-	
-	public Boolean checkIfPhotoIsSuggestive(String photoUrl) {
-		try {
-			String query = "SELECT * FROM profile_picture_moderation_label WHERE photo_url = ? AND name = \"Suggestive\" AND confidence >= 90";
-			PreparedStatement stmt = conn.prepareStatement(query);
-			stmt.setString(1, photoUrl);
-			ResultSet rset = stmt.executeQuery();
-
-			if(rset.next())
-				return true;
-			else
-				return false;
-		}catch(Exception e) {
-			e.printStackTrace();
-		}
-		return false;
-	}
-	
 }

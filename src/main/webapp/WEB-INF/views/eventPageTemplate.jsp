@@ -10,21 +10,6 @@
 	db.open();
 	String event = (String) session.getAttribute("event");
 	String eventName = db.eventName(event);
-	String instagramUrl = db.instagramUrl(event);
-	String facebookUrl = db.facebookUrl(event);
-	String twitterUrl = db.twitterUrl(event);
-	String eventEmail = db.eventEmail(event);
-	String eventLocation = db.eventLocation(event);
-	String eventPlace = db.eventPlace(event);
-	ArrayList<String> eventDate = db.eventDate(event);
-	ArrayList<String> eventTime = db.eventTime(event);
-	ArrayList<String> recruitmentStartDate = db.recruitmentStartDate(event);
-	ArrayList<String> recruitmentEndDate = db.recruitmentEndDate(event);
-	Integer recruitNo = db.totalParticipants(event);
-	Integer recruitLimit = db.recruitmentLimit(event);
-	
-	ArrayList<ArrayList<String>> list = new ArrayList<ArrayList<String>>();
-	list = db.eventInfo(event);
 	int i, j;
 %>
 <!--
@@ -35,20 +20,20 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<title>
-	 <%out.print(eventName);%>
-</title>
-<link rel="apple-touch-icon" sizes="180x180"
-	href="/resources/favicon/apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="32x32"
-	href="/resources/favicon/favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16"
-	href="/resources/favicon/favicon-16x16.png">
-<link rel="manifest" href="/resources/favicon/site.webmanifest">
-<link rel="mask-icon" href="/resources/favicon/safari-pinned-tab.svg"
-	color="#5bbad5">
-<meta name="msapplication-TileColor" content="#2d89ef">
-<meta name="theme-color" content="#ffffff">
+<title><%out.print(eventName);%></title>
+<link rel="apple-touch-icon" sizes="57x57" href="/resources/favicon/apple-icon-57x57.png">
+<link rel="apple-touch-icon" sizes="60x60" href="/resources/favicon/apple-icon-60x60.png">
+<link rel="apple-touch-icon" sizes="72x72" href="/resources/favicon/apple-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="76x76" href="/resources/favicon/apple-icon-76x76.png">
+<link rel="apple-touch-icon" sizes="114x114" href="/resources/favicon/apple-icon-114x114.png">
+<link rel="apple-touch-icon" sizes="120x120" href="/resources/favicon/apple-icon-120x120.png">
+<link rel="apple-touch-icon" sizes="144x144" href="/resources/favicon/apple-icon-144x144.png">
+<link rel="apple-touch-icon" sizes="152x152" href="/resources/favicon/apple-icon-152x152.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/resources/favicon/apple-icon-180x180.png">
+<link rel="icon" type="image/png" sizes="192x192"  href="/resources/favicon/android-icon-192x192.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/resources/favicon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/resources/favicon/favicon-96x96.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/resources/favicon/favicon-16x16.png">
 <meta name="viewport"
 	content="width=device-width, initial-scale=1, user-scalable=no" />
 <link rel="stylesheet" href="/resources/prologue/css/main.css" />
@@ -77,197 +62,79 @@
 			<div id="logo">
 				<span class="image avatar48"><img
 					src="<%out.print(db.eventLogo(event));%>" alt="" /></span>
-				<h1 id="title">
-					<%out.print(eventName);%>
-				</h1>
+				<h1 id="title"><%out.print(eventName);%></h1>
 			</div>
 
 			<!-- Nav -->
 			<nav id="nav">
 				<ul>
-					<li><a href="#join" id=""><span class="icon fa-user-plus">参加申し込み</span></a></li>
-					<li><a href="#survey" id=""><span
-							class="icon fa-pencil-square">アンケート</span></a></li>
-					<li><a href="#analysis" id=""><span
-							class="icon fa-bar-chart">分析</span></a></li>
-					<li><a href="#reviews" id=""><span
-							class="icon fa-pie-chart">評価</span></a></li>
-					<li><a href="#top" id=""><span class="icon fa-refresh">Top</span></a></li>
+					<li>
+						<a href="#introduction" id=""><span class="icon fa-arrow-up">Top</span></a>
+					</li>
+					<li>
+						<a href="#administrator" id=""><span class="icon fa-user-circle">管理者</span></a>
+					</li>
+					<li>
+						<a href="#media" id=""><span class="icon fa-picture-o">メディア</span></a>
+					</li>
+					<li>
+						<a href="#analysis" id=""><span class="icon fa-bar-chart">分析</span></a>
+					</li>
+					<li>
+						<a href="#reviews" id=""><span class="icon fa-comment">評価</span></a>
+					</li>
 				</ul>
 			</nav>
-
 		</div>
-
-		<div class="bottom">
-
-			<!-- Social Icons -->
-			<ul class="icons">
-				<li><a href="/" class="icon fa-home"><span class="label">Home</span></a></li>
-				<%
-					if (instagramUrl.length() > 0)
-						out.println("<li><a href=\"" + instagramUrl
-								+ "\" class=\"icon fa-instagram\"><span class=\"label\">Instagram</span></a></li>");
-					if (facebookUrl.length() > 0)
-						out.println("<li><a href=\"" + facebookUrl
-								+ "\" class=\"icon fa-facebook\"><span class=\"label\">Facebook</span></a></li>");
-					if (twitterUrl.length() > 0)
-						out.println("<li><a href=\"" + twitterUrl
-								+ "\" class=\"icon fa-twitter\"><span class=\"label\">Twitter</span></a></li>");
-
-					if (eventEmail.length() > 0)
-						out.println("<li><a href=\"mailto:" + eventEmail
-								+ "?subject=MYouthサイトから\" class=\"icon fa-envelope\"><span class=\"label\">お問い合わせ</span></a></li>");
-				%>
-			</ul>
-
-		</div>
-
+		<% 
+			SocialLinks socialLinks = new SocialLinks();
+			socialLinks.append(request);
+			out.print(request.getAttribute("socialLinks"));
+			request.removeAttribute("socialLinks");
+		%>
 	</div>
 
 	<!-- Main -->
 	<div id="main">
 
-		<!-- Intro -->
-		<section id="top" class="one dark cover">
+		<section id="introduction" class="two">
 			<div class="container">
-
-				<header>
-				</header>
-
+				<% 
+					EventPageEventInfo eventInfo = new EventPageEventInfo();
+					eventInfo.append(request);
+					out.print(request.getAttribute("eventPageEventInfo"));
+					request.removeAttribute("eventPageEventInfo");
+				%>
 			</div>
-
 		</section>
 
-		<section id="" class="two">
+		<!-- Administrator -->
+		<section id="administrator" class="three">
+			<h3>管理者</h3>
 			<div class="container">
-				<h2><%out.print(eventName);%></h2>
-				<br />
-				
-				<p>
-				<span class="icon fa-map-marker"></span>
-				<a target="blank" href="https://www.google.com/maps/dir/?api=1&destination=<% out.print(eventLocation);%>">
-				<%out.print(eventPlace);%>
-				</a>
-				</p>
-				
-				<p>
-				<span class="icon fa-calendar-check"></span>
-				<% 
-				i = 0;
-				for(String string : eventDate){
-					if(i == 2)
-						out.print(string);
-					else 
-						out.print(string+"-");
-					i++;
-				}
-				%>
-				</p>
-				
-				<p>
-				<span class="icon fa-clock"></span>
-				<% 
-				i = 0;
-				for(String string : eventTime){
-					if(i == 1){
-						if(Integer.valueOf(string) < 10)
-							out.print("0"+string);
-						else
-							out.print(string);
-					}
-					else 
-						out.print(string+":");
-					i++;
-				}
-				%>
-				</p>
-				
-				<p>
-				<span class="icon fa-user-plus"></span>
-				<%out.print(recruitLimit-recruitNo);%>
-				</p>
-				
-				<p>
-				<span class="icon fa-calendar-alt"></span>
-				<% 
-				i = 0;
-				for(String string : recruitmentStartDate){
-					if(i == 2)
-						out.print(string+" ~ ");
-					else 
-						out.print(string+"-");
-					i++;
-				}
-				%>
-				<% 
-				i = 0;
-				for(String string : recruitmentEndDate){
-					if(i == 2)
-						out.print(string);
-					else 
-						out.print(string+"-");
-					i++;
-				}
-				%>
-				</p>
-				<p>
-					<%
-						out.print(db.eventDescription(event));
-					%>
-				</p>
-
-				<h3>管理者</h3>
 				<div class="row">
-					<%
-						EventPageMemberLists memberLists = new EventPageMemberLists();
-						memberLists.append(request);
-						out.print(request.getAttribute("memberLists"));
-						request.removeAttribute("memberLists");
-					%>
-				</div>
-				
-				<br />
-				<h3>写真</h3>
-				<div class="row">
-					<%
-						EventPageImageLists imageLists = new EventPageImageLists();
-						imageLists.append(request);
-						out.print(request.getAttribute("imageLists"));
-						request.removeAttribute("imageLists");
-					%>
+				<%
+					EventPageMemberLists memberLists = new EventPageMemberLists();
+					memberLists.append(request);
+					out.print(request.getAttribute("memberLists"));
+					request.removeAttribute("memberLists");
+				%>
 				</div>
 			</div>
 		</section>
 
-		<!-- Join -->
-		<section id="join" class="three">
+		<!-- Media -->
+		<section id="media" class="four">
+			<h3>メディア</h3>
 			<div class="container">
-
-				<header>
-					<h2>参加申し込み</h2>
-				</header>
-
-				<p>参加申し込み後、<% out.print(eventName); %>から
-				<br />のメールが送信されますので
-				<br />ご確認ください。
-				<br /> 参加申し込みは<a href="<%out.print(event);%>/form/">こちら</a>です。</p>
-
-			</div>
-		</section>
-
-		<!-- Survey -->
-		<section id="survey" class="four">
-			<div class="container">
-
-				<header>
-					<h2>アンケート</h2>
-				</header>
-
-				<p><%out.print(eventName);%>に
-				<br />参加して頂きありがとうございます。
-				<br /> 最後にアンケートにご協力ください。 
-				<br />アンケートは<a href="/events/<%out.print(event);%>/survey">こちら</a>です。</p>
-
+				<div class="row">
+				<%
+					EventPageImageLists imageLists = new EventPageImageLists();
+					imageLists.append(request);
+					out.print(request.getAttribute("imageLists"));
+					request.removeAttribute("imageLists");
+				%>
+				</div>
 			</div>
 		</section>
 
@@ -292,8 +159,6 @@
 				%>
 			</div>
 		</section>
-
-
 
 		<!-- Reviews -->
 		<% 

@@ -1,14 +1,12 @@
 package jp.myouth.downloads; 
  
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.OutputStream; 
 import java.util.ArrayList; 
  
 import javax.servlet.http.HttpServletResponse; 
  
 import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Font; 
 import com.itextpdf.text.PageSize; 
 import com.itextpdf.text.Phrase; 

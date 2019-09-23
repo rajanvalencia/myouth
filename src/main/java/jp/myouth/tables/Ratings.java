@@ -14,7 +14,11 @@ public class Ratings {
 
 		String event = (String) session.getAttribute("event");
 
-		String result = "<section id=\"reviews\" class=\"four\"><div class=\"container\"><header><h2>評価</h2></header>";
+		String result = "<section id=\"reviews\" class=\"four\">"
+				+ "\n\t\t\t<div class=\"container\">"
+				+ "\n\t\t\t\t<header>"
+				+ "\n\t\t\t\t\t<h2>評価</h2>"
+				+ "\n\t\t\t\t</header>";
 
 		Events db = new Events();
 		db.open();
@@ -31,61 +35,80 @@ public class Ratings {
 		int i = 0;
 		for (i = 1; i <= 5; i++) {
 			if (i <= averageRatings)
-				result += "<span class=\"fa fa-star light\"></span>";
+				result += "\n\t\t\t\t<span class=\"fa fa-star light\"></span>";
 			else {
 				if ((double) i - 0.5 <= averageRatings) {
-					result += "<span class=\"fa fa-star-half light\"></span>";
+					result += "\n\t\t\t\t<span class=\"fa fa-star-half light\"></span>";
 				} else
-					result += "<span class=\"fa fa-star dark\"></span>";
+					result += "\n\t\t\t\t<span class=\"fa fa-star dark\"></span>";
 			}
 		}
-		result += "<p>" + totalRatings + " 件中　平均満足度は " + averageRatings + "<p>";
-		result += "<div class=\"row\">";
+		result += "\n\t\t\t\t<p>" + totalRatings + " 件中　平均満足度は " + averageRatings + "<p>";
+		result += "\n\t\t\t\t<div class=\"row\">";
 
 		i = 0;
 		double total = totalRatings;
 		for (Double data : ratingDataPerSatisfaction) {
 			if (i % 2 == 0) {
-				result += "<div class=\"side\"><div>";
-				result += "<span style=\"margin-right: 18px;\">" + data.intValue()
-						+ "</span><span class=\"fa fa-star light\"></span>";
-				result += "</div></div>";
-				result += "<div class=\"middle\"><div class=\"bar-container\"><div class=\"bar-" + data.intValue() + "\"";
+				result += "\n\t\t\t\t\t<div class=\"side\">"
+						+ "\n\t\t\t\t\t\t<div>";
+				result += "\n\t\t\t\t\t\t\t<span style=\"margin-right: 18px;\">" + data.intValue() + "</span>"
+						+ "\n\t\t\t\t\t\t\t<span class=\"fa fa-star light\"></span>";
+				result += "\n\t\t\t\t\t\t</div>"
+						+ "\n\t\t\t\t\t</div>";
+				result += "\n\t\t\t\t\t<div class=\"middle\">"
+						+ "\n\t\t\t\t\t\t<div class=\"bar-container\">"
+						+ "\n\t\t\t\t\t\t\t<div class=\"bar-" + data.intValue() + "\"";
 			} else {
-				result += " style=\"width:" + (data / total) * 100 + "%;\"></div></div></div>";
-				result += "<div class=\"side right\"><div>" + data.intValue() + "</div></div>";
+				result += " style=\"width:" + (data / total) * 100 + "%;\"></div>"
+						+ "\n\t\t\t\t\t\t</div>"
+						+ "\n\t\t\t\t\t</div>";
+				result += "\n\t\t\t\t\t<div class=\"side right\">"
+						+ "\n\t\t\t\t\t\t<div>" + data.intValue() + "</div>"
+						+ "\n\t\t\t\t\t</div>";
 			}
 			i++;
 		}
-		result += "</div><br /> <br />";
+		result += "\n\t\t\t\t</div>"
+				+ "\n\t\t\t\t<br />"
+				+ "\n\t\t\t\t<br />";
 
 		if (comments.size() == 0)
-			result += "コメントがありません";
+			result += "\n\t\t\t\tコメントがありません";
 
-		result += "<table><tbody>";
+		result += "\n\t\t\t\t<table>"
+				+ "\n\t\t\t\t\t<tbody>";
 
 		i = 0;
 		int j = 0;
 		for (String string : comments) {
 			if (i % 3 == 0) {
-				result += "<tr>";
-				result += "<td><span>";
+				result += "\n\t\t\t\t\t\t<tr>";
+				result += "\n\t\t\t\t\t\t\t<td>"
+						+ "\n\t\t\t\t\t\t\t\t<span>";
 				int stars = Integer.parseInt(string);
 				for (j = 0; j < stars; j++)
-					result += "<span class=\"fa fa-star light\"></span>";
+					result += "\n\t\t\t\t\t\t\t\t\t<span class=\"fa fa-star light\"></span>";
 
 				for (; j < 5; j++)
-					result += "<span class=\"fa fa-star dark\"></span>";
+					result += "\n\t\t\t\t\t\t\t\t\t<span class=\"fa fa-star dark\"></span>";
 
-				result += "</span>";
+				result += "\n\t\t\t\t\t\t\t\t</span>";
 			} else if (i % 3 == 1)
-				result += string + "</td></tr>";
+				result += string 
+						+ "\n\t\t\t\t\t\t\t</td>"
+						+ "\n\t\t\t\t\t\t</tr>";
 			else
-				result += "<tr><td>" + string + "</td></tr>";
+				result += "\n\t\t\t\t\t\t<tr>"
+						+ "\n\t\t\t\t\t\t\t<td>" + string + "</td>"
+						+ "\n\t\t\t\t\t\t</tr>";
 			i++;
 		}
 
-		result += "</tbody></table></div></section>";
+		result += "\n\t\t\t\t\t</tbody>"
+				+ "\n\t\t\t\t</table>"
+				+ "\n\t\t\t</div>"
+				+ "\n\t\t</section>";
 
 		request.setAttribute("eventRatings", result);
 	}

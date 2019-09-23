@@ -1,4 +1,4 @@
-@import url("fontawesome-all.min.css");
+@import url("https://use.fontawesome.com/releases/v5.6.3/css/all.css");
 @import url("https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,300italic,400italic");
 
 /*
@@ -237,6 +237,43 @@
 		margin: 0 0.25em;
 		padding: 0.25em 0.65em;
 	}
+	
+	.image-container {
+  		position: relative;
+  		text-align: center;
+  		color: white;
+	}
+
+	.bottom-left {
+  		position: absolute;
+  		bottom: 8px;
+  		left: 16px;
+	}
+
+	.top-left {
+  		position: absolute;
+  		top: 8px;
+  		left: 16px;
+	}
+
+	.top-right {
+  		position: absolute;
+  		top: 8px;
+  		right: 16px;
+	}
+
+	.bottom-right {
+  		position: absolute;
+  		bottom: 8px;
+  		right: 16px;
+	}
+
+	.centered {
+  		position: absolute;
+  		top: 50%;
+  		left: 50%;
+  		transform: translate(-50%, -50%);
+	}
 
 	.align-left {
 		text-align: left;
@@ -316,6 +353,11 @@
 
 		.row > .off-2 {
 			margin-left: 16.66667%;
+		}
+		
+		/*added by Rajan Valencia*/
+		.row > .col-2-5 {
+			width: 20.83333%;
 		}
 
 		.row > .col-3 {
@@ -3209,7 +3251,6 @@
 			}
 
 /* Banner */
-
 	#banner {
 		background-attachment: scroll,							fixed;
 		background-color: #666;

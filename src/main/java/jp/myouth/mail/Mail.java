@@ -19,13 +19,11 @@ import com.amazonaws.services.simpleemail.model.Destination;
 import com.amazonaws.services.simpleemail.model.Message;
 import com.amazonaws.services.simpleemail.model.SendEmailRequest;
 
-import jp.myouth.db.Messages;
-
 public class Mail {
 
 	static final String CONFIGSET = "ConfigSet";
 
-	public String send(String FROM, ArrayList<String> addresses, String FROMNAME, String SUBJECT, String TEXTBODY,
+	public ArrayList<String> send(String FROM, ArrayList<String> addresses, String FROMNAME, String SUBJECT, String TEXTBODY,
 			String HTMLBODY) throws IOException {
 		try {
 			AWSCredentials credentials = credentials();
@@ -34,24 +32,19 @@ public class Mail {
 					.withRegion(Regions.US_EAST_1).withCredentials(new AWSStaticCredentialsProvider(credentials))
 					.build();
 
-			String messageId = new String();
-			Messages db = new Messages();
-			db.open();
-			for (String address : addresses) {
-				SendEmailRequest request = new SendEmailRequest().withDestination(new Destination().withToAddresses(address))
-						.withMessage(new Message()
-								.withBody(new Body().withHtml(new Content().withCharset("UTF-8").withData(HTMLBODY))
-										.withText(new Content().withCharset("UTF-8").withData(TEXTBODY)))
-								.withSubject(new Content().withCharset("UTF-8").withData(SUBJECT)))
-						.withSource(senderAddressBuilder(FROM, FROMNAME))
-						// Comment or remove the next line if you are not using a
-						// configuration set
-						.withConfigurationSetName(CONFIGSET);
+			SendEmailRequest request = new SendEmailRequest()
+					.withMessage(new Message()
+							.withBody(new Body().withHtml(new Content().withCharset("UTF-8").withData(HTMLBODY))
+									.withText(new Content().withCharset("UTF-8").withData(TEXTBODY)))
+							.withSubject(new Content().withCharset("UTF-8").withData(SUBJECT)))
+					.withSource(senderAddressBuilder(FROM, FROMNAME))
+					// Comment or remove the next line if you are not using a
+					// configuration set
+					.withConfigurationSetName(CONFIGSET);
 
-				messageId = client.sendEmail(request).getMessageId();
-				db.sentEmailAddress(messageId, address);
-			}
-			db.close();
+			ArrayList<String> messageId = new ArrayList<String>();
+			for(String address : addresses)
+				messageId.add(client.sendEmail(request.withDestination(new Destination().withToAddresses(address))).getMessageId());
 			
 			return messageId;
 

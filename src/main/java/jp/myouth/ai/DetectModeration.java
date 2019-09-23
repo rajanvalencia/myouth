@@ -10,8 +10,8 @@ import com.amazonaws.services.rekognition.model.AmazonRekognitionException;
 import com.amazonaws.services.rekognition.model.Image;
 import com.amazonaws.services.rekognition.model.ModerationLabel;
 import com.amazonaws.services.rekognition.model.S3Object;
-import jp.myouth.db.User;
-import jp.myouth.storage.UploadObject;
+
+import jp.myouth.db.Images;
 
 import com.amazonaws.services.rekognition.model.DetectModerationLabelsRequest;
 import com.amazonaws.services.rekognition.model.DetectModerationLabelsResult;
@@ -28,7 +28,7 @@ public class DetectModeration {
 
 	static final String EXPLICIT_CONTENT_PHOTO = "users/default/ExplicitContentPhoto.jpg";
 
-	public Boolean detect(String userId, String path) throws AmazonRekognitionException {
+	public Boolean detect(String userId, String path, String imageType, int eventId) throws AmazonRekognitionException {
 
 		String photoUrl = "https://s3-ap-northeast-1.amazonaws.com/jp.myouth.images/" + path;
 
@@ -43,7 +43,7 @@ public class DetectModeration {
 			List<ModerationLabel> moderationLabels = result.getModerationLabels();
 
 			if(moderationLabels.size() > 0) {
-				User db = new User();
+				Images db = new Images();
 				db.open();
 				String moderationName = new String();
 				String moderationParentName = new String();
@@ -52,8 +52,17 @@ public class DetectModeration {
 					moderationName = moderation.getName();
 					moderationParentName = moderation.getParentName();
 					confidence = moderation.getConfidence();
-					db.insertProfilePictureModerationLabel(userId, photoUrl, moderationName, moderationParentName,confidence);
-					db.insertOrUpdateUserProfilePicture(userId, EXPLICIT_CONTENT_PHOTO);
+					if(imageType == "profile_picture") {
+						db.insertProfilePictureModerationLabel(userId, photoUrl, moderationName, moderationParentName,confidence);
+						db.insertOrUpdateUserProfilePicture(userId, EXPLICIT_CONTENT_PHOTO);
+					}
+					else if(imageType == "event_logo") {
+						db.insertEventLogoModerationLabel(userId, eventId, photoUrl, moderationName, moderationParentName,confidence);
+						db.updateEventLogo(eventId, EXPLICIT_CONTENT_PHOTO);
+					}
+					else if(imageType == "event_image") {
+						db.insertEventImageModerationLabel(userId, eventId, photoUrl, moderationName, moderationParentName,confidence);
+					}
 				}
 				db.close();
 				return false;

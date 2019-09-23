@@ -1,7 +1,6 @@
 package jp.myouth.servlets;
 
 import java.io.IOException;
-import java.io.Writer;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;

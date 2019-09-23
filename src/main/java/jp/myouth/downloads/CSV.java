@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 
 public class CSV {
 	
-	public void createCSVFile(HttpServletResponse response, String event, ArrayList<String> data, int total) throws IOException {
+	public void create(HttpServletResponse response, String event, ArrayList<String> data, int total) throws IOException {
 	
 	response.setContentType("text/csv");
 	response.setHeader("Content-Disposition", "attachment; filename=\"" + event + ".csv\"");

@@ -1,6 +1,8 @@
 package jp.myouth.servlets;
 
 import java.io.IOException;
+
+
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
@@ -16,7 +18,7 @@ import org.apache.commons.lang3.time.StopWatch;
 import jp.myouth.db.Events;
 import jp.myouth.db.Participants;
 import jp.myouth.db.User;
-import jp.myouth.mail.Templates;
+import jp.myouth.mailTemplates.MailToAllParticipants;
 
 @WebServlet("/sendMessage")
 public class SendMessage extends HttpServlet {
@@ -37,13 +39,8 @@ public class SendMessage extends HttpServlet {
 		
 		ArrayList<String> TO = new ArrayList<String>();
 		
-		Events db = new Events();
-		db.open();
-		String eventName = db.eventName(event);
-		db.close();
-		
-		String startPeriod;
-		String endPeriod;
+		String startPeriod = new String();
+		String endPeriod  = new String();
 		
 		request.setCharacterEncoding("UTF-8");
 		String periodType = request.getParameter("periodType");
@@ -52,9 +49,10 @@ public class SendMessage extends HttpServlet {
 			startPeriod = request.getParameter("startYear")+"-"+request.getParameter("startMonth")+"-"+request.getParameter("startDay");
 			endPeriod = request.getParameter("endYear")+"-"+request.getParameter("endMonth")+"-"+request.getParameter("endDay");	
 		} else if(periodType.equals("recruitmentPeriod")){
+			Events db = new Events();
 			db.open();
-			startPeriod = db.recruitmentStartDate(event).get(0)+"-"+db.recruitmentStartDate(event).get(1)+"-"+db.recruitmentStartDate(event).get(2);
-			endPeriod = db.recruitmentEndDate(event).get(0)+"-"+db.recruitmentEndDate(event).get(1)+"-"+db.recruitmentEndDate(event).get(2);
+			startPeriod = db.recruitmentStartDate(event);
+			endPeriod = db.recruitmentEndDate(event);
 			db.close();
 		} else /*else if(periodType.equals("allPeriod"))*/{
 			startPeriod = null;
@@ -64,15 +62,10 @@ public class SendMessage extends HttpServlet {
 		User db1 = new User();
 		db1.open();
 		String senderEmail = db1.userEmailAddress(userId);
-		String userName = db1.name(userId);
 		db1.close();
 		
 		Participants db2 = new Participants();
 		db2.open();
-		/*
-		*イベントに合計参加者数を習得
-		*/
-		Integer totalParticipants = db2.totalParticipantsByEmailAddress(event, senderEmail);
 		TO = db2.participantsEmailAddress(event, senderEmail, periodType, startPeriod, endPeriod);
 		db2.close();
 		
@@ -81,8 +74,8 @@ public class SendMessage extends HttpServlet {
 		String SUBJECT = request.getParameter("subject");
 		String MESSAGE = request.getParameter("message");
 		
-		Templates send = new Templates();
-		Boolean res = send.mailToAllParticipants(event, eventName, userName, SUBJECT, TO, MESSAGE);
+		MailToAllParticipants mail = new MailToAllParticipants();
+		Boolean res = mail.template(event, userId, SUBJECT, TO, MESSAGE);
 		
 		stopWatch.stop();
 		session.setAttribute("stopWatch", stopWatch.getTime(TimeUnit.SECONDS));
@@ -90,7 +83,7 @@ public class SendMessage extends HttpServlet {
 		
 		if(res){
 			session.setAttribute("success","");
-			response.sendRedirect("/home/"+event+"/mail");	
+			response.sendRedirect("/home/"+event+"/mail/create");	
 		}
 	}
 

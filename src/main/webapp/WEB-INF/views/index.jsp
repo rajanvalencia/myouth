@@ -27,29 +27,31 @@ db2.close();
 	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
 -->
 <html>
-	<head>
-	<link rel="apple-touch-icon" sizes="180x180"
-	href="/resources/favicon/apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="32x32"
-	href="/resources/favicon/favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16"
-	href="/resources/favicon/favicon-16x16.png">
-<link rel="manifest" href="/resources/favicon/site.webmanifest">
-<link rel="mask-icon" href="/resources/favicon/safari-pinned-tab.svg"
-	color="#5bbad5">
-<meta name="msapplication-TileColor" content="#2d89ef">
-<meta name="theme-color" content="#ffffff">
+<head>
+<link rel="apple-touch-icon" sizes="57x57" href="/resources/favicon/apple-icon-57x57.png">
+<link rel="apple-touch-icon" sizes="60x60" href="/resources/favicon/apple-icon-60x60.png">
+<link rel="apple-touch-icon" sizes="72x72" href="/resources/favicon/apple-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="76x76" href="/resources/favicon/apple-icon-76x76.png">
+<link rel="apple-touch-icon" sizes="114x114" href="/resources/favicon/apple-icon-114x114.png">
+<link rel="apple-touch-icon" sizes="120x120" href="/resources/favicon/apple-icon-120x120.png">
+<link rel="apple-touch-icon" sizes="144x144" href="/resources/favicon/apple-icon-144x144.png">
+<link rel="apple-touch-icon" sizes="152x152" href="/resources/favicon/apple-icon-152x152.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/resources/favicon/apple-icon-180x180.png">
+<link rel="icon" type="image/png" sizes="192x192"  href="/resources/favicon/android-icon-192x192.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/resources/favicon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/resources/favicon/favicon-96x96.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/resources/favicon/favicon-16x16.png">
 
 <meta name="author" content="バレンシア　ラジャン　ザモラ">
 
 <meta name="description"
 	content="誰でも無料にイベント管理が出来るWeb上にあるシステムです。参加申し込み、アンケートデータの分析までの自動処理を行います。一般公開されるまで数か月お待ちください">
 	
-		<title>myouth イベント管理システム</title>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-		<link rel="stylesheet" href="/resources/alpha/css/main.css" />
-		<link rel="stylesheet" href="/resources/css/font-awesome-animation.css">
+<title>myouth</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+<link rel="stylesheet" href="/resources/alpha/css/main.css" />
+<link rel="stylesheet" href="/resources/css/font-awesome-animation.css">
 		
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=UA-143752853-1"></script>
@@ -60,7 +62,7 @@ db2.close();
 
   gtag('config', 'UA-143752853-1');
 </script>
-	</head>
+</head>
 	<body class="landing is-preload">
 		<div id="page-wrapper">
 
@@ -102,8 +104,8 @@ db2.close();
 						<li><a href="registerUser" class="button primary">無料登録</a></li>
 						<li><a href="login" class="button primary">ログイン</a></li>
 					</ul>
-					<ul>
-						<li style="list-style-type: none;"><a href="events" class="button">イベント一覧</a></li>
+					<ul class="alt">
+						<li><a href="events" class="button">イベント一覧</a></li>
 					</ul>
 					<h4>現在のイベント数は <% out.print(totalEvents);%></h4>
 					<h4>利用者(管理者)数は <% out.print(totalUsers);%> 人</h4>
@@ -126,24 +128,24 @@ db2.close();
 					<section class="box special features">
 						<div class="features-row">
 							<section>
-								<span class="icon solid major fa fa-cog faa-pulse animated accent2"></span>
+								<span class="icon solid major fa fa-cog accent2"></span>
 								<h3>管理</h3>
 								<p>参加申し込み、アンケート、データのグラフ化、ダウンロードするcsvファイルまでリアルタイムで更新され、イベントの運営効率を上げられます。</p>
 							</section>
 							<section>
-								<span class="icon solid major fa-envelope faa-pulse animated accent3"></span>
+								<span class="icon solid major fa-envelope accent3"></span>
 								<h3>コンタクト</h3>
 								<p>各イベントの全参加者への一斉送信などの連絡ができます。その上、既読者数または既読者を把握することができます。</p>
 							</section>
 						</div>
 						<div class="features-row">
 							<section>
-								<span class="icon solid major fa-cloud faa-pulse animated accent4"></span>
+								<span class="icon solid major fa-cloud accent4"></span>
 								<h3>拡大</h3>
 								<p>利用者（管理者）のアカウント一つでいくつものイベントを運用することができます。その上、各イベントに管理者を登録可能です。</p>
 							</section>
 							<section>
-								<span class="icon solid major fa-image faa-pulse animated accent5"></span>
+								<span class="icon solid major fa-image accent5"></span>
 								<h3>コンテンツ</h3>
 								<p>不適切な画像や投稿を機械学習で自動的に排除します。投稿は多様な言語に対応しています。デザインはレスポンシブであるためPC,スマホー、タブレットで操作可能です。</p>
 							</section>
@@ -171,31 +173,11 @@ db2.close();
 
 				</section>
 
-			<!-- CTA -->
-				<!--  <section id="cta">
-
-					<h2>Sign up for beta access</h2>
-					<p>Blandit varius ut praesent nascetur eu penatibus nisi risus faucibus nunc.</p>
-
-					<form>
-						<div class="row gtr-50 gtr-uniform">
-							<div class="col-8 col-12-mobilep">
-								<input type="email" name="email" id="email" placeholder="Email Address" />
-							</div>
-							<div class="col-4 col-12-mobilep">
-								<input type="submit" value="Sign Up" class="fit" />
-							</div>
-						</div>
-					</form>
-
-				</section>-->
-
 			<!-- Footer -->
 				<footer id="footer">
 					<ul class="copyright">
-						<li>myouth.jp</li>
-						<li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
-						<li>Images: <a href="http://unsplash.com/">UNSPLASH</a></li>
+						<li>Design: <a href="https://html5up.net">HTML5 UP</a></li>
+						<li>Images: <a href="https://giphy.com">GIPHY</a></li>
 					</ul>
 				</footer>
 

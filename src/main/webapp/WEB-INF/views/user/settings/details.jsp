@@ -14,28 +14,29 @@
 	db.open();
 	String eventName = db.eventName(event);
 	String eventPlace = db.eventPlace(event);
-	ArrayList<String> eventDate = db.eventDate(event);
-	ArrayList<String> eventTime = db.eventTime(event);
-	ArrayList<String> recruitmentStartDate = db.recruitmentStartDate(event);
-	ArrayList<String> recruitmentEndDate = db.recruitmentEndDate(event);
+	String eventDate = db.eventDate(event);
+	String eventTime = db.eventTime(event);
+	String recruitmentStartDate = db.recruitmentStartDate(event);
+	String recruitmentEndDate = db.recruitmentEndDate(event);
 	String description = db.eventDescription(event);
 	int recruitNo = db.recruitmentLimit(event);
-	db.close();
 
-	String year = eventDate.get(0);
-	String month = eventDate.get(1);
-	String day = eventDate.get(2);
+	String year = db.eventDateYear(event);
+	String month = db.eventDateMonth(event);
+	String day = db.eventDateDay(event);
 
-	int hour = Integer.valueOf(eventTime.get(0));
-	int minute = Integer.valueOf(eventTime.get(1));
+	int hour = db.eventTimeHour(event);
+	int minute = db.eventTimeMinute(event);
 	
-	String startYear = recruitmentStartDate.get(0);
-	String startMonth = recruitmentStartDate.get(1);
-	String startDay = recruitmentStartDate.get(2);
+	String startYear = db.recruitmentStartDateYear(event);
+	String startMonth = db.recruitmentStartDateMonth(event);
+	String startDay = db.recruitmentStartDateDay(event);
 
-	String endYear = recruitmentEndDate.get(0);
-	String endMonth = recruitmentEndDate.get(1);
-	String endDay = recruitmentEndDate.get(2);
+	String endYear = db.recruitmentEndDateYear(event);
+	String endMonth = db.recruitmentEndDateMonth(event);
+	String endDay = db.recruitmentEndDateDay(event);
+	
+	db.close();
 %>
 <!DOCTYPE HTML>
 <!--
@@ -49,6 +50,19 @@
 <meta charset="utf-8" />
 <meta name="viewport"
 	content="width=device-width, initial-scale=1, user-scalable=no" />
+<link rel="apple-touch-icon" sizes="57x57" href="/resources/favicon/apple-icon-57x57.png">
+<link rel="apple-touch-icon" sizes="60x60" href="/resources/favicon/apple-icon-60x60.png">
+<link rel="apple-touch-icon" sizes="72x72" href="/resources/favicon/apple-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="76x76" href="/resources/favicon/apple-icon-76x76.png">
+<link rel="apple-touch-icon" sizes="114x114" href="/resources/favicon/apple-icon-114x114.png">
+<link rel="apple-touch-icon" sizes="120x120" href="/resources/favicon/apple-icon-120x120.png">
+<link rel="apple-touch-icon" sizes="144x144" href="/resources/favicon/apple-icon-144x144.png">
+<link rel="apple-touch-icon" sizes="152x152" href="/resources/favicon/apple-icon-152x152.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/resources/favicon/apple-icon-180x180.png">
+<link rel="icon" type="image/png" sizes="192x192"  href="/resources/favicon/android-icon-192x192.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/resources/favicon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/resources/favicon/favicon-96x96.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/resources/favicon/favicon-16x16.png">
 <link rel="stylesheet" href="/resources/alpha/css/main.css" />
 <link rel="stylesheet" href="/resources/css/font-awesome-animation.css">
 <link rel="stylesheet"
@@ -72,7 +86,7 @@
 		<section id="main" class="container">
 			<section class="back-button">
 				<a href="/home/<%out.print(event);%>/settings"><span
-					class="fas fa-arrow-left fa-3x faa-passing-reverse animated"></span></a>
+					class="fas fa-arrow-left fa-2x faa-passing-reverse animated"></span></a>
 			</section>
 			<header>
 				<h2>Edit Event Details</h2>
@@ -232,7 +246,7 @@
 					</section>
 					<section class="back-button">
 						<a href="/home/<%out.print(event);%>/settings"><span
-							class="fas fa-arrow-left fa-3x faa-passing-reverse animated"></span></a>
+							class="fas fa-arrow-left fa-2x faa-passing-reverse animated"></span></a>
 					</section>
 				</div>
 			</div>

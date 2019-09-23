@@ -10,18 +10,43 @@ import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ListObjectsRequest;
 import com.amazonaws.services.s3.model.ObjectListing;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
 
 public class DeleteObject {
-
-    public Boolean deleteByFolder(String bucketName, String prefix) throws IOException {
-        String clientRegion = "ap-northeast-1";
-
+	
+	static final String CLIENT_REGION = "ap-northeast-1";
+	
+	public Boolean file(String bucketName, String keyName) throws IOException {
         try {
         	AmazonS3 s3Client = AmazonS3ClientBuilder.standard()
-					.withRegion(clientRegion)
+					.withRegion(CLIENT_REGION)
+					.withCredentials(new AWSStaticCredentialsProvider(credentials()))
+					.build();
+
+            	 s3Client.deleteObject(new DeleteObjectRequest(bucketName, keyName));
+             
+             return true;
+        }
+        catch(AmazonServiceException e) {
+            // The call was transmitted successfully, but Amazon S3 couldn't process 
+            // it, so it returned an error response.
+            e.printStackTrace();
+        }
+        catch(SdkClientException e) {
+            // Amazon S3 couldn't be contacted for a response, or the client
+            // couldn't parse the response from Amazon S3.
+            e.printStackTrace();
+        }
+        return false;
+    }
+	
+    public Boolean folder(String bucketName, String prefix) throws IOException {
+        try {
+        	AmazonS3 s3Client = AmazonS3ClientBuilder.standard()
+					.withRegion(CLIENT_REGION)
 					.withCredentials(new AWSStaticCredentialsProvider(credentials()))
 					.build();
 

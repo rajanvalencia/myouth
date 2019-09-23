@@ -35,7 +35,7 @@ public class MemberSearch extends HttpServlet {
 		
 		session.setAttribute("searchResults", searchResults);
 		
-		response.sendRedirect("/home/"+event+"/settings/member");
+		response.sendRedirect("/home/"+event+"/member");
 	}
 
 }

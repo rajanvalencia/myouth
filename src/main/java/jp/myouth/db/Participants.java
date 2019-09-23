@@ -9,7 +9,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 
 public class Participants {
-	private Connection conn = null;
+	private static Connection conn = null;
 	private Statement stmt = null;
 
 	RDSVariables var = new RDSVariables();
@@ -41,29 +41,6 @@ public class Participants {
 			}
 	}
 
-	public ArrayList<ArrayList<String>> participantsInfo(String eventname) {
-		ArrayList<ArrayList<String>> data = new ArrayList<ArrayList<String>>();
-		ArrayList<String> list = new ArrayList<String>();
-		try {
-			String query = "SELECT fname, email, phone, country, company FROM participants, event_participants, event WHERE english_e_name=\""
-					+ eventname
-					+ "\" AND event_participants.participant_id = participants.participant_id AND event.event_id = event_participants.event_id AND join_date >= recruitment_start AND join_date <= recruitment_end ORDER BY participants.participant_id DESC";
-			ResultSet rset = stmt.executeQuery(query);
-			while (rset.next()) {
-				list.add(rset.getString("fname"));
-				list.add(rset.getString("email"));
-				list.add(rset.getString("phone"));
-				list.add(rset.getString("country"));
-				list.add(rset.getString("company"));
-				data.add(list);
-			}
-			return data;
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-
 	public int allEventsTotalParticipants() {
 		try {
 			int data = 0;
@@ -90,13 +67,14 @@ public class Participants {
 			
 			query = "SELECT COUNT(*) FROM participants, event_participants, event WHERE participants.participant_id = event_participants.participant_id AND event.event_id = event_participants.event_id AND english_e_name = ? ";
 			
-			if(periodType.equals("freePeriod") || periodType.equals("recruitmentPeriod"))
-				query += "AND join_date >= ? AND join_date <= ?";
-			
+			if(periodType.equals("freePeriod"))
+				query += "AND event_participants.time >= ? AND event_participants.time <= ?";
+			else if(periodType.equals("recruitmentPeriod"))
+				query += "AND event_participants.time >= event.recruitment_start AND event_participants.time <= event.recruitment_end";
 			PreparedStatement stmt = conn.prepareStatement(query);
 			stmt.setString(1, event);
 			
-			if(periodType.equals("freePeriod") || periodType.equals("recruitmentPeriod")) {
+			if(periodType.equals("freePeriod")) {
 				stmt.setString(2, startPeriod);
 				stmt.setString(3, endPeriod);
 			}
@@ -105,6 +83,7 @@ public class Participants {
 			if (rset.next())
 				total = rset.getInt("COUNT(*)");
 			rset.close();
+			
 			return total;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -148,12 +127,12 @@ public class Participants {
 			String update = "UPDATE participants SET gender = NULL, phone = NULL, country2 = NULL, country3 = NULL, zip = NULL, address = NULL, allergy = NULL WHERE gender = \"null\" OR phone = \"null\" OR country2 = \"null\" OR country3 = \"null\" OR zip = \"null\" OR address = \"nullnull\" OR allergy = \"null\"";
 			stmt.executeUpdate(update);
 			
-			query = "SELECT join_date, join_time,";
+			query = "SELECT event_participants.time,";
 			
 			Events db = new Events();
 			db.open();
 			ArrayList<String> formQuestionColumn = db.formQuestionsColumn(event);
-			list = db.formQuestionColumnName(formQuestionColumn);
+			list = db.formQuestionColumnNames(formQuestionColumn);
 			db.close();
 			
 			int i = 0;
@@ -168,16 +147,21 @@ public class Participants {
 			query += "FROM participants, event, event_participants WHERE english_e_name = ? AND participants.participant_id = event_participants.participant_id AND event.event_id = event_participants.event_id ";
 			
 			if(periodType.equals("allPeriod"))
-				query += "ORDER BY participants.participant_id DESC";
+				query += "ORDER BY event_participants.time DESC";
+			else if(periodType.equals("recruitmentPeriod"))
+				query += "AND event_participants.time >= (SELECT recruitment_start FROM event WHERE english_e_name = ?) AND event_participants.time <= (SELECT recruitment_end FROM event WHERE english_e_name = ?) ORDER BY event_participants.time DESC";
 			else
-				query += "AND join_date >= ? AND join_date <= ? ORDER BY participants.participant_id DESC";
+				query += "AND event_participants.time >= ? AND event_participants.time <= ? ORDER BY event_participants.time DESC";
 			
 			System.out.println(query);
 			
 			PreparedStatement stmt = conn.prepareStatement(query);
 			stmt.setString(1, event);
 			
-			if(periodType.equals("freePeriod") || periodType.equals("recruitmentPeriod")) {
+			if(periodType.equals("recruitmentPeriod")) {
+				stmt.setString(2, event);
+				stmt.setString(3, event);
+			} else if(periodType.equals("freePeriod")) {
 				stmt.setString(2, startPeriod);
 				stmt.setString(3, endPeriod);
 			}
@@ -185,7 +169,7 @@ public class Participants {
 			ResultSet rset = stmt.executeQuery();
 			
 			while (rset.next()) {
-				list.add(rset.getString("join_date")+" "+rset.getString("join_time"));
+				list.add(rset.getString("time"));
 				for(String string : formQuestionColumn) {
 					list.add(rset.getString(string));
 				}
@@ -264,12 +248,12 @@ public class Participants {
 		String query = new String();
 		try {
 			
-			query = "SELECT event_participants.join_date, event_participants.join_time, participants.name, participants.participant_id FROM participants, event_participants, event WHERE english_e_name = ? AND event_participants.participant_id = participants.participant_id AND event.event_id = event_participants.event_id ";
+			query = "SELECT event_participants.time, participants.name, participants.participant_id FROM participants, event_participants, event WHERE english_e_name = ? AND event_participants.participant_id = participants.participant_id AND event.event_id = event_participants.event_id ";
 			
 			if(periodType.equals("allPeriod")) 
-				query += "ORDER BY participants.participant_id DESC";
+				query += "ORDER BY event_participants.time DESC";
 			else
-				query += "AND join_date >= ? AND join_date <= ? ORDER BY participants.participant_id DESC";
+				query += "AND event_participants.time >= ? AND event_participants.time <= ? ORDER BY event_participants.time DESC";
 			
 			PreparedStatement stmt = conn.prepareStatement(query);
 			stmt.setString(1, event);
@@ -282,14 +266,54 @@ public class Participants {
 			ResultSet rset = stmt.executeQuery();
 
 			while (rset.next()) {
-				data.add(rset.getString("join_date"));
-				data.add(rset.getString("join_time"));
+				data.add(rset.getString("time"));
 				data.add(rset.getString("name"));
 				data.add(rset.getString("participant_id"));
 			}
 
 			return data;
 		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public ArrayList<String> participantInfoFull(String participantId, String event) {
+		ArrayList<String> list = new ArrayList<String>();
+		try {
+			Events db = new Events();
+			db.open();
+			ArrayList<String> formQuestionColumn = db.formQuestionsColumn(event);
+			
+			String query = "SELECT ";
+			
+			int i = 0;
+			for(String string : formQuestionColumn) {
+				if(i == formQuestionColumn.size()-1)
+					query += string + " ";
+				else
+					query += string + ", ";
+				i++;
+			}
+			query +=  "FROM participants, event_participants WHERE participants.participant_id = event_participants.participant_id AND participants.participant_id = ?";
+			
+			//System.out.println(query);
+			
+			PreparedStatement stmt = conn.prepareStatement(query);
+			stmt.setString(1, participantId);
+			ResultSet rset = stmt.executeQuery();
+			
+			while (rset.next()) {
+				for(String string : formQuestionColumn) {
+					list.add(db.formQuestionColumnName(string));
+					list.add(rset.getString(string));
+				}
+			}
+			db.close();
+			
+			return list;
+			
+		} catch(Exception e) {
 			e.printStackTrace();
 		}
 		return null;
@@ -346,20 +370,5 @@ public class Participants {
 			e.printStackTrace();
 		}
 		return 0;
-	}
-	
-	public static void main(String[] args) {
-		String event = "multiculturalyouth";
-		String periodType = "allPeriod";
-		String startPeriod = null;
-		String endPeriod = null;
-		
-		Participants db = new Participants();
-		db.open();
-		//ArrayList<String> data = db.survey(event, periodType, startPeriod, endPeriod);
-		ArrayList<String> data = db.participantsEmailAddress(event, "rajan.valencia@au.com", periodType, startPeriod, endPeriod);
-		db.close();
-		//System.out.println(res);
-		System.out.println(data);
 	}
 }

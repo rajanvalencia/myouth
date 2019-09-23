@@ -39,27 +39,26 @@ public class EventPageImageLists {
 
 		for (String string : imageLists) {
 			if (i == 0 || i == row2 || i == row3)
-				result += "<div class=\"col-4 col-12-mobile\">";
+				result += "\n\t\t\t\t\t<div class=\"col-4 col-12-mobile\">";
 
 			if (i % 2 == 0) {
-				result += "<article class=\"item\">";
-				result += "<a href=\"#\" class=\"image fit\">";
-				result += "<img src=\"https://s3-ap-northeast-1.amazonaws.com/jp.myouth.images/events/" + event + "/"
-						+ string + "\" alt=\"\" />";
+				result += "\n\t\t\t\t\t\t<article class=\"item\">";
+				result += "\n\t\t\t\t\t\t\t<a href=\"#\" class=\"image fit\">";
+				result += "<img src=\""+ string + "\" alt=\"\" />";
 				result += "</a>";
 			}
 
 			else if (i % 2 == 1 && string != null) {
 				result += "<header><h3>" + string + "</h3></header>";
-				result += "</article>";
+				result += "\n\t\t\t\t\t\t</article>";
 			}
 
 			else {
-				result += "</article>";
+				result += "\n\t\t\t\t\t\t</article>";
 			}
 
 			if (i == row2 - 1 || i == row3 - 1 || i == len - 1)
-				result += "</div>";
+				result += "\n\t\t\t\t\t</div>";
 
 			i++;
 		}

@@ -35,7 +35,7 @@
 		<!-- Main -->
 		<section id="main" class="container">
 		<section  class="back-button">
-		<a href="/"><span class="fas fa-arrow-left fa-3x faa-passing-reverse animated"></span></a>
+		<a href="/"><span class="fas fa-arrow-left fa-2x faa-passing-reverse animated"></span></a>
 		</section>
 			<div class="row">
 				<div class="col-12">

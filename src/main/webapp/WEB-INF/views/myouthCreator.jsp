@@ -36,11 +36,11 @@
 		<section id="main" class="container">
 			<section class="back-button">
 				<a href="/"><span
-					class="fas fa-arrow-left fa-3x faa-passing-reverse animated"></span></a>
+					class="fas fa-arrow-left fa-2x faa-passing-reverse animated"></span></a>
 			</section>
 			<header>
 				<h2>Valencia Rajan Zamora</h2>
-				<span><a href="https://github.com/rajanvalencia" class="icon"><span
+				<span><a target="blank" href="https://github.com/rajanvalencia" class="icon"><span
 						class="fa fa-github fa-3x faa-pulse animated"></span></a></span>
 			</header>
 			<div class="row">
@@ -175,23 +175,24 @@
 							ある事情により非公開にしています。
 						</p>
 							<div style="text-align: center">2次元(n=2)でアリティは5(k=5)のTCCの可視化</div >
-						<video class="image fit" controls loop autoplay><source
+						<video class="image fit" controls loop autoplay playsinline><source
 							src="https://s3-ap-northeast-1.amazonaws.com/jp.myouth.images/rajanValencia/2DTCC.mp4" type="video/mp4"></source></video>
-							<div  style="text-align: center">3次元(n=2)でアリティは5(k=5)のTCCの可視化(ノード番号付き)</div >
-						<video class="image fit" controls loop autoplay><source
+							<div  style="text-align: center">2次元(n=2)でアリティは5(k=5)のTCCの可視化(ノード番号付き)</div >
+						<video class="image fit" controls loop autoplay playsinline><source
 							src="https://s3-ap-northeast-1.amazonaws.com/jp.myouth.images/rajanValencia/2DTCC_1.mp4" type="video/mp4"></source></video>
 							<div  style="text-align: center">3次元(n=3)でアリティは2(k=2)のTCCの可視化</div >
-						<video class="image fit" controls loop autoplay><source
+						<video class="image fit" controls loop autoplay playsinline><source
 							src="https://s3-ap-northeast-1.amazonaws.com/jp.myouth.images/rajanValencia/3DTCC_1+.mp4" type="video/mp4"></source></video>
 							<div  style="text-align: center">3次元(n=3)でアリティは5(k=5)のTCCの可視化</div >
-						<video class="image fit" controls loop autoplay><source
+						<video class="image fit" controls loop autoplay playsinline><source
 							src="https://s3-ap-northeast-1.amazonaws.com/jp.myouth.images/rajanValencia/3DTCC.mp4" type="video/mp4"></source></video>
 							<div  style="text-align: center">3次元(n=3)でアリティは3(k=3)のTCCの可視化(ノード番号付き)</div >
-						<video class="image fit" controls loop autoplay><source
+						<video class="image fit" controls loop autoplay playsinline><source
 							src="https://s3-ap-northeast-1.amazonaws.com/jp.myouth.images/rajanValencia/3DTCC_2.mp4" type="video/mp4"></source></video>
 					</section>
 
 					<section class="box">
+						<img src="https://s3-ap-northeast-1.amazonaws.com/jp.myouth.images/backgrounds/myouth-logo.jpg" alt="" style="border-radius: 10px;" width="200"/>
 						<h3>
 							<a href="/">myouth</a> Web Application <a
 								href="https://github.com/rajanvalencia/myouth" class="icon"><span
@@ -206,6 +207,7 @@
 									<li>Java</li>
 									<li>SQL</li>
 									<li>JavaScript(JQuery)</li>
+									<li>NodeJS</li>
 									<li>HTML</li>
 									<li>CSS</li>
 								</ul>
@@ -223,15 +225,12 @@
 								</ul>
 							</div>
 						</div>
-						<div  style="text-align: center">ログインページ</div >
-						<video class="image fit" controls loop autoplay><source
-							src="https://s3-ap-northeast-1.amazonaws.com/jp.myouth.images/rajanValencia/myouthDemo1.mp4" type="video/mp4"></source></video>
 					</section>
 				</div>
 			</div>
 			<section class="back-button">
 				<a href="/"><span
-					class="fas fa-arrow-left fa-3x faa-passing-reverse animated"></span></a>
+					class="fas fa-arrow-left fa-2x faa-passing-reverse animated"></span></a>
 			</section>
 		</section>
 
