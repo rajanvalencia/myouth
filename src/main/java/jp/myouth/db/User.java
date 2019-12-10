@@ -43,10 +43,10 @@ public class User {
 			}
 	}
 
-	public String userId(String email) {
+	public String getUserId(String email) {
 		String data = new String();
 		try {
-			String query = "SELECT users.user_id FROM users WHERE email = ?";
+			String query = "SELECT users.user_id FROM users WHERE email_address = ?";
 			PreparedStatement stmt = conn.prepareStatement(query);
 			stmt.setString(1, email);
 			ResultSet rset = stmt.executeQuery();
@@ -60,7 +60,7 @@ public class User {
 	}
 	
 
-	public String name(String userId) {
+	public String getName(String userId) {
 		String data = new String();
 		try {
 			String query = "SELECT users.name FROM users WHERE user_id = ?";
@@ -76,7 +76,7 @@ public class User {
 		return null;
 	}
 	
-	public String fname(String userId) {
+	public String getFname(String userId) {
 		String data = new String();
 		try {
 			String query = "SELECT users.fname FROM users WHERE user_id = ?";
@@ -93,7 +93,7 @@ public class User {
 		return null;
 	}
 
-	public String word(String userId) {
+	public String getMotto(String userId) {
 		String data = new String();
 		try {
 			String query = "SELECT users.word FROM users WHERE user_id = ?";
@@ -109,7 +109,7 @@ public class User {
 		return null;
 	}
 
-	public Boolean introduction(String userId, String name, String word) {
+	public Boolean updateProfileInfo(String userId, String name, String word) {
 		try {
 			String update = "UPDATE users SET name = ?, word = ? WHERE user_id = ?";
 			PreparedStatement stmt = conn.prepareStatement(update);
@@ -128,9 +128,9 @@ public class User {
 		return false;
 	}
 
-	public Boolean register(String userId, String name, String fname, String email, String phone, String birthdate) {
+	public Boolean registerUser(String userId, String name, String fname, String email, String phone, String birthdate) {
 		try {
-			String update = "INSERT INTO users (user_id, name, fname, email, phone, birthdate) VALUES(?,?,?,?,?,?)";
+			String update = "INSERT INTO users (user_id, name, fname, email_address, phone, birthdate) VALUES(?,?,?,?,?,?)";
 			PreparedStatement stmt = conn.prepareStatement(update);
 			stmt.setString(1, userId);
 			stmt.setString(2, name);
@@ -150,74 +150,7 @@ public class User {
 		return false;
 	}
 	
-	public String getUserIdFromToken(String token) {
-		try {
-			String userId = new String();
-			
-			String query = "SELECT user_id FROM account_verification_token WHERE token = ?";
-			PreparedStatement stmt = conn.prepareStatement(query);
-			stmt.setString(1, token);
-			ResultSet rset = stmt.executeQuery();
-			if(rset.next())
-				userId = rset.getString("user_id");
-			
-			String update = "DELETE FROM account_verification_token WHERE token = ?";
-			PreparedStatement stmt1 = conn.prepareStatement(update);
-			stmt1.setString(1, token);
-			int res = stmt1.executeUpdate();
-			
-			if(res > 0)
-				return userId;
-		}catch(Exception e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-	
-	public Boolean verifyEmail(String userId, Boolean verification) {
-		try {
-			int res = 0;
-			
-			if(!verification) {
-				String insert = "INSERT INTO verify_email (user_id, verification) VALUES(?, ?)";
-				PreparedStatement stmt = conn.prepareStatement(insert);
-				stmt.setString(1, userId);
-				stmt.setBoolean(2, verification);
-				res = stmt.executeUpdate();
-			}
-			else {
-				String update = "UPDATE verify_email SET verification = ? WHERE user_id = ?";
-				PreparedStatement stmt = conn.prepareStatement(update);
-				stmt.setBoolean(1, verification);
-				stmt.setString(2, userId);
-				res = stmt.executeUpdate();
-			}
-			if(res > 0)
-				return true;
-		}catch(Exception e) {
-			e.printStackTrace();
-		}
-		return false;
-	}
-	
-	public Boolean checkVerification(String userId) {
-		Boolean data = false;
-		try {
-			String query = "SELECT verification FROM verify_email WHERE user_id = ?";
-			
-			PreparedStatement stmt = conn.prepareStatement(query);
-			stmt.setString(1, userId);
-			ResultSet rset = stmt.executeQuery();
-			if(rset.next())
-				data = rset.getBoolean("verification");
-			return data;
-		}catch(Exception e) {
-			e.printStackTrace();
-		}
-		return false;
-	}
-	
-	public Integer totalUsers() {
+	public Integer getTotalUsers() {
 		Integer data = 0;
 		try {
 			String query = "SELECT COUNT(*) AS totalUsers FROM users";
@@ -234,10 +167,10 @@ public class User {
 	}
 	
 	
-	public String userEmailAddress(String userId) {
+	public String getUserEmailAddress(String userId) {
 		String data = new String();
 		try {
-			String query = "SELECT email FROM users WHERE user_id = ?";
+			String query = "SELECT email_address FROM users WHERE user_id = ?";
 			PreparedStatement stmt = conn.prepareStatement(query);
 			stmt.setString(1, userId);
 			ResultSet rset = stmt.executeQuery();
@@ -255,7 +188,7 @@ public class User {
 	public ArrayList<String> managingEvents(String userId) {
 		ArrayList<String> data = new ArrayList<String>();
 		try {
-			String query = "SELECT event.english_e_name, event_logo.logo_url, event.e_name FROM event, user_event, event_logo WHERE user_event.user_id = ? AND event.event_id = user_event.event_id AND event.event_id = event_logo.event_id";
+			String query = "SELECT event.english_e_name, event_logo.logo_url, event.e_name FROM event, event_administrators, event_logo WHERE event_administrators.user_id = ? AND event.event_id = event_administrators.event_id AND event.event_id = event_logo.event_id";
 			PreparedStatement stmt = conn.prepareStatement(query);
 			stmt.setString(1, userId);
 			ResultSet rset = stmt.executeQuery();
@@ -275,7 +208,7 @@ public class User {
 	public ArrayList<String> eventMember(String event){
 		ArrayList<String> data = new ArrayList<String>();
 		try {
-			String query = "SELECT user_profile_picture.path, users.name, users.user_id FROM users, user_event, event, user_profile_picture WHERE users.user_id = user_profile_picture.user_id AND users.user_id = user_event.user_id AND event.event_id = user_event.event_id AND event.english_e_name = ?";
+			String query = "SELECT users_profile_picture.path, users.name, users.user_id FROM users, event_administrators, event, users_profile_picture WHERE users.user_id = users_profile_picture.user_id AND users.user_id = event_administrators.user_id AND event.event_id = event_administrators.event_id AND event.english_e_name = ?";
 			PreparedStatement stmt = conn.prepareStatement(query);
 			stmt.setString(1, event);
 			ResultSet rset = stmt.executeQuery();
@@ -296,7 +229,7 @@ public class User {
 	public ArrayList<String> memberSearch(String search, String event){
 		ArrayList<String> data = new ArrayList<String>();
 		try {
-			String query = "SELECT user_profile_picture.path, name, users.user_id FROM users, user_profile_picture WHERE users.user_id NOT IN (SELECT user_id FROM user_event WHERE event_id = (SELECT event_id FROM event WHERE english_e_name = ?)) AND users.user_id = user_profile_picture.user_id AND (users.name LIKE ? OR users.fname LIKE ?)";
+			String query = "SELECT users_profile_picture.path, name, users.user_id FROM users, users_profile_picture WHERE users.user_id NOT IN (SELECT user_id FROM event_administrators WHERE event_id = (SELECT event_id FROM event WHERE english_e_name = ?)) AND users.user_id = users_profile_picture.user_id AND (users.name LIKE ? OR users.fname LIKE ?)";
 			PreparedStatement stmt = conn.prepareStatement(query);
 			stmt.setString(1, event);
 			stmt.setString(2, "%"+search+"%");
@@ -318,7 +251,7 @@ public class User {
 	
 	public Boolean memberAdd(String event, String userId) {
 		try {
-			String update = "INSERT INTO user_event (user_id, event_id) VALUES(?, (SELECT event_id FROM event WHERE english_e_name = ?))";
+			String update = "INSERT INTO event_administrators (user_id, event_id) VALUES(?, (SELECT event_id FROM event WHERE english_e_name = ?))";
 			PreparedStatement stmt = conn.prepareStatement(update);
 			stmt.setString(1, userId);
 			stmt.setString(2, event);
@@ -344,7 +277,7 @@ public class User {
 				event_id = rset.getString("event_id");
 			rset.close();
 			
-			String update = "DELETE FROM user_event WHERE user_id = ? AND event_id = ?";
+			String update = "DELETE FROM event_administrators WHERE user_id = ? AND event_id = ?";
 			PreparedStatement stmt1 = conn.prepareStatement(update);
 			stmt1.setString(1, userId);
 			stmt1.setString(2, event_id);

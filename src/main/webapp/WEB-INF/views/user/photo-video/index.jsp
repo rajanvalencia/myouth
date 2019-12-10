@@ -70,7 +70,7 @@
 					<!-- Image -->
 					<section class="box">
 						<form id="profilePicUplaodForm" enctype="multipart/form-data" method="post" action="/uploadEventLogo">
-							<input type="file" class="hidden" name="eventLogo" id="imgupload">
+							<input type="file" accept="image/*" class="hidden" name="eventLogo" id="imgupload">
 							<span class="image profile-image-center"><img style="border-radius: 10px;" src="<% out.print(path);%>" alt="" width="140"/></span>
 							<div class="col-12">
 								<ul class="actions">
@@ -79,7 +79,7 @@
   							</div>
   						</form>
   						<form id="uploadEventImageForm" enctype="multipart/form-data" method="post" action="/uploadEventImage">
-							<input type="file" class="hidden" name="eventImage" id="uploadEventImageButton">
+							<input type="file" accept="image/*" class="hidden" name="eventImage" id="uploadEventImageButton">
   						</form>
 						<% 
 							UserPageImageLists list = new UserPageImageLists();

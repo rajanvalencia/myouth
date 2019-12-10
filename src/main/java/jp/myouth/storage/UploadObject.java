@@ -10,8 +10,11 @@ import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.amazonaws.services.s3.model.BucketAccelerateConfiguration;
+import com.amazonaws.services.s3.model.BucketAccelerateStatus;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.model.SetBucketAccelerateConfigurationRequest;
 
 public class UploadObject {
 
@@ -22,8 +25,14 @@ public class UploadObject {
         	AmazonS3 s3Client = AmazonS3ClientBuilder.standard()
 					.withRegion(clientRegion)
 					.withCredentials(new AWSStaticCredentialsProvider(credentials()))
+					.enableAccelerateMode()
 					.build();
-        
+        	
+        	// Enable Transfer Acceleration for the specified bucket.
+            s3Client.setBucketAccelerateConfiguration(
+            		new SetBucketAccelerateConfigurationRequest(bucketName,
+            				new BucketAccelerateConfiguration(BucketAccelerateStatus.Enabled)));
+        	
             ObjectMetadata metadata = new ObjectMetadata();
             metadata.setContentType(contentType);
             metadata.addUserMetadata("x-amz-meta-title", "someTitle");

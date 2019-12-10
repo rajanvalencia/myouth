@@ -1,4 +1,3 @@
-myouth web application
+Welcome to the myouth web application
 ==================================================
-イベント管理システムと相談システム
-https://myouth.jp
+Please proceed to https://myouth.jp

@@ -79,7 +79,6 @@
 			<div class="row">
 				<div class="col-12">
 
-					<!-- Form -->
 					<section style="background-color: #E8F9DF;" class="box <%out.print(success);session.setAttribute("success", "hidden");%>" id="success">
 						<p>メールは正常に送信されました <i class="fa fa-check faa-tada animated"></i> <br />全参加者に送信するまでにかかった時間：<%out.print(stopWatch);%>秒
 						<br />受信者数: <%out.print(totalParticipants);%></p>
@@ -142,7 +141,7 @@
 									</select>
 								</div>
 								<div id="recipientField" class="col-12 hidden">
-									<input type="text" name="recipient" id="recipient" value="<%out.print(replyTo);%>" placeholder="宛先" />
+									<input type="email" name="recipient" id="recipient" value="<%out.print(replyTo);%>" placeholder="宛先" />
 								</div>
 								<div class="col-12">
 									<input type="text" name="subject" id="subject" placeholder="件名" />

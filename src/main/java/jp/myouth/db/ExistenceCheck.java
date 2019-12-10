@@ -74,7 +74,7 @@ public class ExistenceCheck {
 	
 	public Boolean eventAccess(String userId, String event) {
 		try {
-			String query = "SELECT * FROM user_event WHERE user_id = ? AND event_id = (SELECT event_id FROM event WHERE english_e_name = ?)";
+			String query = "SELECT * FROM event_administrators WHERE user_id = ? AND event_id = (SELECT event_id FROM event WHERE english_e_name = ?)";
 			PreparedStatement stmt = conn.prepareStatement(query);
 			stmt.setString(1, userId);
 			stmt.setString(2, event);
@@ -89,13 +89,38 @@ public class ExistenceCheck {
 		return false;
 	}
 	
-	public static void main(String[] args) {
-		ExistenceCheck ec = new ExistenceCheck();
-		ec.open();
-		if(!ec.eventAccess("fWSwV9AqUN6", "altervoice"))
-			System.out.println("fail");
-		else
-			System.out.println("success");
-		ec.close();
+	public Boolean eventIdDoesntExist(String eventId) {
+		try {
+			String query = "SELECT * FROM event WHERE english_e_name = ?";
+			PreparedStatement stmt = conn.prepareStatement(query);
+			stmt.setString(1, eventId);
+			ResultSet rset = stmt.executeQuery();
+			
+			if(!rset.next()) {
+				rset.close();
+				return true;
+			}
+			rset.close();
+		} catch(SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
+	
+	public Boolean emailAddressAvailable(String emailAddress) {
+		try {
+			String query = "SELECT * FROM users WHERE email_address = ?";
+			PreparedStatement stmt = conn.prepareStatement(query);
+			stmt.setString(1, emailAddress);
+			ResultSet rset = stmt.executeQuery();
+			
+			if(rset.next()) {
+				return false;
+			}
+		} catch(SQLException e) {
+			e.printStackTrace();
+		} 
+		return true;
+	}
+	
 }

@@ -16,7 +16,7 @@ public class UpdateEventImageDescription extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
 	
-	protected final String BUCKET_NAME = "jp.myouth.images";
+	protected final String BUCKET_NAME = "myouth-images";
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		HttpSession session = request.getSession();

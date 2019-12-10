@@ -90,7 +90,8 @@
 								<ul>
 									<li>Certificate Manager</li>
 									<li>Cloud9</li>
-									<li>Cloudfront</li>
+									<li>CloudFormation</li>
+									<li>CloudFront</li>
 									<li>CloudWatch</li>
 									<li>CodeBuild</li>
 									<li>CodeCommit</li>
@@ -99,6 +100,7 @@
 									<li>CodeStar</li>
 									<li>Comprehend</li>
 									<li>EC2</li>
+									<li>Elastic Beanstalk</li>
 									<li>IAM</li>
 									<li>Lambda</li>
 									<li>RDS</li>
@@ -176,19 +178,19 @@
 						</p>
 							<div style="text-align: center">2次元(n=2)でアリティは5(k=5)のTCCの可視化</div >
 						<video class="image fit" controls loop autoplay playsinline><source
-							src="https://s3-ap-northeast-1.amazonaws.com/jp.myouth.images/rajanValencia/2DTCC.mp4" type="video/mp4"></source></video>
+							src="https://s3-ap-northeast-1.amazonaws.com/myouth-images/rajanValencia/2DTCC.mp4" type="video/mp4"></source></video>
 							<div  style="text-align: center">2次元(n=2)でアリティは5(k=5)のTCCの可視化(ノード番号付き)</div >
 						<video class="image fit" controls loop autoplay playsinline><source
-							src="https://s3-ap-northeast-1.amazonaws.com/jp.myouth.images/rajanValencia/2DTCC_1.mp4" type="video/mp4"></source></video>
+							src="https://s3-ap-northeast-1.amazonaws.com/myouth-images/rajanValencia/2DTCC_1.mp4" type="video/mp4"></source></video>
 							<div  style="text-align: center">3次元(n=3)でアリティは2(k=2)のTCCの可視化</div >
 						<video class="image fit" controls loop autoplay playsinline><source
-							src="https://s3-ap-northeast-1.amazonaws.com/jp.myouth.images/rajanValencia/3DTCC_1+.mp4" type="video/mp4"></source></video>
+							src="https://s3-ap-northeast-1.amazonaws.com/myouth-images/rajanValencia/3DTCC_1+.mp4" type="video/mp4"></source></video>
 							<div  style="text-align: center">3次元(n=3)でアリティは5(k=5)のTCCの可視化</div >
 						<video class="image fit" controls loop autoplay playsinline><source
-							src="https://s3-ap-northeast-1.amazonaws.com/jp.myouth.images/rajanValencia/3DTCC.mp4" type="video/mp4"></source></video>
+							src="https://s3-ap-northeast-1.amazonaws.com/myouth-images/rajanValencia/3DTCC.mp4" type="video/mp4"></source></video>
 							<div  style="text-align: center">3次元(n=3)でアリティは3(k=3)のTCCの可視化(ノード番号付き)</div >
 						<video class="image fit" controls loop autoplay playsinline><source
-							src="https://s3-ap-northeast-1.amazonaws.com/jp.myouth.images/rajanValencia/3DTCC_2.mp4" type="video/mp4"></source></video>
+							src="https://s3-ap-northeast-1.amazonaws.com/myouth-images/rajanValencia/3DTCC_2.mp4" type="video/mp4"></source></video>
 					</section>
 
 					<section class="box">
@@ -197,7 +199,7 @@
 								href="https://github.com/rajanvalencia/myouth" class="icon"><span
 								class="fa fa-github faa-pulse animated"></span></a>
 						</h3>
-						<img src="https://s3-ap-northeast-1.amazonaws.com/jp.myouth.images/backgrounds/myouth-logo.jpg" alt="" style="border-radius: 10px;" width="200"/>
+						<img src="https://s3-ap-northeast-1.amazonaws.com/myouth-images/backgrounds/myouth-logo.jpg" alt="" style="border-radius: 10px;" width="200"/>
 						<div class="row">
 							<div class="col-6">
 								<h4>

@@ -6,11 +6,6 @@
 <%@ page import="jp.myouth.db.Events"%>
 <%@ page import="jp.myouth.tables.*"%>
 <%
-	Boolean user = (Boolean) session.getAttribute("user");
-	if (!user)
-		response.sendRedirect("/login");
-	
-	String userId = (String) session.getAttribute("userId");
 	String event = (String) session.getAttribute("event");
 	
 	String periodType = null;

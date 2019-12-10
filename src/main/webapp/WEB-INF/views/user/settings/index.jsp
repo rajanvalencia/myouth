@@ -1,15 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
 	pageEncoding="utf-8"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
-<%@ page import="jp.myouth.db.Events"%>
-<%@ page import="java.util.ArrayList"%>
-<%
-	Boolean user = (Boolean) session.getAttribute("user");
-	if (!user)
-		response.sendRedirect("/login");
-	String userId = (String) session.getAttribute("userId");
-	String event = (String) session.getAttribute("event");
-%>
 <!DOCTYPE HTML>
 <!--
 	Alpha by HTML5 UP
@@ -63,15 +54,13 @@
 		</header>
 			<div class="row">
 				<div class="col-12">
-
-					<!-- Image -->
 					<section class="box">
 						 <div class="table-wrapper">
 							<table>
 								<tbody>
 									<tr>
 										<td>
-											<a href="/home/<%out.print(event);%>/settings/details" style="color: #e89980; border-bottom-color: transparent;">
+											<a href="/home/${event}/settings/details" style="color: #e89980; border-bottom-color: transparent;">
 												<div class="row gtr-50 gtr-uniform">
 													<div class="col-4">
 														<span class="fa fa-info-circle fa-2x"></span>
@@ -85,13 +74,13 @@
 									</tr>
 									<tr>
 										<td>
-											<a href="/home/<%out.print(event);%>/settings/form"  style="color: #e89980; border-bottom-color: transparent;">
+											<a href="/home/${event}/settings/formTemplates"  style="color: #e89980; border-bottom-color: transparent;">
 												<div class="row gtr-50 gtr-uniform">
 													<div class="col-4">
 														<span class="fa fa-file fa-2x"></span>
 													</div>
 													<div class="col-8">
-														<h3>参加申し込み</h3>
+														<h3>フォーム</h3>
 													</div>
 												</div>
 											</a>
@@ -99,30 +88,14 @@
 									</tr>
 									<tr>
 										<td>
-											<a href="/home/<%out.print(event);%>/settings/survey"  style="color: #e89980; border-bottom-color: transparent;">
-												<div class="row gtr-50 gtr-uniform">
-													<div class="col-4">
-														<span class="fa fa-file-alt fa-2x"></span>
-													</div>
-													<div class="col-8">
-														<h3>アンケート</h3>
-													</div>
+											<div class="row gtr-50 gtr-uniform mouse-pointer" style="color: #ff7496;">
+												<div class="col-4">
+													<span class="fa fa-trash fa-2x"></span>
 												</div>
-											</a>
-										</td>
-									</tr>
-									<tr>
-										<td>
-											<a href="/home/<%out.print(event);%>/settings/delete"  style="color: #e89980; border-bottom-color: transparent;">
-												<div class="row gtr-50 gtr-uniform">
-													<div class="col-4">
-														<span class="fa fa-trash fa-2x"></span>
-													</div>
-													<div class="col-8">
-														<h3>イベントを削除</h3>
-													</div>
+												<div class="col-8" id="deleteEvent">
+													<h3>イベントを削除</h3>
 												</div>
-											</a>
+											</div>
 										</td>
 									</tr>
 								</tbody>
@@ -161,6 +134,32 @@
 	<script src="/resources/alpha/js/breakpoints.min.js"></script>
 	<script src="/resources/alpha/js/util.js"></script>
 	<script src="/resources/alpha/js/main.js"></script>
+	<script>
+		$('#deleteEvent').click(function(){
+			var text = prompt('${eventName}イベントを削除したい場合以下の欄にイベントID(${event})を入力してください。');
+			
+			if(text != '${event}')
+				return;
 
+			var params = {
+				event	: '${event}',
+				apiKey	: '${apiKey}'
+			}
+
+			$.ajax({
+				type	: 'POST',
+				url 	: '/apis/ajax/events/deleteEvent',
+				data	: params,
+				async	: true,
+				success	: function(res){
+					if(res)
+						window.location.href = '/home';
+				},
+				error	: function(XMLHttpRequest, textStatus, errorThrown) {
+					alert("リクエスト時になんらかのエラーが発生しました：" + textStatus +":\n" + errorThrown);
+				}
+			})
+		});
+	</script>
 </body>
 </html>

@@ -26,8 +26,8 @@ public class UserPageParticipantsInfo {
 				+ "\n\t\t\t\t\t\t\t<table>"
 				+ "\n\t\t\t\t\t\t\t\t<thead>"
 				+ "\n\t\t\t\t\t\t\t\t\t<tr>"
-				+ "\n\t\t\t\t\t\t\t\t\t\t<th>ƒ^ƒCƒ€ƒXƒ^ƒ“ƒv</th>"
-				+ "\n\t\t\t\t\t\t\t\t\t\t<th>–¼‘O</th>"
+				+ "\n\t\t\t\t\t\t\t\t\t\t<th>å‚åŠ æ™‚</th>"
+				+ "\n\t\t\t\t\t\t\t\t\t\t<th>æ°å</th>"
 				+ "\n\t\t\t\t\t\t\t\t\t</tr>"
 				+ "\n\t\t\t\t\t\t\t\t</thead>"
 				+ "\n\t\t\t\t\t\t\t\t<tbody>";

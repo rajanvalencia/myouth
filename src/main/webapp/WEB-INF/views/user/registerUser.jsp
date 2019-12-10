@@ -1,17 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
 	pageEncoding="utf-8"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
-<%
-	String success = (String) session.getAttribute("registerUserSuccess");
-	String failure = (String) session.getAttribute("registerUserFailure");
-	
-	String name = (String) session.getAttribute("registerUserName");
-	String fname = (String) session.getAttribute("registerUserFname");
-	String phone = (String) session.getAttribute("registerUserPhone");
-	String year = (String) session.getAttribute("registerUserYear");
-	String month = (String) session.getAttribute("registerUserMonth");
-	String day = (String) session.getAttribute("registerUserDay");
-%>
 <!DOCTYPE HTML>
 <!--
 	Alpha by HTML5 UP
@@ -40,7 +29,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <link rel="stylesheet" href="/resources/css/font-awesome-animation.css">
 	
-	<!-- Global site tag (gtag.js) - Google Analytics -->
+<!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=UA-143752853-1"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
@@ -49,8 +38,7 @@
 
   gtag('config', 'UA-143752853-1');
 </script>
-	
-	</head>
+</head>
 	<body class="is-preload">
 		<div id="page-wrapper">
 			<!-- Main -->
@@ -61,164 +49,174 @@
 				<header>
 					<h2>Register</h2>
 				</header>
-				<section style="background-color: #E8F9DF;" class="box <%out.print(success); session.setAttribute("registerUserSuccess", "hidden");%>" id="success">
-					<p>まだ途中です
-					<br />只今入力されたアカウントを承認するためのurlは入力されたメールアドレスに送信致しました <i class="fa fa-check faa-tada animated"></i> 
-					<br />30分経過したら無効になってしまいますのでご了承ください
+				<section class="box ${success}" id="success" ${success}>
+					<p style="color: #06A10B;">
+						正常に送信されました <i class="fa fa-check faa-tada animated"></i>
+						<br />
+						只今メールアドレスに承認するためのリンクを送信致しました 
+					</p>
+					<p>
+						<i class="fa fa-exclamation-triangle" style="color: #ff7496;"></i>
+						30分経過したら自動的に無効になりますのでご注意ください。
+						<br />
+						メールに記載されているリンクは一度のみクリックできます。
 					</p>
 				</section>
-				<section style="background-color: #F4BAA7;" class="box <%out.print(failure); session.setAttribute("registerUserFailure", "hidden");%>" id="success">
-					<p>メールアドレスは既に使用されてます<i class="fa fa-times faa-pulse animated"></i></p>
-				</section>
-					<div class="box">
+				<section class="box">
 					<div class="row">
 						<form id="form" method="post" action="/register">
 							<div class="row gtr-50 gtr-uniform">
 								<div class="col-12">
 									<label for="name">名前</label>
-									<input type="text" name="name" id="name" value="<%out.print(name);%>" placeholder="" required/>
+									<input type="text" name="name" required/>
 								</div>
 								<div class="col-12">
 									<label for="fname">フリガナ</label>
-									<input type="text" name="fname" id="fname" value="<%out.print(fname);%>" placeholder="" required/>
+									<input type="text" name="fname" required/>
 								</div>
 								<div class="col-12">
-									<label for="email">メールアドレス</label>
-									<input type="email" name="email" id="email" value="" placeholder="" required/>
+									<label for="email">
+										メールアドレス
+										<br />
+										<span id="messageForEmailAddressAvailability"></span>
+									</label>
+									<input type="email" name="email" id="emailAddress" required/>
 								</div>
 								<div class="col-12">
 									<label for="phone">電話番号</label>
-									<input type="number" name="phone" id="phone" value="<%out.print(phone);%>" placeholder="" required/>
+									<input type="number" name="phone" required/>
 								</div>
-								<div class="col-4 col-4-mobilep">
-									<label for="years">生年月日  年</label>
-									<select name="birth-year" id="years" required>
-										<option label="" selected></option>
-									</select>
-								</div>
-								<div class="col-4 col-4-mobilep">
-									<label for="months">月</label>
-									<select name="birth-month" id="months" required>
-										<option label="" selected></option>
-									</select>
-								</div>
-								<div class="col-4 col-4-mobilep">
-									<label for="days">日</label>
-									<select name="birth-day" id="days" required>
-									</select>
+								<div class="col-3 col-5-mobile">
+									<label for="birth-date">生年月日</label>
+									<input type="date" id="birth-date" name="birth-date" required>
 								</div>
 								<div class="col-12">
-									<label for="password">パスワード<br />(8文字以上で1文字以上の数字、小文字アルファベット、大文字アルファベットがそれぞれ含まれていること)</label> <input type="password"
-										name="password" id="password"
-										pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
-										title="8文字以上で1文字以上の数字、小文字アルファベット、大文字アルファベットがそれぞれ含まれていること"
-										value="" required />
+									<label for="password">パスワード<br />(8文字以上で1文字以上の数字、小文字アルファベット、大文字アルファベットがそれぞれ含まれていること)</label>
+									<input type="password" name="password" id="password" autocomplete="new-password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="8文字以上で1文字以上の数字、小文字アルファベット、大文字アルファベットがそれぞれ含まれていること" value="" required />
 								</div>
 								<div class="col-12">
-									<label for="confirm_password">パスワードをもう一度入力</label> <input type="password"
-									name="confirm_password" id="confirm_password"
-									pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
-									value="" required />
-									<br />
-									<span id='message'></span>
+									<label for="confirm_password">
+										パスワードをもう一度入力
+										<br />
+										<span id='message'></span>
+									</label>
+									<input type="password" name="confirm_password" id="confirm_password" autocomplete="new-password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" value="" required />
 								</div>
-								<div class="col-4 col-12-mobile">
-									<ul class="actions" id="swap">
-										<li><input id="btn" type="submit" value="登録 " disabled/></li>
+								<div id="btn" class="col-4 col-12-mobile">
+									<ul class="actions">
+										<li><input id="submit" type="submit" value="登録 " disabled/></li>
+									</ul>
+								</div>
+								<div id="loading" class="col-12" hidden>
+									<ul class="actions">
+										<li>
+											<i class="fa fa-refresh fa-2x faa-spin faa-fast animated"></i>
+										</li>
 									</ul>
 								</div>
 							</div>
 						</form>
 					</div>
-				</div>
+				</section>
 				<section  class="back-button">
 					<a href="/"><span class="fas fa-arrow-left fa-2x faa-passing-reverse animated"></span></a>
 				</section>
 			</section>
 
 			<!-- Footer -->
-				<footer id="footer">
-					<!-- <ul class="icons">
-						<li><a href="#" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
-						<li><a href="#" class="icon brands fa-facebook-f"><span class="label">Facebook</span></a></li>
-						<li><a href="#" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
-						<li><a href="#" class="icon brands fa-github"><span class="label">Github</span></a></li>
-						<li><a href="#" class="icon brands fa-dribbble"><span class="label">Dribbble</span></a></li>
-						<li><a href="#" class="icon brands fa-google-plus"><span class="label">Google+</span></a></li>
-					</ul> -->
-					<ul class="copyright">
-						<li>myouth.jp</li><li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
-					</ul>
-				</footer>
+			<footer id="footer">
+				<ul class="copyright">
+					<li>myouth.jp</li><li>Design: <a href="http://html5up.net" target="_blank" rel="noopener">HTML5 UP</a> & <a href="/developer" target="_blank">Rajan Valencia</a></li>
+				</ul>
+			</footer>
 
 		</div>
 
 		<!-- Scripts -->
-			<script src="/resources/alpha/js/jquery.min.js"></script>
-			<script src="/resources/alpha/js/jquery.dropotron.min.js"></script>
-			<script src="/resources/alpha/js/jquery.scrollex.min.js"></script>
-			<script src="/resources/alpha/js/browser.min.js"></script>
-			<script src="/resources/alpha/js/breakpoints.min.js"></script>
-			<script src="/resources/alpha/js/util.js"></script>
+		<script src="/resources/alpha/js/jquery.min.js"></script>
+		<script src="/resources/alpha/js/jquery.dropotron.min.js"></script>
+		<script src="/resources/alpha/js/jquery.scrollex.min.js"></script>
+		<script src="/resources/alpha/js/browser.min.js"></script>
+		<script src="/resources/alpha/js/breakpoints.min.js"></script>
+		<script src="/resources/alpha/js/util.js"></script>
 		<!--<script src="/resources/alpha/js/main.js"></script>-->
-		<script type="text/javascript">
-
-		$(function() {
-
-		    //populate our years select box
-		    for ( i = new Date().getFullYear()-70; i <= new Date().getFullYear()-12; i++){
-		        $('#years').append($('<option />').val(i).html(i));
-		    }
-		    //populate our months select box
-		    for (i = 1; i <= 12; i++){
-		        $('#months').append($('<option />').val(i).html(i));
-		    }
-		    //populate our Days select box
-		    updateNumberOfDays(); 
-
-		    //"listen" for change events
-		    $('#years, #months').change(function(){
-		        updateNumberOfDays(); 
-		    });
-
-		});
-
-		//function to update the days based on the current values of month and year
-		function updateNumberOfDays(){
-		    $('#days').html('');
-		    month = $('#months').val();
-		    year = $('#years').val();
-		    days = daysInMonth(month, year);
-
-		    for(i = " "; i <= days ; i++){
-		            $('#days').append($('<option />').val(i).html(i));
-		    }
-		}
-
-		//helper function
-		function daysInMonth(month, year) {
-		    return new Date(year, month, 0).getDate();
-		}
+		<script>
 		
+			$(function(){
+				$('form').submit(function(){
+					$('#btn').hide();
+					$('#loading').attr('hidden', false);
+				})
+				
+				var currentYear = new Date().getFullYear();
+				$('#birth-date').attr('max', currentYear-14+'-12-31');
+				$('#birth-date').attr('min', currentYear-85+'-01-01');
+				
+				var successAttr = $('#success').attr('hidden');
+				var failureAttr = $('#failure').attr('hidden');
+				
+			    if(successAttr != 'hidden'){
+			    	hideSection('success');
+			    }
+			   
+			    if(failureAttr != 'hidden'){
+					hideSection('failure');
+			    }
+			})
+			
+			function hideSection(sectionId){
+				setTimeout(function(){
+					$('#'+sectionId+'').toggle('blind');
+				}, 5000)
+			}
+		</script>
+		<script>
 		
-		$('#form').on('submit', function (){
-			$('#swap')
-		    .html('<li><i class="fa fa-refresh fa-2x faa-spin faa-fast animated"></i></li>')
-		});
-		
-		$('#password, #confirm_password, #phone').on('keyup', function () {
-			  if ($('#password').val() == $('#confirm_password').val() && $('#confirm_password').val() != '') {
-			  	$('#message').html('パスワードが一致しました').css('color', '#06A10B');
-			 	if($('#phone').val().length >= 10 && $('#phone').val().length <= 11)
-			    	$('#btn').removeAttr("disabled");
-			 	else
-			 		$('#btn').prop("disabled", true);
-			  }
-			  else {
-			    $('#message').html('パスワードが一致しません').css('color', '#ff7496');
-			  }
+			$('#password, #confirm_password').keyup(function () {
+				if($('#password').val().length == 0 || $('#confirm_password').val().length == 0) return ;
+				
+				if ($('#password').val() == $('#confirm_password').val()) {
+					$('#message').html('パスワードが一致しました').css('color', '#06A10B');
+					$('#submit').attr('disabled', false);
+				} else {
+					$('#message').html('パスワードが一致しません').css('color', '#ff7496');
+					$('#submit').attr('disabled', true);
+					
+				}
 			});
-	</script>
-
+			
+			$('#emailAddress').keyup(function(){
+				if($('#emailAddress').val().length == 0) return ;
+				
+				checkIfEmailAddressIsAvailable($(this).val());
+			})
+			
+			function checkIfEmailAddressIsAvailable(emailAddress){
+				var params = {
+					emailAddress : emailAddress
+				}
+				
+				$.ajax({
+					type	: 'POST',
+					url		: '/apis/ajax/users/checkIfEmailAddressIsAvailable',
+					data	: params,
+					async	: true,
+					success	: function(data){
+						var response = data['res'];
+						
+						if(response){
+							$('#messageForEmailAddressAvailability').html('メールアドレスは利用可能です。').css('color', '#06A10B');
+							$('#submit').attr('disabled', false);
+						} else {
+							$('#messageForEmailAddressAvailability').html('メールアドレスはすでに利用されています。').css('color', '#ff7496');
+							$('#submit').attr('disabled', true);
+						}
+					},
+					error	: function(XMLHttpRequest, textStatus, errorThrown) {
+						alert("リクエスト時になんらかのエラーが発生しました：" + textStatus +":\n" + errorThrown);
+					}
+				})
+			}
+		</script>
 	</body>
 </html>

@@ -27,9 +27,9 @@ public class UploadEventImage extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
 
-	static final String BUCKET_NAME = "jp.myouth.images";
+	static final String BUCKET_NAME = "myouth-images";
 
-	static final String EXPLICIT_CONTENT_PHOTO = "https://s3-ap-northeast-1.amazonaws.com/jp.myouth.images/events/ExplicitContentPhoto.jpg";
+	static final String EXPLICIT_CONTENT_PHOTO = "https://s3-ap-northeast-1.amazonaws.com/myouth-images/events/ExplicitContentPhoto.jpg";
 
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -52,7 +52,7 @@ public class UploadEventImage extends HttpServlet {
 		String event = (String)  session.getAttribute("event");
 		
 		String path = "events/" + event + "/" + imageId + ".jpg";
-		String photoUrl = "https://s3-ap-northeast-1.amazonaws.com/jp.myouth.images/" + path;
+		String photoUrl = "https://s3-ap-northeast-1.amazonaws.com/myouth-images/" + path;
 
 		UploadObject s3 = new UploadObject();
 		s3.upload(BUCKET_NAME, path, input, contentType);

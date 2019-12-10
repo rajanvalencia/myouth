@@ -1,26 +1,27 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
 	pageEncoding="utf-8"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
-<%@ page import="jp.myouth.db.Events" %>
-<%@ page import="jp.myouth.db.User" %>
-<%@ page import="jp.myouth.db.Participants" %>
-<% 
-Events db = new Events();
-db.open();
-Integer totalEvents = db.totalEvents();
-db.close();
-
-User db1 = new User();
-db1.open();
-Integer totalUsers = db1.totalUsers();
-db1.close();
-
-Participants db2 = new Participants();
-db2.open();
-Integer totalParticipants = db2.allEventsTotalParticipants();
-db2.close();
-%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<%@ page import="org.springframework.ui.ModelMap"%>
+<%@ page import="jp.myouth.db.*"%>
+<% 
+	ModelMap model = new ModelMap();
+
+	Events db = new Events();
+	db.open();
+	Integer totalEvents = db.totalEvents();
+	db.close();
+	
+	User db1 = new User();
+	db1.open();
+	Integer totalUsers = db1.getTotalUsers();
+	db1.close();
+	
+	Participants db2 = new Participants();
+	db2.open();
+	Integer totalParticipants = db2.allEventsTotalParticipants();
+	db2.close();
+%>
 <!--
 	Alpha by HTML5 UP
 	html5up.net | @ajlkn
@@ -44,8 +45,7 @@ db2.close();
 
 <meta name="author" content="バレンシア　ラジャン　ザモラ">
 
-<meta name="description"
-	content="誰でも無料にイベント管理が出来るWeb上にあるシステムです。参加申し込み、アンケートデータの分析までの自動処理を行います。一般公開されるまで数か月お待ちください">
+<meta name="description" content="誰でも無料にイベント管理が出来るWeb上にあるシステムです。参加申し込み、アンケートデータの分析までの自動処理を行います。一般公開されるまで数か月お待ちください">
 	
 <title>myouth | イベント管理システム | Event Management System</title>
 <meta charset="utf-8" />
@@ -107,9 +107,9 @@ db2.close();
 					<ul class="alt">
 						<li><a href="events" class="button">イベント一覧</a></li>
 					</ul>
-					<h4>現在のイベント数は <% out.print(totalEvents);%></h4>
-					<h4>利用者(管理者)数は <% out.print(totalUsers);%> 人</h4>
-					<h4>全イベントの参加者数は <% out.print(totalParticipants);%> 人</h4>
+					<h4>現在のイベント数は <%out.print(totalEvents);%></h4>
+					<h4>利用者(管理者)数は <%out.print(totalUsers);%> 人</h4>
+					<h4>全イベントの参加者数は <%out.print(totalParticipants);%> 人</h4>
 				</section>
 			<!-- Main -->
 				<section id="main" class="container">
@@ -130,7 +130,7 @@ db2.close();
 							<section>
 								<span class="icon solid major fa fa-cog accent2"></span>
 								<h3>管理</h3>
-								<p>参加申し込み、アンケート、データのグラフ化、ダウンロードするcsvファイルまでリアルタイムで更新され、イベントの運営効率を上げられます。</p>
+								<p>参加申し込み、アンケート、PDFまたはエクセル形式のダウンロードファイルをリアルタイムで更新し、イベントの運営効率を上げられます。</p>
 							</section>
 							<section>
 								<span class="icon solid major fa-envelope accent3"></span>

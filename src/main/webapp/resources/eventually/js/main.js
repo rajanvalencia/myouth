@@ -36,9 +36,9 @@
 
 					// Images (in the format of 'url': 'alignment').
 						images: {
-							//'https://s3-ap-northeast-1.amazonaws.com/jp.myouth.images/backgrounds/bg01.jpg': 'center',
-							//'https://s3-ap-northeast-1.amazonaws.com/jp.myouth.images/backgrounds/bg02.jpg': 'center',
-							'https://s3-ap-northeast-1.amazonaws.com/jp.myouth.images/backgrounds/bg03.jpg': 'center'
+							//'https://s3-ap-northeast-1.amazonaws.com/myouth-images/backgrounds/bg01.jpg': 'center',
+							//'https://s3-ap-northeast-1.amazonaws.com/myouth-images/backgrounds/bg02.jpg': 'center',
+							'https://s3-ap-northeast-1.amazonaws.com/myouth-images/backgrounds/bg03.jpg': 'center'
 						},
 
 					// Delay.

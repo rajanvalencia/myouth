@@ -37,7 +37,7 @@ public class EventTrashedReceivedMessage {
 						+ "\n\t\t\t\t\t\t\t\t\t\t<td>"
 						+ "\n\t\t\t\t\t\t\t\t\t\t\t<div class=\"row gtr-50 gtr-uniform\">"
 						+ "\n\t\t\t\t\t\t\t\t\t\t\t\t<div class=\"col-10 col-8-mobile\">"
-						+ "\n\t\t\t\t\t\t\t\t\t\t\t\t\t·ol: "+string+"";
+						+ "\n\t\t\t\t\t\t\t\t\t\t\t\t\tå·®å‡ºäºº: "+string+"";
 			
 			}
 			else if(i % 4 == 1) {

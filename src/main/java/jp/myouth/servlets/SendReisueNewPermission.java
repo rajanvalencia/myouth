@@ -22,13 +22,11 @@ public class SendReisueNewPermission extends HttpServlet {
 		Authentication auth = new Authentication();
 		Boolean res = auth.identify(email);
 		if (res){
-			session.setAttribute("reissuePermissionSuccess", "");
-			response.sendRedirect("/reissuePermission");	
+			session.setAttribute("success", "");
+		} else {
+			session.setAttribute("failure", "");	
 		}
-		else {
-			session.setAttribute("reissuePermissionFailure", "");	
-			response.sendRedirect("/reissuePermission");
-		}
+		response.sendRedirect("/reissuePermission");
 	}
 
 }

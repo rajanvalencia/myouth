@@ -75,14 +75,14 @@ ArrayList<String> searchResults = (ArrayList<String>) session.getAttribute("sear
 						</form>
 						<%
 							if (searchResults != null) {
-								SearchMemberList searchMemberList = new SearchMemberList();
+								MemberPageSearchMemberList searchMemberList = new MemberPageSearchMemberList();
 								searchMemberList.append(request, response);
 								out.println(request.getAttribute("searchMemberList"));
 							}
 						%>
 						<%
 							if (searchResults == null) {
-								MemberList memberList = new MemberList();
+								MemberPageMemberList memberList = new MemberPageMemberList();
 								memberList.append(request, response);
 								out.println(request.getAttribute("memberList"));
 							}

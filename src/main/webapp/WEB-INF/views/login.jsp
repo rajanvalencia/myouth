@@ -58,9 +58,9 @@
 	<!-- Signup Form -->
 	<form id="signup-form" method="post" action="/loginRedirect">
 	<span class="message" id="hello"></span>
-		<input type="email" name="email" id="email" placeholder="メールアドレス"
-			required /> <input type="password" name="password" id="パスワード"
-			placeholder="パスワード" required /> <input type="submit" value="ログイン" />
+		<input type="email" name="email" id="email" placeholder="メールアドレス" required />
+		<input type="password" name="password" id="パスワード" placeholder="パスワード" required /> <input type="submit" value="ログイン" />
+		<input type="hidden" name="token" value="${loginToken}" />
 	</form>
 
 	<!-- Footer -->
@@ -106,12 +106,9 @@
 
 			$message._hide = function() {
 				$message.classList.remove('visible');
-
 			};
-	<%Boolean failure = (Boolean) session.getAttribute("failure");
-			if (failure)
-				out.println("$message._show('failure', 'メールアドレスまたはパスワードが間違っています');");
-			session.setAttribute("failure", false);%>
+			
+			${loginFailureText}
 		})();
 	</script>
 

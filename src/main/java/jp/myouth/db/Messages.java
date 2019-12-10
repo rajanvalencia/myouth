@@ -327,7 +327,7 @@ public class Messages {
 		try {
 			ArrayList<String> data = new ArrayList<String>();
 
-			String query = "SELECT sender, subject, text_body, html_body, CONCAT(DATE_FORMAT(time, \"%Y”N%mŒŽ%d“ú\"), TIME_FORMAT(time, \" %H:%i\")) AS time FROM message_received WHERE message_received.message_id = ?";
+			String query = "SELECT sender, subject, text_body, html_body, CONCAT(DATE_FORMAT(time, \"%Yï¿½N%mï¿½ï¿½%dï¿½ï¿½\"), TIME_FORMAT(time, \" %H:%i\")) AS time FROM message_received WHERE message_received.message_id = ?";
 			PreparedStatement stmt = conn.prepareStatement(query);
 			stmt.setString(1, messageId);
 			ResultSet rset = stmt.executeQuery();
@@ -377,7 +377,7 @@ public class Messages {
 		try {
 			ArrayList<String> data = new ArrayList<String>();
 
-			String query = "SELECT subject, body, CONCAT(DATE_FORMAT(time, \"%Y”N%mŒŽ%d“ú\"), TIME_FORMAT(time, \" %H:%i\")) AS time FROM message_sent WHERE transaction_id = ? ORDER BY time DESC";
+			String query = "SELECT subject, body, CONCAT(DATE_FORMAT(time, \"%Yï¿½N%mï¿½ï¿½%dï¿½ï¿½\"), TIME_FORMAT(time, \" %H:%i\")) AS time FROM message_sent WHERE transaction_id = ? ORDER BY time DESC";
 			PreparedStatement stmt = conn.prepareStatement(query);
 			stmt.setString(1, transactionId);
 			ResultSet rset = stmt.executeQuery();
@@ -400,7 +400,7 @@ public class Messages {
 		try {
 			ArrayList<String> data = new ArrayList<String>();
 
-			String query = "SELECT sender, subject, text_body, html_body, CONCAT(DATE_FORMAT(time, \"%Y”N%mŒŽ%d“ú\"), TIME_FORMAT(time, \" %H:%i\")) AS time FROM message_received_deleted WHERE message_id = ? ORDER BY time DESC";
+			String query = "SELECT sender, subject, text_body, html_body, CONCAT(DATE_FORMAT(time, \"%Y-%M-%d\"), TIME_FORMAT(time, \" %H:%i\")) AS time FROM message_received_deleted WHERE message_id = ? ORDER BY time DESC";
 			PreparedStatement stmt = conn.prepareStatement(query);
 			stmt.setString(1, messageId);
 			ResultSet rset = stmt.executeQuery();
@@ -428,7 +428,7 @@ public class Messages {
 		try {
 			ArrayList<String> data = new ArrayList<String>();
 
-			String query = "SELECT subject, body, CONCAT(DATE_FORMAT(time, \"%Y”N%mŒŽ%d“ú\"), TIME_FORMAT(time, \" %H:%i\")) AS time FROM message_deleted WHERE transaction_id = ? ORDER BY time DESC";
+			String query = "SELECT subject, body, CONCAT(DATE_FORMAT(time, \"%Y-%M-%d\"), TIME_FORMAT(time, \" %H:%i\")) AS time FROM message_deleted WHERE transaction_id = ? ORDER BY time DESC";
 			PreparedStatement stmt = conn.prepareStatement(query);
 			stmt.setString(1, transactionId);
 			ResultSet rset = stmt.executeQuery();
@@ -451,7 +451,7 @@ public class Messages {
 		try {
 			ArrayList<String> data = new ArrayList<String>();
 
-			String query = "SELECT name, CONCAT(DATE_FORMAT(message_read.time, \"%Y-%m-%d\"), TIME_FORMAT(message_read.time, \" %H:%i\")) AS time FROM message_transactions, message_read, message_recipients, participants WHERE message_transactions.message_id = message_recipients.message_id AND message_transactions.message_id = message_read.message_id AND message_recipients.recipient = participants.email AND message_recipients.recipient NOT IN (SELECT email FROM users) AND message_transactions.transaction_id = ? ORDER BY message_read.time DESC";
+			String query = "SELECT name, CONCAT(DATE_FORMAT(message_read.time, \"%Y-%M-%d\"), TIME_FORMAT(message_read.time, \" %H:%i\")) AS time FROM message_transactions, message_read, message_recipients, event_participants WHERE message_transactions.message_id = message_recipients.message_id AND message_transactions.message_id = message_read.message_id AND message_recipients.recipient = event_participants.email_address AND message_recipients.recipient NOT IN (SELECT email_address FROM users) AND message_transactions.transaction_id = ? GROUP BY time ORDER BY message_read.time DESC";
 			PreparedStatement stmt = conn.prepareStatement(query);
 			stmt.setString(1, transactionId);
 			ResultSet rset = stmt.executeQuery();
@@ -472,7 +472,7 @@ public class Messages {
 		try {
 			ArrayList<String> data = new ArrayList<String>();
 
-			String query = "SELECT message_read.message_id, path, name, CONCAT(DATE_FORMAT(message_read.time, \"%Y-%m-%d\"), TIME_FORMAT(message_read.time, \" %H:%i\")) AS time FROM message_transactions, message_read, message_recipients, users, user_profile_picture WHERE users.user_id = user_profile_picture.user_id AND message_read.message_id = message_transactions.message_id AND users.email = message_recipients.recipient AND message_recipients.message_id = message_read.message_id AND message_transactions.transaction_id = ? ORDER BY message_read.time DESC";
+			String query = "SELECT message_read.message_id, path, name, CONCAT(DATE_FORMAT(message_read.time, \"%Y-%m-%d\"), TIME_FORMAT(message_read.time, \" %H:%i\")) AS time FROM message_transactions, message_read, message_recipients, users, users_profile_picture WHERE users.user_id = users_profile_picture.user_id AND message_read.message_id = message_transactions.message_id AND users.email_address = message_recipients.recipient AND message_recipients.message_id = message_read.message_id AND message_transactions.transaction_id = ? GROUP BY time ORDER BY message_read.time DESC";
 			PreparedStatement stmt = conn.prepareStatement(query);
 			stmt.setString(1, transactionId);
 			ResultSet rset = stmt.executeQuery();
@@ -493,7 +493,7 @@ public class Messages {
 	public ArrayList<String> linkClickedUsers(String transactionId) {
 		ArrayList<String> data = new ArrayList<String>();
 		try {
-			String query = "SELECT path, name, link FROM message_clicked_links, message_recipients, message_transactions, users, user_profile_picture WHERE users.user_id = user_profile_picture.user_id AND message_recipients.recipient = users.email AND message_recipients.message_id = message_clicked_links.message_id AND message_transactions.message_id = message_clicked_links.message_id AND message_transactions.transaction_id = ? ORDER BY message_clicked_links.time DESC";
+			String query = "SELECT path, name, link FROM message_clicked_links, message_recipients, message_transactions, users, users_profile_picture WHERE users.user_id = users_profile_picture.user_id AND message_recipients.recipient = users.email_address AND message_recipients.message_id = message_clicked_links.message_id AND message_transactions.message_id = message_clicked_links.message_id AND message_transactions.transaction_id = ? ORDER BY message_clicked_links.time DESC";
 			PreparedStatement stmt = conn.prepareStatement(query);
 			stmt.setString(1, transactionId);
 			ResultSet rset = stmt.executeQuery();
@@ -514,7 +514,7 @@ public class Messages {
 	public ArrayList<String> linkClickedParticipants(String transactionId) {
 		ArrayList<String> data = new ArrayList<String>();
 		try {
-			String query = "SELECT name, link FROM message_transactions, message_recipients, message_clicked_links, participants WHERE message_transactions.message_id = message_recipients.message_id AND message_recipients.message_id = message_clicked_links.message_id AND message_recipients.recipient = participants.email AND message_recipients.recipient NOT IN (SELECT email FROM users) AND message_transactions.transaction_id = ? ORDER BY message_clicked_links.time DESC";
+			String query = "SELECT name, link FROM message_transactions, message_recipients, message_clicked_links, event_participants WHERE message_transactions.message_id = message_recipients.message_id AND message_recipients.message_id = message_clicked_links.message_id AND message_recipients.recipient = event_participants.email_address AND message_recipients.recipient NOT IN (SELECT email_address FROM users) AND message_transactions.transaction_id = ? ORDER BY message_clicked_links.time DESC";
 			PreparedStatement stmt = conn.prepareStatement(query);
 			stmt.setString(1, transactionId);
 			ResultSet rset = stmt.executeQuery();

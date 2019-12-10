@@ -73,10 +73,10 @@
 										<td>
 											<a href="/home/<%out.print(event);%>/visualization/analytics"  style="color: #e89980; border-bottom-color: transparent;">
 												<div class="row gtr-50 gtr-uniform">
-													<div class="col-4">
+													<div class="col-5">
 														<span class="fas fa-chart-area fa-2x"></span>
 													</div>
-													<div class="col-8">
+													<div class="col-7">
 														<h3>分析</h3>
 													</div>
 												</div>
@@ -87,10 +87,10 @@
 										<td>
 											<a href="/home/<%out.print(event);%>/visualization/ratings"  style="color: #e89980; border-bottom-color: transparent;">
 												<div class="row gtr-50 gtr-uniform">
-													<div class="col-4">
+													<div class="col-5">
 														<span class="fa fa-comment fa-2x"></span>
 													</div>
-													<div class="col-8">
+													<div class="col-7">
 														<h3>評価</h3>
 													</div>
 												</div>

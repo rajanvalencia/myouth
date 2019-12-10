@@ -12,8 +12,9 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.text.StringEscapeUtils;
 
 import jp.myouth.db.Events;
+import jp.myouth.security.GenerateSecureString;
 
-@WebServlet("/registerEvent")
+@WebServlet("/servlets/events/registerEvent")
 public class RegisterEvent extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -25,36 +26,31 @@ public class RegisterEvent extends HttpServlet {
 		
 		request.setCharacterEncoding("UTF-8");
 		
-		String eventId = request.getParameter("eventId");
-		eventId = StringEscapeUtils.escapeHtml4(eventId);
+		String id = StringEscapeUtils.escapeHtml4(request.getParameter("id"));
 		
-		String eventName = request.getParameter("eventName");
-		eventName = StringEscapeUtils.escapeHtml4(eventName);
+		String name = StringEscapeUtils.escapeHtml4(request.getParameter("name"));
 		
-		String eventPlace = request.getParameter("eventPlace");
-		eventPlace = StringEscapeUtils.escapeHtml4(eventPlace);
+		String place = StringEscapeUtils.escapeHtml4(request.getParameter("place"));
 
-		String eventDate = request.getParameter("year") + "-" + request.getParameter("month") + "-"
-				+ request.getParameter("day");
-		eventDate = StringEscapeUtils.escapeHtml4(eventDate);
+		String date = StringEscapeUtils.escapeHtml4(request.getParameter("date"));
 
-		String eventTime = request.getParameter("hour") + ":" + request.getParameter("minute");
-		eventTime = StringEscapeUtils.escapeHtml4(eventTime);
+		String startTime = StringEscapeUtils.escapeHtml4(request.getParameter("startTime"));
+		
+		String endTime = StringEscapeUtils.escapeHtml4(request.getParameter("endTime"));
 
-		String recruitNo = request.getParameter("recruitNo");
-		recruitNo = StringEscapeUtils.escapeHtml4(recruitNo);
+		String recruitLimit =StringEscapeUtils.escapeHtml4(request.getParameter("recruitLimit"));
 
-		String recruitmentStartDate = request.getParameter("startYear") + "-" + request.getParameter("startMonth")
-				+ "-" + request.getParameter("startDay");
-		recruitmentStartDate = StringEscapeUtils.escapeHtml4(recruitmentStartDate);
+		String recruitmentStartDate = StringEscapeUtils.escapeHtml4(request.getParameter("recruitmentStartDate"));
 
-		String recruitmentEndDate = request.getParameter("endYear") + "-" + request.getParameter("endMonth") + "-"
-				+ request.getParameter("endDay");
-		recruitmentEndDate = StringEscapeUtils.escapeHtml4(recruitmentEndDate);
+		String recruitmentEndDate = StringEscapeUtils.escapeHtml4(request.getParameter("recruitmentEndDate"));
+		
+		String description = StringEscapeUtils.escapeHtml4(request.getParameter("description"));
+		
+		String templateId = new GenerateSecureString().string(80);
 		
 		Events db = new Events();
 		db.open();
-		Boolean res = db.registerEvent(userId, eventId, eventName, eventPlace, eventDate, recruitmentStartDate, recruitmentEndDate, eventTime, recruitNo);
+		Boolean res = db.registerEvent(userId, id, name, place, date, recruitmentStartDate, recruitmentEndDate, startTime, endTime, recruitLimit, description, templateId);
 		db.close();
 		
 		if(res)
@@ -63,12 +59,13 @@ public class RegisterEvent extends HttpServlet {
 			response.setContentType("text/html");
 			Writer writer = response.getWriter();
 			writer.write("userId: "+userId);
-			writer.write("<br />eventId: "+eventId);
-			writer.write("<br />eventName: "+eventName);
-			writer.write("<br />eventPlace: "+eventPlace);
-			writer.write("<br />eventDate: "+eventDate);
-			writer.write("<br />eventTime: "+eventTime);
-			writer.write("<br />recruitNo: "+recruitNo);
+			writer.write("<br />eventId: "+id);
+			writer.write("<br />eventName: "+name);
+			writer.write("<br />eventPlace: "+place);
+			writer.write("<br />eventDate: "+date);
+			writer.write("<br />startTime: "+startTime);
+			writer.write("<br />endTime: "+endTime);
+			writer.write("<br />recruitNo: "+recruitLimit);
 			writer.write("<br />recruitStartDate: "+recruitmentStartDate);
 			writer.write("<br />recruitEndDate: "+recruitmentEndDate);
 		}

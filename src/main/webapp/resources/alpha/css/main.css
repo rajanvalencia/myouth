@@ -344,13 +344,21 @@
 		.row > .imp {
 			order: -1;
 		}
-
+		
+		.row > .col-0 {
+			width: 1%;
+		}
+		
 		.row > .col-1 {
 			width: 8.33333%;
 		}
 
 		.row > .off-1 {
 			margin-left: 8.33333%;
+		}
+		
+		.row > .col-1-and-half {
+			width: 12.5%;
 		}
 
 		.row > .col-2 {
@@ -1597,6 +1605,10 @@
 
 				.row > .off-2-mobile {
 					margin-left: 16.66667%;
+				}
+				
+				.row > .col-2-and-half-mobile {
+					width: 20.83334%;
 				}
 
 				.row > .col-3-mobile {
@@ -3278,7 +3290,7 @@
 	#banner {
 		background-attachment: scroll,							fixed;
 		background-color: #666;
-		background-image: url("images/overlay.png"), url("https://s3-ap-northeast-1.amazonaws.com/jp.myouth.images/backgrounds/balloons.jpg");
+		background-image: url("images/overlay.png"), url("https://s3-ap-northeast-1.amazonaws.com/myouth-images/backgrounds/balloons.jpg");
 		background-position: top left,						center center;
 		background-repeat: repeat,							no-repeat;
 		background-size: auto,							cover;

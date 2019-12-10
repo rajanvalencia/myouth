@@ -16,7 +16,7 @@ public class EventJoinedConfirmationMail {
 			String eventName = db.eventName(event);
 			String place = db.eventLocation(event);
 			String date = db.eventDate(event);
-			String time = db.eventTime(event);
+			String time = db.formattedEventStartTime(eventName);
 
 			db.close();
 
@@ -24,32 +24,32 @@ public class EventJoinedConfirmationMail {
 		
 			String FROMNAME = eventName;
 			
-			String SUBJECT = "‚¨\‚İŠ®—¹‚Ì‚¨’m‚ç‚¹";
+			String SUBJECT = "ãŠç”³è¾¼ã¿å®Œäº†ã®ãŠçŸ¥ã‚‰ã›";
 			
 			String HTMLBODY = 
 					"<table width=\"100%\" margin: 0; padding: 0; font-size: 100%; font: inherit; vertical-align: baseline; border=\"0\" cellspacing=\"0\" cellpadding=\"0\"><tr><td>" +
-					" <h2 style=\"font-weight: 300; line-height: 1em; margin: 0 0 0.5em 0; color: #646464; text-align: center; font-size: 1.4em; line-height: 1.5em; letter-spacing: 0;\">"+name+"‚³‚ñ<br />‚¨\‚İ‚ ‚è‚ª‚Æ‚¤‚²‚´‚¢‚Ü‚·</h2>" +
-					" <h5 style=\"font-weight: 300; line-height: 1em; margin: 0 0 0.5em 0; color: #646464; text-align: center; font-size: 1.1em; line-height: 1.5em; letter-spacing: 0;\">ŠJÃêŠ: " +
+					" <h2 style=\"font-weight: 300; line-height: 1em; margin: 0 0 0.5em 0; color: #646464; text-align: center; font-size: 1.4em; line-height: 1.5em; letter-spacing: 0;\">"+name+"ã•ã‚“<br />ãŠç”³è¾¼ã¿ã‚ã‚ŠãŒã¨ã†ã”ã–ã„ã¾ã™</h2>" +
+					" <h5 style=\"font-weight: 300; line-height: 1em; margin: 0 0 0.5em 0; color: #646464; text-align: center; font-size: 1.1em; line-height: 1.5em; letter-spacing: 0;\">é–‹å‚¬å ´æ‰€: " +
 					" <a style=\"text-decoration: none;\" href=\"https://www.google.com/maps/dir/?api=1&destination=" + place + "\">" +
 					" <h5 style=\"font-weight: 300; line-height: 1em; margin: 0 0 0.5em 0; text-align: center; color: #e89980; font-size: 1em;\">"+place+"</h5></a></h5>" + 
-					" <h5 style=\"font-weight: 300; line-height: 1em; margin: 0 0 0.5em 0; color: #646464; text-align: center; font-size: 1.1em; line-height: 1.5em; letter-spacing: 0;\">ŠJÃ“ú: "+date+"</h5>" + 
-					" <h5 style=\"font-weight: 300; line-height: 1em; margin: 0 0 0.5em 0; color: #646464; text-align: center; font-size: 1.1em; line-height: 1.5em; letter-spacing: 0;\">ŠJnŠÔ: "+time+"</h5>" +
+					" <h5 style=\"font-weight: 300; line-height: 1em; margin: 0 0 0.5em 0; color: #646464; text-align: center; font-size: 1.1em; line-height: 1.5em; letter-spacing: 0;\">é–‹å‚¬æ—¥: "+date+"</h5>" + 
+					" <h5 style=\"font-weight: 300; line-height: 1em; margin: 0 0 0.5em 0; color: #646464; text-align: center; font-size: 1.1em; line-height: 1.5em; letter-spacing: 0;\">é–‹å§‹æ™‚é–“: "+time+"</h5>" +
 					" <img src=\""+eventLogo+"\" style=\"display: block; border-radius: 10px; margin-right: auto; margin-left: auto;\" width=\"130\">\r\n" + 
 					" <h5 style=\"font-weight: 300; line-height: 1em; margin: 0 0 0.5em 0; color: #646464; text-align: center; font-size: 1.1em; line-height: 1.5em; letter-spacing: 0;\">"+eventName+"</h5>\r\n" + 
 					" <a style=\"text-decoration: none;\" href=\"https://myouth.jp/events/"+event+"\"><h5 style=\"font-weight: 300; line-height: 1em; margin: 0 0 0.5em 0; text-align: center; color: #e89980; font-size: 1em;\">https://myouth.jp/events/"+event+"</h5></a>" +
 					" <img src=\"https://s3-ap-northeast-1.amazonaws.com/jp.myouth.images/backgrounds/myouth-logo.jpg\" width=\"200\" style=\"display: block; border-radius: 10px; margin-right: auto; margin-left: auto;\">\r\n" + 
-					" <h5 style=\"font-weight: 300; line-height: 1em; margin: 0 0 0.5em 0; color: #646464; text-align: center; font-size: 1.1em; line-height: 1.5em; letter-spacing: 0;\">ƒCƒxƒ“ƒgŠÇ—ƒVƒXƒeƒ€</h5>" + 
+					" <h5 style=\"font-weight: 300; line-height: 1em; margin: 0 0 0.5em 0; color: #646464; text-align: center; font-size: 1.1em; line-height: 1.5em; letter-spacing: 0;\">ã‚¤ãƒ™ãƒ³ãƒˆç®¡ç†ã‚·ã‚¹ãƒ†ãƒ </h5>" + 
 					" <a style=\"text-decoration: none;\" href=\"https://myouth.jp\"><h5 style=\"font-weight: 300; line-height: 1em; margin: 0 0 0.5em 0; text-align: center; color: #e89980; font-size: 1em;\">https://myouth.jp</h5></a>" +
 					"</td></tr></table>";
 
-			String TEXTBODY =  name + "‚³‚ñ\n"
-					+"‚¨\‚İ‚ ‚è‚ª‚Æ‚¤‚²‚´‚¢‚Ü‚·\n"
-					+"ŠJÃêŠ:" + place + "\n"
-					+"ŠJÃ“ú: "+date+"\n"
-					+"ŠJnŠÔ:"+time+"\n"
-					+"‘½•¶‰»ƒ†[ƒX\n"
+			String TEXTBODY =  name + "ã•ã‚“\n"
+					+"ãŠç”³è¾¼ã¿ã‚ã‚ŠãŒã¨ã†ã”ã–ã„ã¾ã™\n"
+					+"é–‹å‚¬å ´æ‰€:" + place + "\n"
+					+"é–‹å‚¬æ—¥: "+date+"\n"
+					+"é–‹å§‹æ™‚é–“:"+time+"\n"
+					+"å¤šæ–‡åŒ–ãƒ¦ãƒ¼ã‚¹\n"
 					+"https://myouth.jp/events/"+event
-					+"ƒCƒxƒ“ƒgŠÇ—ƒVƒXƒeƒ€iƒTƒCƒg)\n"
+					+"ã‚¤ãƒ™ãƒ³ãƒˆç®¡ç†ã‚·ã‚¹ãƒ†ãƒ ï¼ˆã‚µã‚¤ãƒˆ)\n"
 					+"https://myouth.jp/";
 
 			ArrayList<String> TO = new ArrayList<String>();
@@ -66,7 +66,7 @@ public class EventJoinedConfirmationMail {
 	
 	public static void main(String[] args) {
 		String event = "altervoice";
-		String name = "ƒoƒŒƒ“ƒVƒA@ƒ‰ƒWƒƒƒ“@ƒUƒ‚ƒ‰";
+		String name = "ãƒãƒ¬ãƒ³ã‚·ã‚¢ã€€ãƒ©ã‚¸ãƒ£ãƒ³ã€€ã‚¶ãƒ¢ãƒ©";
 		String email = "rajan.valencia@au.com";
 		EventJoinedConfirmationMail mail = new EventJoinedConfirmationMail();
 		mail.template(event, name, email);

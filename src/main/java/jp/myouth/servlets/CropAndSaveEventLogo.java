@@ -30,13 +30,13 @@ public class CropAndSaveEventLogo extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
 
-	static final String BUCKET_NAME = "jp.myouth.images";
+	static final String BUCKET_NAME = "myouth-images";
 	
 	static final String CONTENT_TYPE = "image/jpeg";
 	
-	static final String URL_PREFIX = "https://s3-ap-northeast-1.amazonaws.com/jp.myouth.images/";
+	static final String URL_PREFIX = "https://s3-ap-northeast-1.amazonaws.com/myouth-images/";
 	
-	static final String EXPLICIT_CONTENT_PHOTO = "https://s3-ap-northeast-1.amazonaws.com/jp.myouth.images/events/ExplicitContentPhoto.jpg";
+	static final String EXPLICIT_CONTENT_PHOTO = "https://s3-ap-northeast-1.amazonaws.com/myouth-images/events/ExplicitContentPhoto.jpg";
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		

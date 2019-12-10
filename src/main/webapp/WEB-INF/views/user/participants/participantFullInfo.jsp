@@ -1,15 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
 	pageEncoding="utf-8"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
-<%@ page import="java.util.ArrayList"%>
-<%@ page import="jp.myouth.db.Participants"%>
-<%@ page import="jp.myouth.db.Events"%>
-<%@ page import="jp.myouth.tables.*"%>
-<%
-	Boolean user = (Boolean) session.getAttribute("user");
-	if (!user)
-		response.sendRedirect("/login");
-%>
 <!DOCTYPE HTML>
 <!--
 	Alpha by HTML5 UP
@@ -57,7 +48,7 @@
 		<!-- Main -->
 		<section id="main" class="container">
 			<section class="back-button">
-				<a href="/home/<%out.print(session.getAttribute("event"));%>/participants"><span
+				<a href="/home/${event}/participants"><span
 					class="fas fa-arrow-left fa-2x faa-passing-reverse animated"></span></a>
 			</section>
 			<header>
@@ -66,17 +57,12 @@
 			<div class="row">
 				<div class="col-12">
 					<section class="box">
-							<%
-								UserPageParticipantInfoFull list = new UserPageParticipantInfoFull();
-								list.append(request, response);
-								out.print(request.getAttribute("userPageParticipantInfoFull"));
-								request.removeAttribute("userPageParticipantInfoFull");
-							%>
+						${UserPageParticipantInfoFull}
 					</section>
 				</div>
 			</div>
 			<section class="back-button">
-				<a href="/home/<%out.print(session.getAttribute("event"));%>/participants"><span
+				<a href="/home/${event}/participants"><span
 					class="fas fa-arrow-left fa-2x faa-passing-reverse animated"></span></a>
 			</section>
 		</section>

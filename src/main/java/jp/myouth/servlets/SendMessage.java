@@ -69,7 +69,7 @@ public class SendMessage extends HttpServlet {
 			
 			User db1 = new User();
 			db1.open();
-			String senderEmail = db1.userEmailAddress(userId);
+			String senderEmail = db1.getUserEmailAddress(userId);
 			db1.close();
 			
 			Participants db2 = new Participants();

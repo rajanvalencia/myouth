@@ -55,13 +55,6 @@ public class PDF {
         outputStream.close(); 
     } 
     
-    /**
-     * ’è‚³‚ê‚½•¶š—ñ‚ªA”¼Šp‰p”š(‹L†ŠÜ‚Ş)‚©”Û‚©‚ğ•Ô‚µ‚Ü‚·B
-     *
-     * @param value ˆ—‘ÎÛ‚Æ‚È‚é•¶š—ñ
-     * @return true:”¼Šp‰p”š‚Å‚ ‚é(‚à‚µ‚­‚Í‘ÎÛ•¶š‚ª‚È‚¢), false:”¼Šp‰p”š‚Å‚È‚¢
-     */
-    
     public static Boolean isHalfWidthAlphanumeric(String value) {
         if ( value == null || value.length() == 0 )
             return true;

@@ -24,26 +24,10 @@ public class Authentication {
 	
 	private static final String KEY = "pepper/pepper1.txt";
 
-	/**
-	 * パスワードを安全にするためのアルゴリズム
-	 */
 	private static final String ALGORITHM = "PBKDF2WithHmacSHA512";
-	/**
-	 * ストレッチング回数
-	 */
 	private static final int ITERATION_COUNT = 20000;
-	/**
-	 * 生成される鍵の長さ
-	 */
 	private static final int KEY_LENGTH = 2048;
 	
-	/**
-	 * 平文のパスワードとソルトから安全なパスワードを生成し、返却します
-	 *
-	 * @param password 平文のパスワード
-	 * @param salt     ソルト
-	 * @return 安全なパスワード
-	 */
 	public static String getSafetyPassword(String password, String salt) {
 
 		char[] passCharAry = password.toCharArray();
@@ -66,9 +50,6 @@ public class Authentication {
 		}
 		byte[] passByteAry = secretKey.getEncoded();
 
-		/*
-		 * 生成されたバイト配列を16進数の文字列に変換
-		 */
 		StringBuilder sb = new StringBuilder(64);
 		for (byte b : passByteAry) {
 			sb.append(String.format("%02x", b & 0xff));
@@ -76,12 +57,6 @@ public class Authentication {
 		return sb.toString();
 	}
 
-	/**
-	 * ソルトをハッシュ化して返却します ※ハッシュアルゴリズムはSHA-512を使用
-	 *
-	 * @param salt ソルト
-	 * @return ハッシュ化されたバイト配列のソルト
-	 */
 	private static byte[] getHashedSalt(String salt) {
 		MessageDigest messageDigest;
 		try {
@@ -100,16 +75,18 @@ public class Authentication {
 		Credentials db = new Credentials();
 		db.open();
 		String userId = db.userId(email);
-		String salt = db.salt(userId);
-		String hashedPasswordWithSalt = Authentication.getSafetyPassword(password, salt);
-		String hashedPasswordWithSaltAndPepper = Authentication.getSafetyPassword(hashedPasswordWithSalt, pepper);
-		Boolean res = db.password(userId, hashedPasswordWithSaltAndPepper);
-		db.close();
 		
-		User db1 = new User();
-		db1.open();
-		Boolean res1 = db1.checkVerification(userId);
-		db1.close();
+		System.out.println("userId: "+userId);
+		
+		String salt = db.salt(userId);
+		
+		System.out.println("salt: "+salt);
+		
+		String hashedPasswordWithSalt = getSafetyPassword(password, salt);
+		String hashedPasswordWithSaltAndPepper = getSafetyPassword(hashedPasswordWithSalt, pepper);
+		Boolean res = db.checkPasswordExistence(hashedPasswordWithSaltAndPepper);
+		Boolean res1 = db.checkIfEmailAddressVerified(userId);
+		db.close();
 		
 		if (res && res1)
 			return true;
@@ -142,17 +119,17 @@ public class Authentication {
 		db.open();
 		Boolean res1 = db.insertUserCredentials(userId, hashedPasswordWithSaltAndPepper, salt);
 		Boolean res2 = db.insertAccountVerificationToken(userId, token);
+		Boolean res3 = db.updateEmailAddressVerificationStatus(userId, false);
 		db.close();
 
 		User db1 = new User();
 		db1.open();
-		Boolean res3 = db1.register(userId, name, fname, email, phone, birthdate);
-		Boolean res4 = db1.verifyEmail(userId, false);
+		Boolean res4 = db1.registerUser(userId, name, fname, email, phone, birthdate);
 		db1.close();
 		
 		Images db3 = new Images();
 		db3.open();
-		Boolean res5 = db3.insertOrUpdateUserProfilePicture(userId, "https://s3-ap-northeast-1.amazonaws.com/jp.myouth.images/users/default/default_image.jpg");
+		Boolean res5 = db3.insertOrUpdateUserProfilePicture(userId, "https://s3-ap-northeast-1.amazonaws.com/myouth-images/users/default/default_image.jpg");
 		db3.close();
 		EmailVerification mail = new EmailVerification();
 		Boolean res6 = mail.template(name, email, token);
@@ -163,8 +140,6 @@ public class Authentication {
 			return false;
 	}
 	
-	/*
-	 * メールアドレスと青年月日が一致したらメールアドレスにパスワード再発行するためのurlをメールにて送る*/
 	public Boolean identify(String email) {
 		
 		GenerateSecureString gen = new GenerateSecureString();
@@ -215,11 +190,5 @@ public class Authentication {
 			e.printStackTrace();
 		}
 		return false;
-	}
-	
-	public static void main(String... args) throws IOException{
-		DownloadObject s3 = new DownloadObject();
-		String pepper = s3.download(CLIENT_REGION, BUCKETNAME, KEY);
-		System.out.println(pepper);
 	}
 }

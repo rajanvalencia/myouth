@@ -53,7 +53,7 @@
 								<h3><%out.print(session.getAttribute("emailAddress")); %></h3>
 								<h3>は正常に登録されました</h3>
 								<p>ログインページは<a href="https://myouth.jp/login">こちら</a>です</p>
-								<span class="center"><img src="https://s3-ap-northeast-1.amazonaws.com/jp.myouth.images/backgrounds/myouth-logo.jpg" alt="" style="border-radius: 10px;" width="200"/></span>
+								<span class="center"><img src="https://s3-ap-northeast-1.amazonaws.com/myouth-images/backgrounds/myouth-logo.jpg" alt="" style="border-radius: 10px;" width="200"/></span>
 							</header>
 						</section>
 					</div>

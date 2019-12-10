@@ -1,10 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
 	pageEncoding="utf-8"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
-<% 
-	String success = (String) session.getAttribute("reissuePermissionSuccess");
-	String failure = (String) session.getAttribute("reissuePermissionFailure");
-%>
 <!DOCTYPE HTML>
 <!--
 	Alpha by HTML5 UP
@@ -13,7 +9,7 @@
 -->
 <html>
 <head>
-<title>パスワード忘れ</title>
+<title>パスワード再設定</title>
 <meta charset="utf-8" />
 <meta name="viewport"
 	content="width=device-width, initial-scale=1, user-scalable=no" />
@@ -59,49 +55,57 @@
 				<h2>Reissue Permission</h2>
 			</header>
 				<!-- Form -->
-			<section style="background-color: #E8F9DF;" class="box <%out.print(success); session.setAttribute("reissuePermissionSuccess", "hidden");%>" id="success">
+			<section class="box ${success}" id="success" ${success}>
+				<p style="color: #06A10B;">
+					パスワードを再発行するために必要なurlはメールアドレスに送信しました。 
+					<i class="fa fa-check faa-tada animated"></i> 
+				</p>
 				<p>
-					パスワードを再発行するために必要なurlは登録されたメールに送信されました <i class="fa fa-check faa-tada animated"></i> 
-					<br />30分経過したら自動的に無効になりますのでご注意ください。
+					<i class="fa fa-exclamation-triangle" style="color: #ff7496;"></i>
+					30分経過したら自動的に無効になりますのでご注意ください。
+					<br />
+					メールに記載されているリンクは一度のみクリックできます。
 				</p>
 			</section>
-			<section style="background-color: #F4BAA7;" class="box <%out.print(failure); session.setAttribute("reissuePermissionFailure", "hidden");%>" id="success">
-				<p>
-					メールアドレスは登録されてません。<i class="fa fa-times faa-pulse animated"></i> 
+			<section class="box ${failure}" id="failure" ${failure}>
+				<p style="color: #ff7496;">
+					そのようなメールアドレスは登録されてません。
+					<i class="fa fa-times faa-pulse animated"></i> 
 				</p>
 			</section>
 			<section class="box">
-				<form id="form" method="post" action="/sendReissuePermission">
-					<div class="row gtr-50 gtr-uniform">
-						<div class="col-12">
-							<label for="email">登録されてるメールアドレス</label> <input type="email"
-								name="email" id="email" value="" placeholder="" required />
+				<div class="row">
+					<form id="form" method="post" action="/sendReissuePermission">
+						<div class="row gtr-50 gtr-uniform">
+							<div class="col-12">
+								<label for="email">登録されてるメールアドレス</label> 
+								<input type="email" name="email" required />
+							</div>
+							<div id="btn" class="col-12">
+								<ul class="actions" id="swap">
+									<li><input id="btn" type="submit" value="パスワード再発行 " /></li>
+								</ul>
+							</div>
+							<div id="loading" class="col-12" hidden>
+								<ul class="actions">
+									<li>
+										<i class="fa fa-refresh fa-2x faa-spin faa-fast animated"></i>
+									</li>
+								</ul>
+							</div>
 						</div>
-						<div class="col-12">
-							<ul class="actions" id="swap">
-								<li><input id="btn" type="submit" value="パスワード再発行 " /></li>
-							</ul>
-						</div>
-					</div>
-				</form>
+					</form>
+				</div>
 			</section>
-	</section>
+		</section>
 
-	<!-- Footer -->
-	<footer id="footer">
-		<!-- <ul class="icons">
-						<li><a href="#" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
-						<li><a href="#" class="icon brands fa-facebook-f"><span class="label">Facebook</span></a></li>
-						<li><a href="#" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
-						<li><a href="#" class="icon brands fa-github"><span class="label">Github</span></a></li>
-						<li><a href="#" class="icon brands fa-dribbble"><span class="label">Dribbble</span></a></li>
-						<li><a href="#" class="icon brands fa-google-plus"><span class="label">Google+</span></a></li>
-					</ul> -->
-		<ul class="copyright">
-			<li>myouth.jp</li>
-			<li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
-		</ul>
-	</footer>
+		<!-- Footer -->
+		<footer id="footer">
+			<ul class="copyright">
+				<li>myouth.jp</li>
+				<li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
+			</ul>
+		</footer>
 
 	</div>
 
@@ -113,5 +117,31 @@
 	<script src="/resources/alpha/js/breakpoints.min.js"></script>
 	<script src="/resources/alpha/js/util.js"></script>
 	<script src="/resources/alpha/js/main.js"></script>
+	<script>
+		$(function(){
+			
+			$('form').submit(function(){
+				$('#btn').hide();
+				$('#loading').attr('hidden', false);
+			})
+			
+			var successAttr = $('#success').attr('hidden');
+			var failureAttr = $('#failure').attr('hidden');
+			
+		    if(successAttr != 'hidden'){
+		    	hideSection('success');
+		    }
+		   
+		    if(failureAttr != 'hidden'){
+				hideSection('failure');
+		    }
+		})
+		
+		function hideSection(sectionId){
+			setTimeout(function(){
+				$('#'+sectionId+'').toggle('blind');
+			}, 5000)
+		}
+	</script>
 </body>
 </html>

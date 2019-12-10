@@ -17,7 +17,7 @@ public class DetectNameEntities {
 
     	Translate translate = new Translate();
     	
-        String text = translate.text("‹@ŠBŠwK‚Í‘f°‚ç‚µ‚¢”­–¾‚¾‚Æv‚¢‚Ü‚·B", "ja", "en");
+        String text = translate.text("", "ja", "en");
 
         AmazonComprehend comprehendClient = AmazonComprehendClientBuilder
         		.standard().withRegion(Regions.US_EAST_1)

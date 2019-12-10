@@ -28,7 +28,7 @@ public class SendMail {
 			
 			User db1 = new User();
 			db1.open();
-			String userName = db1.name(userId);
+			String userName = db1.getName(userId);
 			db1.close();
 			
 			Images db2 = new Images();
@@ -43,14 +43,14 @@ public class SendMail {
 			String HTMLBODY = 
 					"<table width=\"100%\" margin: 0; padding: 0; font-size: 100%; font: inherit; vertical-align: baseline; border=\"0\" cellspacing=\"0\" cellpadding=\"0\"><tr><td>" +
 					"<blockquote style=\"border-left: solid 4px  #e5e5e5; margin: 0 0 2em 0; padding: 0.5em 0 0.5em 2em;\"><h5 style=\"font-weight: 300; line-height: 1em; margin: 0 0 0.5em 0; font-size: 1em; color: #646464\">"+HTMLTEXTBODY+"</h5></blockquote>" +
-					" <h5 style=\"font-weight: 300; line-height: 1em; margin: 0 0 0.5em 0; color: #646464; text-align: center; font-size: 0.9em; line-height: 1.5em; letter-spacing: 0;\">‘—MŽÒ:</h5>\r\n" + 
+					" <h5 style=\"font-weight: 300; line-height: 1em; margin: 0 0 0.5em 0; color: #646464; text-align: center; font-size: 0.9em; line-height: 1.5em; letter-spacing: 0;\">é€ä¿¡è€…:</h5>\r\n" + 
 					" <img src=\""+userProfilePicture+"\" style=\"display: block; border-radius: 50%; margin-right: auto; margin-left: auto;\" width=\"130\">\r\n" + 
 					" <h5 style=\"font-weight: 300; line-height: 1em; margin: 0 0 0.5em 0; color: #646464; text-align: center; font-size: 0.9em; line-height: 1.5em; letter-spacing: 0;\">"+userName+"</h5>\r\n" + 
 					" <img src=\""+eventLogo+"\" style=\"display: block; border-radius: 10px; margin-right: auto; margin-left: auto;\" width=\"130\">\r\n" + 
 					" <h5 style=\"font-weight: 300; line-height: 1em; margin: 0 0 0.5em 0; color: #646464; text-align: center; font-size: 1.1em; line-height: 1.5em; letter-spacing: 0;\">"+eventName+"</h5>\r\n" + 
 					" <a style=\"text-decoration: none;\" href=\"https://myouth.jp/events/"+event+"\"><h5 style=\"font-weight: 300; line-height: 1em; margin: 0 0 0.5em 0; text-align: center; color: #e89980; font-size: 1em;\">https://myouth.jp/events/"+event+"</h5></a>" +
 					" <img src=\"https://s3-ap-northeast-1.amazonaws.com/jp.myouth.images/backgrounds/myouth-logo.jpg\" width=\"200\" style=\"display: block; border-radius: 10px; margin-right: auto; margin-left: auto;\">\r\n" + 
-					" <h5 style=\"font-weight: 300; line-height: 1em; margin: 0 0 0.5em 0; color: #646464; text-align: center; font-size: 1.1em; line-height: 1.5em; letter-spacing: 0;\">ƒCƒxƒ“ƒgŠÇ—ƒVƒXƒeƒ€</h5>" + 
+					" <h5 style=\"font-weight: 300; line-height: 1em; margin: 0 0 0.5em 0; color: #646464; text-align: center; font-size: 1.1em; line-height: 1.5em; letter-spacing: 0;\">ã‚¤ãƒ™ãƒ³ãƒˆç®¡ç†ã‚·ã‚¹ãƒ†ãƒ </h5>" + 
 					" <a style=\"text-decoration: none;\" href=\"https://myouth.jp\"><h5 style=\"font-weight: 300; line-height: 1em; margin: 0 0 0.5em 0; text-align: center; color: #e89980; font-size: 1em;\">https://myouth.jp</h5></a>" +
 					"</td></tr></table>";
 
@@ -60,11 +60,11 @@ public class SendMail {
 			TEXTBODY = TEXTBODY.replaceAll("(\r\n|\n)", "");
 			
 			TEXTBODY = TEXTBODY
-					+ "\n\n‘—MŽÒ:\n"
+					+ "\n\né€ä¿¡è€…:\n"
 					+ userName + "\n\n"
 					+ eventName + "\n"
 					+"https://myouth.jp/events/" + event + "\n\n"
-					+ "ƒCƒxƒ“ƒgŠÇ—ƒVƒXƒeƒ€\n"
+					+ "ã‚¤ãƒ™ãƒ³ãƒˆç®¡ç†ã‚·ã‚¹ãƒ†ãƒ \n"
 					+"https://myouth.jp";
 
 			Mail mail = new Mail();

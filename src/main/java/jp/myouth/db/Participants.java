@@ -8,6 +8,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
+import jp.myouth.security.GenerateSecureString;
+
 public class Participants {
 	private static Connection conn = null;
 	private Statement stmt = null;
@@ -40,7 +42,178 @@ public class Participants {
 				e.printStackTrace();
 			}
 	}
-
+	
+	public ArrayList<String> getAllParticipantIds(){
+		ArrayList<String> data = new ArrayList<String>();
+		try {
+			String query = "SELECT participant_id FROM participants";
+			PreparedStatement stmt = conn.prepareStatement(query);
+			ResultSet rset = stmt.executeQuery();
+			
+			while(rset.next()) {
+				data.add(rset.getString("participant_id"));
+			}
+			rset.close();
+			return data;
+		} catch(SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public String getName(String participantId) {
+		try {
+			String query = "SELECT * FROM participants WHERE participant_id = ?";
+			PreparedStatement stmt = conn.prepareStatement(query);
+			stmt.setString(1, participantId);
+			ResultSet rset = stmt.executeQuery();
+			
+			if(rset.next()) {
+				return rset.getString("name");
+			}
+				
+		} catch(SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public String getFname(String participantId) {
+		try {
+			String query = "SELECT * FROM participants WHERE participant_id = ?";
+			PreparedStatement stmt = conn.prepareStatement(query);
+			stmt.setString(1, participantId);
+			ResultSet rset = stmt.executeQuery();
+			
+			if(rset.next()) {
+				return rset.getString("fname");
+			}
+				
+		} catch(SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public String getGender(String participantId) {
+		try {
+			String query = "SELECT * FROM participants WHERE participant_id = ?";
+			PreparedStatement stmt = conn.prepareStatement(query);
+			stmt.setString(1, participantId);
+			ResultSet rset = stmt.executeQuery();
+			
+			if(rset.next()) {
+				return rset.getString("gender");
+			}
+				
+		} catch(SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public String getEmail(String participantId) {
+		try {
+			String query = "SELECT * FROM participants WHERE participant_id = ?";
+			PreparedStatement stmt = conn.prepareStatement(query);
+			stmt.setString(1, participantId);
+			ResultSet rset = stmt.executeQuery();
+			
+			if(rset.next()) {
+				return rset.getString("email");
+			}
+				
+		} catch(SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public String getBirthdate(String participantId) {
+		try {
+			String query = "SELECT * FROM participants WHERE participant_id = ?";
+			PreparedStatement stmt = conn.prepareStatement(query);
+			stmt.setString(1, participantId);
+			ResultSet rset = stmt.executeQuery();
+			
+			if(rset.next()) {
+				return rset.getString("birthdate");
+			}
+				
+		} catch(SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public String getCountry(String participantId) {
+		try {
+			String query = "SELECT * FROM participants WHERE participant_id = ?";
+			PreparedStatement stmt = conn.prepareStatement(query);
+			stmt.setString(1, participantId);
+			ResultSet rset = stmt.executeQuery();
+			
+			if(rset.next()) {
+				return rset.getString("country");
+			}
+				
+		} catch(SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public String getCountry2(String participantId) {
+		try {
+			String query = "SELECT * FROM participants WHERE participant_id = ?";
+			PreparedStatement stmt = conn.prepareStatement(query);
+			stmt.setString(1, participantId);
+			ResultSet rset = stmt.executeQuery();
+			
+			if(rset.next()) {
+				return rset.getString("country2");
+			}
+				
+		} catch(SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public String getCareer(String participantId) {
+		try {
+			String query = "SELECT * FROM participants WHERE participant_id = ?";
+			PreparedStatement stmt = conn.prepareStatement(query);
+			stmt.setString(1, participantId);
+			ResultSet rset = stmt.executeQuery();
+			
+			if(rset.next()) {
+				return rset.getString("career");
+			}
+				
+		} catch(SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public String getCompany(String participantId) {
+		try {
+			String query = "SELECT * FROM participants WHERE participant_id = ?";
+			PreparedStatement stmt = conn.prepareStatement(query);
+			stmt.setString(1, participantId);
+			ResultSet rset = stmt.executeQuery();
+			
+			if(rset.next()) {
+				return rset.getString("company");
+			}
+				
+		} catch(SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
 	public int allEventsTotalParticipants() {
 		try {
 			int data = 0;
@@ -89,159 +262,7 @@ public class Participants {
 			e.printStackTrace();
 		}
 		return 0;
-	}
-
-	public int totalSurveyAnswers(String event, String periodType, String startPeriod, String endPeriod) {
-		String query = new String();
-		try {
-			Integer total = 0;
-			
-			query = "SELECT COUNT(*) FROM event_survey, event WHERE event.event_id = event_survey.event_id AND english_e_name = ? ";
-			
-			if(periodType.equals("freePeriod") || periodType.equals("recruitmentPeriod"))
-				query += "AND join_date >= ? AND join_date <= ?";
-			
-			PreparedStatement stmt = conn.prepareStatement(query);
-			stmt.setString(1, event);
-			
-			if(periodType.equals("freePeriod") || periodType.equals("recruitmentPeriod")) {
-				stmt.setString(2, startPeriod);
-				stmt.setString(3, endPeriod);
-			}
-			
-			ResultSet rset = stmt.executeQuery();
-			if (rset.next())
-				total = rset.getInt("COUNT(*)");
-			rset.close();
-			return total;
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return 0;
-	}
-	
-	public ArrayList<String> participants(String event, String periodType, String startPeriod, String endPeriod) {
-		ArrayList<String> list = new ArrayList<String>();
-		String query = new String();
-		try {
-			String update = "UPDATE participants SET gender = NULL, phone = NULL, country2 = NULL, country3 = NULL, zip = NULL, address = NULL, allergy = NULL WHERE gender = \"null\" OR phone = \"null\" OR country2 = \"null\" OR country3 = \"null\" OR zip = \"null\" OR address = \"nullnull\" OR allergy = \"null\"";
-			stmt.executeUpdate(update);
-			
-			query = "SELECT event_participants.time,";
-			
-			Events db = new Events();
-			db.open();
-			ArrayList<String> formQuestionColumn = db.formQuestionsColumn(event);
-			list = db.formQuestionColumnNames(formQuestionColumn);
-			db.close();
-			
-			int i = 0;
-			for(String string : formQuestionColumn) {
-				if(i == formQuestionColumn.size()-1)
-					query += string + " ";
-				else
-					query += string + ", ";
-				i++;
-			}
-			
-			query += "FROM participants, event, event_participants WHERE english_e_name = ? AND participants.participant_id = event_participants.participant_id AND event.event_id = event_participants.event_id ";
-			
-			if(periodType.equals("allPeriod"))
-				query += "ORDER BY event_participants.time DESC";
-			else if(periodType.equals("recruitmentPeriod"))
-				query += "AND event_participants.time >= (SELECT recruitment_start FROM event WHERE english_e_name = ?) AND event_participants.time <= (SELECT recruitment_end FROM event WHERE english_e_name = ?) ORDER BY event_participants.time DESC";
-			else
-				query += "AND event_participants.time >= ? AND event_participants.time <= ? ORDER BY event_participants.time DESC";
-			
-			System.out.println(query);
-			
-			PreparedStatement stmt = conn.prepareStatement(query);
-			stmt.setString(1, event);
-			
-			if(periodType.equals("recruitmentPeriod")) {
-				stmt.setString(2, event);
-				stmt.setString(3, event);
-			} else if(periodType.equals("freePeriod")) {
-				stmt.setString(2, startPeriod);
-				stmt.setString(3, endPeriod);
-			}
-				
-			ResultSet rset = stmt.executeQuery();
-			
-			while (rset.next()) {
-				list.add(rset.getString("time"));
-				for(String string : formQuestionColumn) {
-					list.add(rset.getString(string));
-				}
-			}
-			
-			rset.close();
-			
-			return list;
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-	
-	public ArrayList<String> survey(String event, String periodType, String startPeriod, String endPeriod) {
-		ArrayList<String> list = new ArrayList<String>();
-		String query = new String();
-		try {
-			String update = "UPDATE participants SET gender = NULL, phone = NULL, country2 = NULL, country3 = NULL, zip = NULL, address = NULL, allergy = NULL WHERE gender = \"null\" OR phone = \"null\" OR country2 = \"null\" OR country3 = \"null\" OR zip = \"null\" OR address = \"nullnull\" OR allergy = \"null\"";
-			stmt.executeUpdate(update);
-			
-			query = "SELECT event_survey.date, event_survey.time,";
-			
-			Events db = new Events();
-			db.open();
-			ArrayList<String> surveyQuestionColumn = db.surveyQuestionsColumn(event);
-			list = db.surveyQuestionColumnName(surveyQuestionColumn);
-			db.close();
-			
-			int i = 0;
-			for(String string : surveyQuestionColumn) {
-				if(i == surveyQuestionColumn.size()-1)
-					query += string + " ";
-				else
-					query += string + ", ";
-				i++;
-			}
-			
-			query += "FROM event_survey, event WHERE english_e_name = ? AND event.event_id = event_survey.event_id ";
-			
-			if(periodType.equals("allPeriod"))
-				query += "ORDER BY event_survey.event_id DESC";
-			else
-				query += "AND date >= ? AND date <= ? ORDER BY event_survey.event_id DESC";
-			
-			System.out.println(query);
-			
-			PreparedStatement stmt = conn.prepareStatement(query);
-			stmt.setString(1, event);
-			
-			if(periodType.equals("freePeriod") || periodType.equals("recruitmentPeriod")) {
-				stmt.setString(2, startPeriod);
-				stmt.setString(3, endPeriod);
-			}
-				
-			ResultSet rset = stmt.executeQuery();
-			
-			while (rset.next()) {
-				list.add(rset.getString("date")+" "+rset.getString("time"));
-				for(String string : surveyQuestionColumn) {
-					list.add(rset.getString(string));
-				}
-			}
-			
-			rset.close();
-			
-			return list;
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
+	}	
 
 	public ArrayList<String> participantsInfoLess(String event, String periodType, String startPeriod, String endPeriod) {
 		ArrayList<String> data = new ArrayList<String>();
@@ -278,51 +299,6 @@ public class Participants {
 		return null;
 	}
 	
-	public ArrayList<String> participantInfoFull(String participantId, String event) {
-		ArrayList<String> list = new ArrayList<String>();
-		try {
-			Events db = new Events();
-			db.open();
-			ArrayList<String> formQuestionColumn = db.formQuestionsColumn(event);
-			
-			String query = "SELECT ";
-			
-			int i = 0;
-			for(String string : formQuestionColumn) {
-				if(i == formQuestionColumn.size()-1)
-					query += string + " ";
-				else
-					query += string + ", ";
-				i++;
-			}
-			query +=  "FROM participants, event_participants WHERE participants.participant_id = event_participants.participant_id AND participants.participant_id = ?";
-			
-			//System.out.println(query);
-			
-			PreparedStatement stmt = conn.prepareStatement(query);
-			stmt.setString(1, participantId);
-			ResultSet rset = stmt.executeQuery();
-			
-			while (rset.next()) {
-				for(String string : formQuestionColumn) {
-					list.add(db.formQuestionColumnName(string));
-					list.add(rset.getString(string));
-				}
-			}
-			db.close();
-			
-			return list;
-			
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-	
-	/*
-	 * イベントの全参加者のメールアドレスを取得する
-	 */
-
 	public ArrayList<String> participantsEmailAddress(String event, String senderEmail, String periodType, String startPeriod, String endPeriod) {
 		ArrayList<String> data = new ArrayList<String>();
 		String query = new String();
@@ -370,5 +346,29 @@ public class Participants {
 			e.printStackTrace();
 		}
 		return 0;
+	}
+	
+	public static void main(String[] args) throws SQLException {
+		Questions db = new Questions();
+		db.open();
+		Participants db1 = new Participants();
+		db1.open();
+		Library lib = new Library();
+		lib.open();
+		ArrayList<String> participantIds = db1.getAllParticipantIds();
+		String templateId = "Z6FEhuzvJLfOOdmYtUIO5QxvaoL3vyh85IhH6nKLX6D0Z8dbtXpHCyn9wcyHh8EzrHAn3LnDl2nKEX6H";
+		for(String participantId : participantIds) {
+			System.out.println(participantId);
+			String transactionId = new GenerateSecureString().string(50);
+			db.insertTransaction(transactionId, templateId, participantId);
+			db.insertParticipantInfo(participantId, db1.getName(participantId), db1.getFname(participantId), db1.getGender(participantId), db1.getEmail(participantId), db1.getBirthdate(participantId));
+			ArrayList<String> questionIds = db.getQuestionIds(templateId);
+			db.insertAnswer(transactionId, questionIds.get(0), lib.getCountryCode(db1.getCountry(participantId), "en"));
+			db.insertAnswer(transactionId, questionIds.get(1), lib.getCountryCode(db1.getCountry2(participantId), "en"));
+			db.insertOptionTypeAnswer(transactionId, questionIds.get(2), db1.getCareer(participantId));
+		}
+		lib.close();
+		db1.close();
+		db.close();
 	}
 }

@@ -24,7 +24,7 @@ public class UserPageImageLists {
 		result += "<div class=\"box alt\">"
 				+ "\n\t\t\t\t\t\t\t<div class=\"row gtr-50 gtr-uniform\">"
 				+ "\n\t\t\t\t\t\t\t\t<div class=\"col-4 col-12-mobile\">"
-				+ "\n\t\t\t\t\t\t\t\t\t<span class=\"image fit\"><img id=\"uploadEventImageIcon\" src=\"https://s3-ap-northeast-1.amazonaws.com/jp.myouth.images/events/uploadImageIcon.jpg\" alt=\"\"></span>"
+				+ "\n\t\t\t\t\t\t\t\t\t<span class=\"image fit\"><img id=\"uploadEventImageIcon\" src=\"https://s3-ap-northeast-1.amazonaws.com/myouth-images/events/uploadImageIcon.jpg\" alt=\"\"></span>"
 				+ "\n\t\t\t\t\t\t\t\t</div>"
 				+ "\n\t\t\t\t\t\t\t</div>"
 				+ "\n\t\t\t\t\t\t\t<div class=\"row gtr-50 gtr-uniform\">";

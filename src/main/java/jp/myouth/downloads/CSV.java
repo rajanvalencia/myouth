@@ -16,7 +16,6 @@ public class CSV {
 	
 	OutputStream outputStream = response.getOutputStream();
 	
-	//BOM‚ð•t—^
 	outputStream.write(0xef);
 	outputStream.write(0xbb);
 	outputStream.write(0xbf);

@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import jp.myouth.db.Credentials;
 import jp.myouth.db.User;
 
 @WebServlet("/verifyEmail")
@@ -19,12 +20,16 @@ public class VerifyEmail extends HttpServlet {
 		HttpSession session = request.getSession();
 		String token = (String) session.getAttribute("token");
 		session.removeAttribute("token");
-		User db = new User();
+		Credentials db = new Credentials();
 		db.open();
 		String userId = db.getUserIdFromToken(token);
-		Boolean res = db.verifyEmail(userId, true);
-		String emailAddress = db.userEmailAddress(userId);
+		Boolean res = db.updateEmailAddressVerificationStatus(userId, true);
 		db.close();
+		
+		User db1 = new User();
+		db1.open();
+		String emailAddress = db1.getUserEmailAddress(userId);
+		db1.close();
 		
 		if(res) {
 			session.setAttribute("emailAddress", emailAddress);

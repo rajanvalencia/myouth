@@ -12,7 +12,7 @@ import jp.myouth.utilities.UrlToS3KeyName;
 
 public class DeleteImage {
 	
-	static final String BUCKET_NAME = "jp.myouth.images";
+	static final String BUCKET_NAME = "myouth-images";
 	
 	public void event(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		HttpSession session = request.getSession();

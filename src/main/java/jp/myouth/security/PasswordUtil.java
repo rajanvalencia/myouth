@@ -18,27 +18,10 @@ private static final String CLIENT_REGION  = "ap-northeast-1";
 	
 	private static final String KEY = "pepper/pepper1.txt";
 	
-    /**
-     *  パスワードを安全にするためのアルゴリズム 
-    */
     private static final String ALGORITHM = "PBKDF2WithHmacSHA512";
-    /** 
-     * ストレッチング回数 
-    */
     private static final int ITERATION_COUNT = 20000;
-    /** 
-     * 生成される鍵の長さ 
-    */
     private static final int KEY_LENGTH = 2048;
  
-    /**
-     *　平文のパスワードとソルトから安全なパスワードを生成し、返却します
-     *
-     * @param password 平文のパスワード
-     * @param salt ソルト
-     * @return 安全なパスワード
-     * @throws IOException 
-     */
     public static String getSafetyPassword(String password, String saltOrPepper) throws IOException {
  
         char[] passCharAry = password.toCharArray();
@@ -61,9 +44,6 @@ private static final String CLIENT_REGION  = "ap-northeast-1";
         }
         byte[] passByteAry = secretKey.getEncoded();
  
-        /* 
-         * 生成されたバイト配列を16進数の文字列に変換
-         */
         StringBuilder sb = new StringBuilder(64);
         for (byte b : passByteAry) {
             sb.append(String.format("%02x", b & 0xff));
@@ -72,13 +52,6 @@ private static final String CLIENT_REGION  = "ap-northeast-1";
         return sb.toString();
     }
  
-    /**
-     * ソルトをハッシュ化して返却します
-     * ※ハッシュアルゴリズムはSHA-512を使用
-     *
-     * @param salt ソルト
-     * @return ハッシュ化されたバイト配列のソルト
-     */
     private static byte[] getHashedSalt(String salt) {
         MessageDigest messageDigest;
         try {

@@ -1,6 +1,8 @@
 package com.aws.codestar.projecttemplates.controller;
 
 import java.io.IOException;
+
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 import javax.servlet.http.HttpServletRequest;
@@ -8,17 +10,23 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
-import jp.myouth.db.Events;
+import jp.myouth.db.Credentials;
 import jp.myouth.db.ExistenceCheck;
 import jp.myouth.db.Messages;
 import jp.myouth.db.User;
+import jp.myouth.security.GenerateSecureString;
 import jp.myouth.servlets.DeleteImage;
 import jp.myouth.servlets.DeleteTrashedInbox;
+import jp.myouth.tables.AnalyticsPageGenerateEventCharts;
+import jp.myouth.tables.AnalyticsPageViewAllFormTemplates;
+import jp.myouth.tables.FormTemplate;
+import jp.myouth.tables.FormTemplateTitleAndDescription;
 
 /**
  * Basic Spring MVC controller that handles all GET requests.
@@ -40,12 +48,6 @@ public class HelloWorldController {
 		return mav;
 	}
 
-	@RequestMapping("question")
-	public ModelAndView question() {
-		ModelAndView mv = new ModelAndView("test/question");
-		return mv;
-	}
-	
 	@RequestMapping("password")
 	public ModelAndView password() {
 		ModelAndView mv = new ModelAndView("password");
@@ -83,50 +85,20 @@ public class HelloWorldController {
 	}
 	
 	@RequestMapping("login")
-	public ModelAndView login(HttpServletRequest request){
-		HttpSession session = request.getSession();
-		Boolean failure = (Boolean)session.getAttribute("failure");
-		if(failure == null)
-			session.setAttribute("failure", false);
-		ModelAndView mv = new ModelAndView("login");
-		return mv;
+	public ModelAndView login(HttpServletRequest request, HttpSession session, ModelMap model){
+		new  TokenGenerator().generate(session, model);
+		showFailureMessageOnLogin(session, model);
+		return new ModelAndView("login");
 	}
 	
 	@RequestMapping("registerUser")
-	public ModelAndView registerUser(HttpServletRequest request) {
-		HttpSession session = request.getSession();
-		
-		if(session.getAttribute("registerUserSuccess") == null)
-			session.setAttribute("registerUserSuccess", "hidden");
-		
-		if(session.getAttribute("registerUserFailure") == null)
-			session.setAttribute("registerUserFailure", "hidden");
-		
-		if(session.getAttribute("registerUserName") == null)
-			session.setAttribute("registerUserName", "");
-		
-		if(session.getAttribute("registerUserFname") == null)
-			session.setAttribute("registerUserFname", "");
-		
-		if(session.getAttribute("registerUserPhone") == null)
-			session.setAttribute("registerUserPhone", "");
-		
-		if(session.getAttribute("registerUserYear") == null)
-			session.setAttribute("registerUserYear", "");
-		
-		if(session.getAttribute("registerUserMonth") == null)
-			session.setAttribute("registerUserMonth", "");
-		
-		if(session.getAttribute("registerUserDay") == null)
-			session.setAttribute("registerUserDay", "\" \"");
-		
-		ModelAndView mv = new ModelAndView("user/registerUser");
-		return mv;
+	public ModelAndView registerUser(HttpSession session, ModelMap model) {
+		successOrFailure(session, model);
+		return new ModelAndView("user/registerUser");
 	}
 	
 	@RequestMapping("setNewPassword/{token}")
-	public void setNewPasswordWithToken(HttpServletRequest request, HttpServletResponse response, @PathVariable("token") String token) throws IOException {
-		HttpSession session = request.getSession();
+	public void setNewPasswordWithToken(HttpServletResponse response, HttpSession session, @PathVariable("token") String token) throws IOException {
 		session.setAttribute("token", token);
 		response.sendRedirect("/processPasswordToken");
 	}
@@ -145,97 +117,63 @@ public class HelloWorldController {
 	}
 	
 	@RequestMapping("reissuePermission")
-	public ModelAndView reissuePermission(HttpServletRequest request) {
-		HttpSession session = request.getSession();
-		
-		String success = (String) session.getAttribute("reissuePermissionSuccess");
-		if(success == null)
-			session.setAttribute("reissuePermissionSuccess", "hidden");
-		
-		String failure = (String) session.getAttribute("reissuePermissionFailure");
-		if(failure == null)
-			session.setAttribute("reissuePermissionFailure", "hidden");
-		
-		ModelAndView mv = new ModelAndView("user/password/reissuePermission");
-		return mv;
+	public ModelAndView reissuePermission(HttpServletRequest request, HttpSession session, ModelMap model) {
+		successOrFailure(session, model);
+		return new ModelAndView("user/password/reissuePermission");
 	}
 	
 	@RequestMapping("emailVerification/{token}")
-	public void verifyEmail(HttpServletRequest request, HttpServletResponse response, @PathVariable ("token") String token) throws IOException {
-		HttpSession session= request.getSession();
+	public void verifyEmail(HttpServletRequest request, HttpServletResponse response, HttpSession session, @PathVariable ("token") String token) throws IOException {
 		session.setAttribute("token", token);
 		response.sendRedirect("/verifyEmail");
 	}
 	
 	@RequestMapping("emailVerification")
 	public ModelAndView emailVerification() {
-		ModelAndView mv = new ModelAndView("user/emailVerification");
-		return mv;
+		return new ModelAndView("user/emailVerification");
 	}
 
 	@RequestMapping("home")
-	public ModelAndView user(HttpServletRequest request) {
+	public ModelAndView user(HttpServletRequest request, HttpServletResponse response, ModelMap model) throws IOException {
 		HttpSession session = request.getSession();
-		Boolean user = (Boolean)session.getAttribute("user");
-		if(user == null)
-			session.setAttribute("user", false);
-		ModelAndView mv = new ModelAndView("user/home");
-		return mv;
+		redirectToLoginPageIfUserDoesntExist(response, session);
+		new UserHome().initialize(session, model);
+		return new ModelAndView("user/home");
 	}
 	
-	@RequestMapping("home/profile")
-	public ModelAndView editProfile(HttpServletRequest request, HttpServletResponse response) throws IOException {
+	@RequestMapping("home/account")
+	public ModelAndView accountSettings(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		HttpSession session = request.getSession();
-		Boolean user = (Boolean)session.getAttribute("user");
-		if(user == null)
-			response.sendRedirect("/login");
-		ModelAndView mv = new ModelAndView("user/profile/index");
-		return mv;
+		redirectToLoginPageIfUserDoesntExist(response, session);
+		return new ModelAndView("user/account/index");
 	}
 	
-	@RequestMapping("home/changeProfile")
-	public ModelAndView changeProfile(HttpServletRequest request, HttpServletResponse response) throws IOException {
+	@RequestMapping("home/account/profile")
+	public ModelAndView updateAccountDetails(HttpServletRequest request, HttpServletResponse response, ModelMap model) throws IOException {
 		HttpSession session = request.getSession();
-		Boolean user = (Boolean)session.getAttribute("user");
-		if(user == null)
-			response.sendRedirect("/login");
-		ModelAndView mv = new ModelAndView("user/profile/changeProfile");
-		return mv;
+		redirectToLoginPageIfUserDoesntExist(response, session);
+		new UpdateAccountDetails().initialize(session, model);
+		return new ModelAndView("user/account/profile");
 	}
 	
 	@RequestMapping("home/registerEvent")
 	public ModelAndView registerEvent(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		HttpSession session = request.getSession();
-		Boolean user = (Boolean)session.getAttribute("user");
-		if(user == null)
-			response.sendRedirect("/login");
-		
-		if(session.getAttribute("registerEventSuccess") == null)
-			session.setAttribute("registerEventSuccess", "hidden");
-		
-		if(session.getAttribute("registerEventFailure") == null)
-			session.setAttribute("registerEventFailure", "hidden");
-		
-		ModelAndView mv = new ModelAndView("user/registerEvent");
-		return mv;
+		redirectToLoginPageIfUserDoesntExist(response, session);
+		return new ModelAndView("user/registerEvent");
 	}
 	
 	@RequestMapping("home/cropImage")
 	public ModelAndView cropProfilePicture(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		HttpSession session = request.getSession();
-		Boolean user = (Boolean)session.getAttribute("user");
-		if(user == null)
-			response.sendRedirect("/login");
-		ModelAndView mv = new ModelAndView("user/cropImage");
-		return mv;
+		redirectToLoginPageIfUserDoesntExist(response, session);
+		return new ModelAndView("user/cropImage");
 	}
 	
 	@RequestMapping("home/{event}/visualization")
 	public ModelAndView visualization(HttpServletRequest request, HttpServletResponse response, @PathVariable("event") String event) throws IOException {
 		HttpSession session = request.getSession();
-		Boolean user = (Boolean)session.getAttribute("user");
-		if(user == null)
-			response.sendRedirect("/login");
+		redirectToLoginPageIfUserDoesntExist(response, session);
 		session.setAttribute("event", event);
 		
 		ModelAndView mv = new ModelAndView("user/visualization/index");
@@ -251,11 +189,9 @@ public class HelloWorldController {
 	}
 	
 	@RequestMapping("home/{event}/visualization/ratings")
-	public ModelAndView visualizationRatings(HttpServletRequest request, HttpServletResponse response, @PathVariable("event") String event) throws IOException {
+	public ModelAndView visualizationRatings(HttpServletRequest request, HttpServletResponse response, ModelMap model, @PathVariable("event") String event) throws IOException {
 		HttpSession session = request.getSession();
-		Boolean user = (Boolean)session.getAttribute("user");
-		if(user == null)
-			response.sendRedirect("/login");
+		redirectToLoginPageIfUserDoesntExist(response, session);
 		session.setAttribute("event", event);
 		
 		ModelAndView mv = new ModelAndView("user/visualization/ratings");
@@ -267,15 +203,61 @@ public class HelloWorldController {
 			mv = new ModelAndView("error404");
 		check.close();
 		
+		model.addAttribute("event", event);
+		
+		return mv;
+	}
+	
+	@RequestMapping("home/{event}/visualization/analytics")
+	public ModelAndView visualizationAnalyticsIndex(HttpServletRequest request, HttpServletResponse response, ModelMap model, @PathVariable("event") String event) throws IOException {
+		HttpSession session = request.getSession();
+		redirectToLoginPageIfUserDoesntExist(response, session);
+		session.setAttribute("event", event);
+		
+		ModelAndView mv = new ModelAndView("user/visualization/analytics/index");
+		
+		String userId = (String) session.getAttribute("userId");
+		ExistenceCheck check = new ExistenceCheck();
+		check.open();
+		if(!check.eventAccess(userId, event))
+			mv = new ModelAndView("error404");
+		check.close();
+		
+		AnalyticsPageViewAllFormTemplates view = new AnalyticsPageViewAllFormTemplates();
+		view.append(model, event);
+		
+		model.addAttribute("event", event);
+		
+		return mv;
+	}
+	
+	@RequestMapping("home/{event}/visualization/analytics/{templateId}")
+	public ModelAndView visualizationAnalytics(HttpServletRequest request, HttpServletResponse response, ModelMap model, @PathVariable("event") String event, @PathVariable("templateId") String templateId) throws IOException {
+		HttpSession session = request.getSession();
+		redirectToLoginPageIfUserDoesntExist(response, session);
+		session.setAttribute("event", event);
+		
+		ModelAndView mv = new ModelAndView("user/visualization/analytics/analytics");
+		
+		String userId = (String) session.getAttribute("userId");
+		ExistenceCheck check = new ExistenceCheck();
+		check.open();
+		if(!check.eventAccess(userId, event))
+			mv = new ModelAndView("error404");
+		check.close();
+		
+		AnalyticsPageGenerateEventCharts gen = new AnalyticsPageGenerateEventCharts();
+		gen.append(request, response, model, templateId);
+		
+		model.addAttribute("event", event);
+		
 		return mv;
 	}
 	
 	@RequestMapping("home/{event}/participants")
 	public ModelAndView participants(HttpServletRequest request, HttpServletResponse response, @PathVariable("event") String event) throws IOException {
 		HttpSession session = request.getSession();
-		Boolean user = (Boolean)session.getAttribute("user");
-		if(user == null)
-			response.sendRedirect("/login");
+		redirectToLoginPageIfUserDoesntExist(response, session);
 		session.setAttribute("event", event);
 		
 		ModelAndView mv = new ModelAndView("user/participants/index");
@@ -293,9 +275,7 @@ public class HelloWorldController {
 	@RequestMapping("home/{event}/participants/{participantId}")
 	public ModelAndView participantFullInfo(HttpServletRequest request, HttpServletResponse response, @PathVariable("event") String event, @PathVariable("participantId") String participantId) throws IOException {
 		HttpSession session = request.getSession();
-		Boolean user = (Boolean)session.getAttribute("user");
-		if(user == null)
-			response.sendRedirect("/login");
+		redirectToLoginPageIfUserDoesntExist(response, session);
 		session.setAttribute("event", event);
 		session.setAttribute("participantId", participantId);
 		
@@ -314,9 +294,7 @@ public class HelloWorldController {
 	@RequestMapping("home/{event}/downloadSettings")
 	public ModelAndView downloadSettings(HttpServletRequest request, HttpServletResponse response, @PathVariable("event") String event) throws IOException {
 		HttpSession session = request.getSession();
-		Boolean user = (Boolean)session.getAttribute("user");
-		if(user == null)
-			response.sendRedirect("/login");
+		redirectToLoginPageIfUserDoesntExist(response, session);
 		session.setAttribute("event", event);
 		
 		ModelAndView mv = new ModelAndView("user/downloadSettings");
@@ -334,9 +312,7 @@ public class HelloWorldController {
 	@RequestMapping("home/{event}/photo-video")
 	public ModelAndView photoVideo(HttpServletRequest request, HttpServletResponse response, @PathVariable("event") String event) throws IOException {
 		HttpSession session = request.getSession();
-		Boolean user = (Boolean)session.getAttribute("user");
-		if(user == null)
-			response.sendRedirect("/login");
+		redirectToLoginPageIfUserDoesntExist(response, session);
 		session.setAttribute("event", event);
 		
 		ModelAndView mv = new ModelAndView("user/photo-video/index");
@@ -354,9 +330,7 @@ public class HelloWorldController {
 	@RequestMapping("home/{event}/photo-video/description")
 	public ModelAndView writeEventImageDescription(HttpServletRequest request, HttpServletResponse response, @PathVariable("event") String event) throws IOException {
 		HttpSession session = request.getSession();
-		Boolean user = (Boolean)session.getAttribute("user");
-		if(user == null)
-			response.sendRedirect("/login");
+		redirectToLoginPageIfUserDoesntExist(response, session);
 		session.setAttribute("event", event);
 		
 		ModelAndView mv = new ModelAndView("user/photo-video/description");
@@ -374,9 +348,7 @@ public class HelloWorldController {
 	@RequestMapping("home/{event}/photo-video/{imageId}/delete")
 	public ModelAndView deletePhotoVideo(HttpServletRequest request, HttpServletResponse response, @PathVariable("event") String event, @PathVariable("imageId") String imageId) throws IOException {
 		HttpSession session = request.getSession();
-		Boolean user = (Boolean)session.getAttribute("user");
-		if(user == null)
-			response.sendRedirect("/login");
+		redirectToLoginPageIfUserDoesntExist(response, session);
 		session.setAttribute("event", event);
 		
 		request.setAttribute("imageId", imageId);
@@ -398,9 +370,7 @@ public class HelloWorldController {
 	@RequestMapping("home/{event}/mail")
 	public ModelAndView mail(HttpServletRequest request, HttpServletResponse response, @PathVariable("event") String event) throws IOException {
 		HttpSession session = request.getSession();
-		Boolean user = (Boolean)session.getAttribute("user");
-		if(user == null)
-			response.sendRedirect("/login");
+		redirectToLoginPageIfUserDoesntExist(response, session);
 		session.setAttribute("event", event);
 		
 		ModelAndView mv = new ModelAndView("user/mail/index");
@@ -418,32 +388,25 @@ public class HelloWorldController {
 	@RequestMapping("home/{event}/mail/create")
 	public ModelAndView mailCreate(HttpServletRequest request, HttpServletResponse response, @PathVariable("event") String event) throws IOException {
 		HttpSession session = request.getSession();
-		Boolean user = (Boolean)session.getAttribute("user");
-		if(user == null)
-			response.sendRedirect("/login");
+		redirectToLoginPageIfUserDoesntExist(response, session);
 		String success = (String)session.getAttribute("success");
 		if(success == null)
 			session.setAttribute("success", "hidden");
-		
-		session.setAttribute("event", event);
-		ModelAndView mv = new ModelAndView("user/mail/create");
 		
 		String userId = (String) session.getAttribute("userId");
 		ExistenceCheck check = new ExistenceCheck();
 		check.open();
 		if(!check.eventAccess(userId, event))
-			mv = new ModelAndView("error404");
+			return new ModelAndView("error404");
 		check.close();
 		
-		return mv;
+		return new ModelAndView("user/mail/create");
 	}
 	
 	@RequestMapping("home/{event}/mail/create/{messageId}")
 	public ModelAndView mailReplyTo(HttpServletRequest request, HttpServletResponse response, @PathVariable("event") String event, @PathVariable("messageId") String messageId) throws IOException {
 		HttpSession session = request.getSession();
-		Boolean user = (Boolean)session.getAttribute("user");
-		if(user == null)
-			response.sendRedirect("/login");
+		redirectToLoginPageIfUserDoesntExist(response, session);
 		String success = (String)session.getAttribute("success");
 		if(success == null)
 			session.setAttribute("success", "hidden");
@@ -472,9 +435,7 @@ public class HelloWorldController {
 	@RequestMapping("home/{event}/mail/inbox")
 	public ModelAndView mailReceived(HttpServletRequest request, HttpServletResponse response, @PathVariable("event") String event) throws IOException {
 		HttpSession session = request.getSession();
-		Boolean user = (Boolean)session.getAttribute("user");
-		if(user == null)
-			response.sendRedirect("/login");
+		redirectToLoginPageIfUserDoesntExist(response, session);
 		session.setAttribute("event", event);
 		
 		ModelAndView mv = new ModelAndView("user/mail/receivedMessages");
@@ -492,9 +453,7 @@ public class HelloWorldController {
 	@RequestMapping("home/{event}/mail/inbox/{messageId}")
 	public ModelAndView mailReceivedByMessageId(HttpServletRequest request, HttpServletResponse response, @PathVariable("event") String event, @PathVariable("messageId") String messageId) throws IOException {
 		HttpSession session = request.getSession();
-		Boolean user = (Boolean)session.getAttribute("user");
-		if(user == null)
-			response.sendRedirect("/login");
+		redirectToLoginPageIfUserDoesntExist(response, session);
 		session.setAttribute("event", event);
 		
 		session.setAttribute("messageId", messageId);
@@ -514,9 +473,7 @@ public class HelloWorldController {
 	@RequestMapping("home/{event}/mail/sent")
 	public ModelAndView mailSent(HttpServletRequest request, HttpServletResponse response, @PathVariable("event") String event) throws IOException {
 		HttpSession session = request.getSession();
-		Boolean user = (Boolean)session.getAttribute("user");
-		if(user == null)
-			response.sendRedirect("/login");
+		redirectToLoginPageIfUserDoesntExist(response, session);
 		session.setAttribute("event", event);
 		
 		ModelAndView mv = new ModelAndView("user/mail/sentMessages");
@@ -532,32 +489,24 @@ public class HelloWorldController {
 	}
 	
 	@RequestMapping("home/{event}/mail/sent/{transactionId}")
-	public ModelAndView mailSentByTransactionId(HttpServletRequest request, HttpServletResponse response, @PathVariable("event") String event, @PathVariable("transactionId") String transactionId) throws IOException {
-		HttpSession session = request.getSession();
-		Boolean user = (Boolean)session.getAttribute("user");
-		if(user == null)
-			response.sendRedirect("/login");
-		
-		session.setAttribute("event", event);
-		session.setAttribute("transactionId", transactionId);
-		ModelAndView mv = new ModelAndView("user/mail/sentMessage");
+	public ModelAndView mailSentByTransactionId(HttpServletRequest request, HttpServletResponse response, HttpSession session, ModelMap model, @PathVariable("event") String event, @PathVariable("transactionId") String transactionId) throws IOException {
+		redirectToLoginPageIfUserDoesntExist(response, session);
 		
 		String userId = (String) session.getAttribute("userId");
 		ExistenceCheck check = new ExistenceCheck();
 		check.open();
 		if(!check.eventAccess(userId, event))
-			mv = new ModelAndView("error404");
+			return new ModelAndView("error404");
 		check.close();
 		
-		return mv;
+		new EventSentMessage().initialize(response, session, model, event, transactionId);
+		return new ModelAndView("user/mail/sentMessage");
 	}
 	
 	@RequestMapping("home/{event}/mail/trashedInbox")
 	public ModelAndView mailTrashedReceived(HttpServletRequest request, HttpServletResponse response, @PathVariable("event") String event) throws IOException {
 		HttpSession session = request.getSession();
-		Boolean user = (Boolean)session.getAttribute("user");
-		if(user == null)
-			response.sendRedirect("/login");
+		redirectToLoginPageIfUserDoesntExist(response, session);
 		session.setAttribute("event", event);
 		
 		if(session.getAttribute("deleteAllTrashedMessagesSuccess") == null)
@@ -578,9 +527,7 @@ public class HelloWorldController {
 	@RequestMapping("home/{event}/mail/trashed")
 	public ModelAndView mailTrashed(HttpServletRequest request, HttpServletResponse response, @PathVariable("event") String event) throws IOException {
 		HttpSession session = request.getSession();
-		Boolean user = (Boolean)session.getAttribute("user");
-		if(user == null)
-			response.sendRedirect("/login");
+		redirectToLoginPageIfUserDoesntExist(response, session);
 		session.setAttribute("event", event);
 		
 		if(session.getAttribute("deleteAllTrashedMessagesSuccess") == null)
@@ -601,9 +548,7 @@ public class HelloWorldController {
 	@RequestMapping("home/{event}/mail/inbox/{messageId}/delete")
 	public  ModelAndView deleteReceivedMesssage(HttpServletRequest request, HttpServletResponse response, @PathVariable("event") String event, @PathVariable("messageId") String messageId) throws IOException {
 		HttpSession session = request.getSession();
-		Boolean user = (Boolean)session.getAttribute("user");
-		if(user == null)
-			response.sendRedirect("/login");
+		redirectToLoginPageIfUserDoesntExist(response, session);
 		session.setAttribute("event", event);
 		
 		Messages db = new Messages();
@@ -626,9 +571,7 @@ public class HelloWorldController {
 	@RequestMapping("home/{event}/mail/sent/{messageId}/delete")
 	public  ModelAndView deleteMesssage(HttpServletRequest request, HttpServletResponse response, @PathVariable("event") String event, @PathVariable("messageId") String messageId) throws IOException {
 		HttpSession session = request.getSession();
-		Boolean user = (Boolean)session.getAttribute("user");
-		if(user == null)
-			response.sendRedirect("/login");
+		redirectToLoginPageIfUserDoesntExist(response, session);
 		session.setAttribute("event", event);
 		
 		Messages db = new Messages();
@@ -651,9 +594,7 @@ public class HelloWorldController {
 	@RequestMapping("home/{event}/mail/trashed/{transactionId}")
 	public ModelAndView mailTrashedByMessageId(HttpServletRequest request, HttpServletResponse response, @PathVariable("event") String event, @PathVariable("transactionId") String transactionId) throws IOException {
 		HttpSession session = request.getSession();
-		Boolean user = (Boolean)session.getAttribute("user");
-		if(user == null)
-			response.sendRedirect("/login");
+		redirectToLoginPageIfUserDoesntExist(response, session);
 		
 		session.setAttribute("event", event);
 		session.setAttribute("transactionId", transactionId);
@@ -672,9 +613,7 @@ public class HelloWorldController {
 	@RequestMapping("home/{event}/mail/trashedInbox/{messageId}")
 	public ModelAndView receivedTrashedByMessageId(HttpServletRequest request, HttpServletResponse response, @PathVariable("event") String event, @PathVariable("messageId") String messageId) throws IOException {
 		HttpSession session = request.getSession();
-		Boolean user = (Boolean)session.getAttribute("user");
-		if(user == null)
-			response.sendRedirect("/login");
+		redirectToLoginPageIfUserDoesntExist(response, session);
 		
 		session.setAttribute("event", event);
 		session.setAttribute("messageId", messageId);
@@ -693,9 +632,7 @@ public class HelloWorldController {
 	@RequestMapping("home/{event}/mail/trashed/{transactionId}/delete")
 	public  ModelAndView deleteTrashedMessage(HttpServletRequest request, HttpServletResponse response, @PathVariable("event") String event, @PathVariable("transactionId") String transactionId) throws IOException {
 		HttpSession session = request.getSession();
-		Boolean user = (Boolean)session.getAttribute("user");
-		if(user == null)
-			response.sendRedirect("/login");
+		redirectToLoginPageIfUserDoesntExist(response, session);
 		session.setAttribute("event", event);
 		
 		Messages db = new Messages();
@@ -719,9 +656,7 @@ public class HelloWorldController {
 	@RequestMapping("home/{event}/mail/trashedInbox/{messageId}/delete")
 	public  ModelAndView deleteTrashedReceivedMessage(HttpServletRequest request, HttpServletResponse response, @PathVariable("event") String event, @PathVariable("messageId") String messageId) throws IOException {
 		HttpSession session = request.getSession();
-		Boolean user = (Boolean)session.getAttribute("user");
-		if(user == null)
-			response.sendRedirect("/login");
+		redirectToLoginPageIfUserDoesntExist(response, session);
 		session.setAttribute("event", event);
 		
 		Messages db = new Messages();
@@ -747,9 +682,7 @@ public class HelloWorldController {
 	@RequestMapping("home/{event}/mail/trashed/{transactionId}/undo")
 	public  ModelAndView undoTrashedMessage(HttpServletRequest request, HttpServletResponse response, @PathVariable("event") String event, @PathVariable("transactionId") String transactionId) throws IOException {
 		HttpSession session = request.getSession();
-		Boolean user = (Boolean)session.getAttribute("user");
-		if(user == null)
-			response.sendRedirect("/login");
+		redirectToLoginPageIfUserDoesntExist(response, session);
 		session.setAttribute("event", event);
 		
 		Messages db = new Messages();
@@ -772,9 +705,7 @@ public class HelloWorldController {
 	@RequestMapping("home/{event}/mail/trashedInbox/{messageId}/undo")
 	public  ModelAndView undoTrashedReceivedMessage(HttpServletRequest request, HttpServletResponse response, @PathVariable("event") String event, @PathVariable("messageId") String messageId) throws IOException {
 		HttpSession session = request.getSession();
-		Boolean user = (Boolean)session.getAttribute("user");
-		if(user == null)
-			response.sendRedirect("/login");
+		redirectToLoginPageIfUserDoesntExist(response, session);
 		session.setAttribute("event", event);
 		
 		Messages db = new Messages();
@@ -797,9 +728,7 @@ public class HelloWorldController {
 	@RequestMapping("/home/{event}/mail/trashed/deleteAllTrashedMessages")
 	public void deleteTrashedMessages(HttpServletRequest request, HttpServletResponse response, @PathVariable("event") String event) throws IOException {
 		HttpSession session = request.getSession();
-		Boolean user = (Boolean)session.getAttribute("user");
-		if(user == null)
-			response.sendRedirect("/login");
+		redirectToLoginPageIfUserDoesntExist(response, session);
 		session.setAttribute("event", event);
 		
 		Messages db = new Messages();
@@ -817,9 +746,7 @@ public class HelloWorldController {
 	@RequestMapping("/home/{event}/mail/trashedInbox/deleteAllTrashedMessages")
 	public void deleteTrashedReceivedMessages(HttpServletRequest request, HttpServletResponse response, @PathVariable("event") String event) throws IOException {
 		HttpSession session = request.getSession();
-		Boolean user = (Boolean)session.getAttribute("user");
-		if(user == null)
-			response.sendRedirect("/login");
+		redirectToLoginPageIfUserDoesntExist(response, session);
 		session.setAttribute("event", event);
 		
 		Messages db = new Messages();
@@ -837,13 +764,10 @@ public class HelloWorldController {
 	}
 	
 	@RequestMapping("home/{event}/settings")
-	public ModelAndView settings(HttpServletRequest request, HttpServletResponse response, @PathVariable("event") String event) throws IOException {
+	public ModelAndView settings(HttpServletRequest request, HttpServletResponse response, ModelMap model, @PathVariable("event") String event) throws IOException {
 		HttpSession session = request.getSession();
-		Boolean user = (Boolean)session.getAttribute("user");
-		if(user == null)
-			response.sendRedirect("/login");
-		session.setAttribute("event", event);
-		
+		redirectToLoginPageIfUserDoesntExist(response, session);
+		new SettingsPage().initialize(request, model, event);
 		ModelAndView mv = new ModelAndView("user/settings/index");
 		
 		String userId = (String) session.getAttribute("userId");
@@ -857,17 +781,15 @@ public class HelloWorldController {
 	}
 	
 	@RequestMapping("home/{event}/settings/details")
-	public ModelAndView details(HttpServletRequest request, HttpServletResponse response, @PathVariable("event") String event) throws IOException {
+	public ModelAndView editEventDetails(HttpServletRequest request, HttpServletResponse response, ModelMap model, @PathVariable("event") String event) throws IOException {
 		HttpSession session = request.getSession();
-		Boolean user = (Boolean)session.getAttribute("user");
-		if(user == null)
-			response.sendRedirect("/login");
+		redirectToLoginPageIfUserDoesntExist(response, session);
 		
 		String success = (String)session.getAttribute("success");
 		if(success == null)
 			session.setAttribute("success", "hidden");
 		session.setAttribute("event", event);
-		ModelAndView mv = new ModelAndView("user/settings/details");
+		ModelAndView mv = new ModelAndView("user/settings/editEventDetails");
 		
 		String userId = (String) session.getAttribute("userId");
 		ExistenceCheck check = new ExistenceCheck();
@@ -876,21 +798,47 @@ public class HelloWorldController {
 			mv = new ModelAndView("error404");
 		check.close();
 		
+		new EditEventDetailsPage().initialize(request, model, event);
+		
 		return mv;
+	}
+	
+	@RequestMapping("home/{event}/settings/formTemplates")
+	public ModelAndView formTemplates(HttpServletRequest request, HttpServletResponse response, HttpSession session, ModelMap model, @PathVariable("event") String event) throws IOException {
+		redirectToLoginPageIfUserDoesntExist(response, session);
+		session.setAttribute("event", event);
+		model.addAttribute("event", event);
+		
+		String userId = (String) session.getAttribute("userId");
+		ExistenceCheck check = new ExistenceCheck();
+		check.open();
+		if(!check.eventAccess(userId, event))
+			return new ModelAndView("error404");
+		check.close();
+		
+		model.addAttribute("eventSessionStorage", "sessionStorage.setItem('event', '"+event+"');");
+		
+		GenerateSecureString gen = new GenerateSecureString();
+		String apiKey = gen.string(100);
+		model.addAttribute("apiKey", "sessionStorage.setItem('apiKey', '"+apiKey+"');");
+		
+		Credentials db1 = new Credentials();
+		db1.open();
+		db1.insertAjaxApiKey(userId, apiKey);
+		db1.close();
+		
+		new ViewAllFormTemplates().initialize(session, model, event);
+		
+		return new ModelAndView("user/settings/formTemplates");
 	}
 
-	@RequestMapping("home/{event}/settings/form")
-	public ModelAndView formSettings(HttpServletRequest request, HttpServletResponse response, @PathVariable("event") String event) throws IOException {
-		HttpSession session = request.getSession();
-		Boolean user = (Boolean)session.getAttribute("user");
-		if(user == null)
-			response.sendRedirect("/login");
+	@RequestMapping("home/{event}/settings/formTemplates/{templateId}")
+	public ModelAndView formCustomization(HttpServletRequest request, HttpServletResponse response, HttpSession session, ModelMap model, @PathVariable("event") String event, @PathVariable("templateId") String templateId) throws IOException {
+		redirectToLoginPageIfUserDoesntExist(response, session);
 		
-		String success = (String)session.getAttribute("success");
-		if(success == null)
-			session.setAttribute("success", "hidden");
 		session.setAttribute("event", event);
-		ModelAndView mv = new ModelAndView("user/settings/form");
+		model.addAttribute("event", event);
+		ModelAndView mv = new ModelAndView("user/settings/customizeForm");
 		
 		String userId = (String) session.getAttribute("userId");
 		ExistenceCheck check = new ExistenceCheck();
@@ -899,60 +847,29 @@ public class HelloWorldController {
 			mv = new ModelAndView("error404");
 		check.close();
 		
-		return mv;
-	}
-	
-	@RequestMapping("home/{event}/settings/survey")
-	public ModelAndView surveySettings(HttpServletRequest request, HttpServletResponse response, @PathVariable("event") String event) throws IOException {
-		HttpSession session = request.getSession();
-		Boolean user = (Boolean)session.getAttribute("user");
-		if(user == null)
-			response.sendRedirect("/login");
+		if(model.get("changeRequestSuccess") == null) {
+			model.addAttribute("changeRequestSuccess", "hidden");
+		}
 		
-		String success = (String)session.getAttribute("success");
-		if(success == null)
-			session.setAttribute("success", "hidden");
-		session.setAttribute("event", event);
+		if(model.get("formSentSuccess") == null) {
+			model.addAttribute("formSentSuccess", "hidden");
+		}
 		
-		ModelAndView mv = new ModelAndView("user/settings/survey");
+		if(model.get("warning") == null) {
+			model.addAttribute("warning", "");
+		}
 		
-		String userId = (String) session.getAttribute("userId");
-		ExistenceCheck check = new ExistenceCheck();
-		check.open();
-		if(!check.eventAccess(userId, event))
-			mv = new ModelAndView("error404");
-		check.close();
+		session.setAttribute("templateId", templateId);
+		
+		new CustomizeForm().initialize(request, response, session, model, event, templateId);
 		
 		return mv;
 	}
-	
-	@RequestMapping("home/{event}/settings/delete")
-	public void deleteEvent(HttpServletRequest request, HttpServletResponse response, @PathVariable("event") String event) throws IOException {
-		HttpSession session = request.getSession();
-		Boolean user = (Boolean)session.getAttribute("user");
-		if(user == null)
-			response.sendRedirect("/login");
-		
-		String success = (String)session.getAttribute("success");
-		if(success == null)
-			session.setAttribute("success", "hidden");
-		session.setAttribute("event", event);
-		
-		Events db = new Events();
-		db.open();
-		db.deleteEvent(event);
-		db.close();
-		
-		response.sendRedirect("/home");
-	}
-	
 	
 	@RequestMapping("home/{event}/member")
 	public ModelAndView member(HttpServletRequest request, HttpServletResponse response, @PathVariable("event") String event) throws IOException {
 		HttpSession session = request.getSession();
-		Boolean user = (Boolean)session.getAttribute("user");
-		if(user == null)
-			response.sendRedirect("/login");
+		redirectToLoginPageIfUserDoesntExist(response, session);
 		
 		session.setAttribute("event", event);
 		ModelAndView mv = new ModelAndView("user/member");
@@ -970,11 +887,7 @@ public class HelloWorldController {
 	@RequestMapping("home/{event}/member/add/{memberUserId}")
 	public void memberAdd(HttpServletRequest request, HttpServletResponse response, @PathVariable("event") String event, @PathVariable("memberUserId") String memberUserId) throws IOException {
 		HttpSession session = request.getSession();
-		
-		Boolean user = (Boolean) session.getAttribute("user");
-		
-		if(user == null)
-			response.sendRedirect("/login");
+		redirectToLoginPageIfUserDoesntExist(response, session);
 		
 		User db = new User();
 		db.open();
@@ -994,11 +907,7 @@ public class HelloWorldController {
 	@RequestMapping("home/{event}/member/remove/{userId}")
 	public ModelAndView memberRemove(HttpServletRequest request, HttpServletResponse response, @PathVariable("event") String event, @PathVariable("userId") String memberUserId) throws IOException {
 		HttpSession session = request.getSession();
-		
-		Boolean user = (Boolean) session.getAttribute("user");
-		
-		if(user == null)
-			response.sendRedirect("/login");
+		redirectToLoginPageIfUserDoesntExist(response, session);
 		
 		User db = new User();
 		db.open();
@@ -1017,40 +926,74 @@ public class HelloWorldController {
 		return mv;
 	}
 	
-	@RequestMapping("events/{eventname}/form")
-	public String form(HttpServletRequest request, @PathVariable("eventname") String eventname) {
-		HttpSession session = request.getSession(true);
-		session.setAttribute("event", eventname);
-		String success = (String)session.getAttribute("success");
-		if(success == null)
-			session.setAttribute("success", "hidden");
-		return "form";
-	}
-	
-	@RequestMapping("events/{eventname}/survey")
-	public String survey(HttpServletRequest request, @PathVariable("eventname") String eventname) {
-		HttpSession session = request.getSession(true);
-		session.setAttribute("event", eventname);
-		String success = (String)session.getAttribute("success");
-		if(success == null)
-			session.setAttribute("success", "hidden");
-		session.setAttribute("event", eventname);
-		return "survey";
+	@RequestMapping("events/{event}/forms/{templateId}")
+	public ModelAndView form(HttpServletRequest request, HttpServletResponse response, HttpSession session, ModelMap model, @PathVariable("event") String event, @PathVariable("templateId") String templateId) throws SQLException {
+		ExistenceCheck db = new ExistenceCheck();
+		db.open();
+		Boolean res = db.event(event);
+		db.close();
+		if(!res) return new ModelAndView("error404");
+		
+		new FormTemplateTitleAndDescription().initialize(model, templateId);
+		new FormTemplate().initialize(model, event, templateId);
+		
+		model.addAttribute("event", event);
+		model.addAttribute("templateId", templateId);
+		
+		successOrFailure(session, model);
+		
+		return new ModelAndView("form");
 	}
 
 	@RequestMapping("events/{event}")
-	public String eventPage(HttpServletRequest request, HttpServletResponse response, @PathVariable("event") String event) throws IOException {
-		HttpSession session = request.getSession();
-		ExistenceCheck ec = new ExistenceCheck();
-		ec.open();
-		Boolean res = ec.event(event);
-		ec.close();
+	public ModelAndView eventPage(ModelMap model, @PathVariable("event") String event) throws IOException {
+		ExistenceCheck db = new ExistenceCheck();
+		db.open();
+		Boolean res = db.event(event);
+		db.close();
+		if(!res) return new ModelAndView("error404");
+		new EventPage().initialize(model, event);
+		return new ModelAndView("eventPage");
+	}
+	
+	private static void redirectToLoginPageIfUserDoesntExist(HttpServletResponse response, HttpSession session) throws IOException {
+		String user = (String) session.getAttribute("userId");
+		if(user == null)
+			response.sendRedirect("/login");
+	}
+	
+	private static void successOrFailure(HttpSession session, ModelMap model) {
 		
-		if(!res)
-			response.sendRedirect("/error404");
-		else
-			session.setAttribute("event", event);
+		String success = (String) session.getAttribute("success");
+		String failure = (String) session.getAttribute("failure");
 		
-		return "eventPageTemplate";
+		if(success == null || failure == null) {
+			if(success == null) {
+				model.addAttribute("success", "hidden");
+			} 
+			
+			if(failure == null) {
+				model.addAttribute("failure", "hidden");
+			}
+			return ;
+		}
+		
+		if(success.length() == 0) {
+			model.addAttribute("success", "");
+			session.setAttribute("success", "hidden");
+		} else if(failure.length() == 0) {
+			model.addAttribute("failure", "");
+			session.setAttribute("failure", "hidden");
+		}
+	}
+	
+	private static void showFailureMessageOnLogin(HttpSession session, ModelMap model) {
+		Boolean loginFailure = (Boolean) session.getAttribute("loginFailure");
+		
+		if(loginFailure == null || !loginFailure) {
+			model.addAttribute("loginFailureText", "");
+		} else if(loginFailure) {
+			model.addAttribute("loginFailureText", "$message._show('failure', 'メールアドレスまたはパスワードが間違っています');");
+		}
 	}
 }

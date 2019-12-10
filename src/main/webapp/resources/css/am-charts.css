@@ -1,0 +1,21 @@
+.am-charts {
+    width: 100%; 
+    height: 500px; 
+    max-width:100%;
+}
+
+.am-charts-pie-charts {
+    width: 100%; 
+    height: 500px; 
+    max-width:100%;
+}
+
+@media screen and (max-width: 480px) {
+    .am-charts {
+        height: 300px;
+    }
+
+    .am-charts-pie-charts {
+        height: 400px; 
+    }
+}

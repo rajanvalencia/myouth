@@ -1,15 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
 	pageEncoding="utf-8"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
-<%@ page import="jp.myouth.tables.UserPageRatings"%>
-<%@ page import="java.util.ArrayList"%>
-<%
-	Boolean user = (Boolean) session.getAttribute("user");
-	if (!user)
-		response.sendRedirect("/login");
-	String userId = (String) session.getAttribute("userId");
-	String event = (String) session.getAttribute("event");
-%>
 <!DOCTYPE HTML>
 <!--
 	Alpha by HTML5 UP
@@ -18,7 +9,7 @@
 -->
 <html>
 <head>
-<title>可視化</title>
+<title>評価</title>
 <meta charset="utf-8" />
 <meta name="viewport"
 	content="width=device-width, initial-scale=1, user-scalable=no" />
@@ -57,7 +48,7 @@
 		<!-- Main -->
 		<section id="main" class="container">
 		<section  class="back-button">
-			<a href="/home/<%out.print(event);%>/visualization"><span class="fas fa-arrow-left fa-2x faa-passing-reverse animated"></span></a>
+			<a href="/home/${event}/visualization"><span class="fas fa-arrow-left fa-2x faa-passing-reverse animated"></span></a>
 		</section>
 			<div class="row">
 				<div class="col-12">
@@ -65,17 +56,12 @@
 					<!-- Image -->
 					<section class="box">
 						 <!-- Reviews -->
-						<% 
-							UserPageRatings ratings = new UserPageRatings();
-							ratings.append(request);
-							out.println(request.getAttribute("eventRatings"));
-							request.removeAttribute("eventRatings");
-						%>
+						
 					</section>
 				</div>
 			</div>
 			<section  class="back-button">
-				<a href="/home/<%out.print(event);%>/visualization"><span class="fas fa-arrow-left fa-2x faa-passing-reverse animated"></span></a>
+				<a href="/home${event}/visualization"><span class="fas fa-arrow-left fa-2x faa-passing-reverse animated"></span></a>
 			</section>
 		</section>
 

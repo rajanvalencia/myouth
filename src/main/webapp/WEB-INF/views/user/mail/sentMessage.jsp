@@ -1,13 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
 	pageEncoding="utf-8"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
-<%@ page import="jp.myouth.tables.*"%>
-<%
-	Boolean user = (Boolean) session.getAttribute("user");
-	if (!user)
-		response.sendRedirect("/login");
-	String event = (String) session.getAttribute("event");
-%>
 <!DOCTYPE HTML>
 <!--
 	Alpha by HTML5 UP
@@ -54,22 +47,17 @@
 		<!-- Main -->
 		<section id="main" class="container">
 			<section  class="back-button">
-				<a href="/home/<%out.print(event);%>/mail/sent"><span class="fas fa-arrow-left fa-2x faa-passing-reverse animated"></span></a>
+				<a href="/home/${event}/mail/sent"><span class="fas fa-arrow-left fa-2x faa-passing-reverse animated"></span></a>
 			</section>
 			<div class="row">
 				<div class="col-12">
 					<section class="box">
-						<% 
-							EventSentMessage list = new EventSentMessage();
-							list.append(request, response);
-							out.print(request.getAttribute("eventSentMessage"));
-							request.removeAttribute("eventSentMessage");
-						%>
+						${eventSentMessage}
 					</section>
 				</div>
 			</div>
 			<section  class="back-button">
-				<a href="/home/<%out.print(event);%>/mail/sent"><span class="fas fa-arrow-left fa-2x faa-passing-reverse animated"></span></a>
+				<a href="/home/${event}/mail/sent"><span class="fas fa-arrow-left fa-2x faa-passing-reverse animated"></span></a>
 			</section>
 		</section>
 

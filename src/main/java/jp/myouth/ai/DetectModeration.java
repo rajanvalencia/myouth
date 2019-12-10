@@ -22,7 +22,7 @@ import java.util.Properties;
 
 public class DetectModeration {
 
-	static final String BUCKET_NAME = "jp.myouth.images";
+	static final String BUCKET_NAME = "myouth-images";
 
 	static final String CLIENT_REGION = "ap-northeast-1";
 
@@ -30,7 +30,7 @@ public class DetectModeration {
 
 	public Boolean detect(String userId, String path, String imageType, int eventId) throws AmazonRekognitionException {
 
-		String photoUrl = "https://s3-ap-northeast-1.amazonaws.com/jp.myouth.images/" + path;
+		String photoUrl = "https://s3-ap-northeast-1.amazonaws.com/myouth-images/" + path;
 
 		AmazonRekognition rekognitionClient = AmazonRekognitionClientBuilder.standard().withRegion(CLIENT_REGION)
 				.withCredentials(new AWSStaticCredentialsProvider(credentials())).build();

@@ -1,6 +1,7 @@
 package jp.myouth.tables;
 
 import java.io.IOException;
+
 import java.util.ArrayList;
 
 import javax.servlet.http.HttpServletRequest;
@@ -35,7 +36,7 @@ public class EventReceivedMessage {
 			if(i % 6 == 0) {
 				result += "\n\t\t\t\t\t\t\t\t\t<tr>"
 						+ "\n\t\t\t\t\t\t\t\t\t\t<td>"
-						+ "\n\t\t\t\t\t\t\t\t\t\t\t\t\tç∑èoêl: "+string+"";
+						+ "\n\t\t\t\t\t\t\t\t\t\t\t\t\tÂ∑ÆÂá∫‰∫∫: "+string+"";
 			
 			}
 			else if(i % 4 == 1) {
