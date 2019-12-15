@@ -1,5 +1,5 @@
 Welcome to the myouth web application
 ===============================================
-こちらのurlにアクセスして下さい https://myouth.jp
+[!myouthを閲覧するには[こちら](https://myouth.jp)にアクセスして下さい。]
 
 AWSのCodeCommitをリポジトリとして使っているのここではあまり更新されてません。
